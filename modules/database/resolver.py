@@ -16,7 +16,7 @@ def load_db_concept():
     global db_concept
     global db_concept_s
     logger.info('Database concept file:\n'
-                '"' + DB_CONCEPT_PATH + '"')
+                '"' + str(DB_CONCEPT_PATH) + '"')
     logger.info('Loading database concept file...')
     with open(DB_CONCEPT_PATH) as f:
         db_concept = json.load(f)

@@ -1,5 +1,6 @@
 import logging
 
+import rasa.core.agent
 from rasa.nlu import model as nlu_model
 from settings import NLU_MODEL_PATH
 
@@ -11,9 +12,10 @@ inter = None
 def load_model():
     global inter
     logger.info('NLU model:\n'
-                '"' + NLU_MODEL_PATH + '"')
+                '"' + str(NLU_MODEL_PATH) + '"')
     logger.info('Loading the NLU model WITHOUT training...')
-    inter = nlu_model.Interpreter.load(NLU_MODEL_PATH)
+    inter = rasa.core.agent.Agent.load(model_path=NLU_MODEL_PATH)
+    # inter = nlu_model.Interpreter.load(NLU_MODEL_PATH)
     logger.info('NLU model loaded!')
 
 

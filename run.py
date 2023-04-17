@@ -29,9 +29,7 @@ if __name__ == '__main__':
 
     warnings.filterwarnings('ignore')
 
-    log_path = LOG_DIR_PATH_AND_SEP + 'sherbot.log'
-    with open(log_path, 'w+'):
-        pass
+    log_path = LOG_DIR_PATH_AND_SEP / 'sherbot.log'
     logging.basicConfig(filename=log_path, level=logging.INFO)
 
     logging.info('Starting the bot...')
