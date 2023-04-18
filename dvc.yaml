@@ -2,7 +2,15 @@ stages:
   create-chatito-definitions:
     cmd: python3 translator.py
     outs:
-      - writer/chatito_model.chatito
+    - writer/chatito_model.chatito
     deps:
-      - writer/chatito_template.chatito
-      - translator.py
+    - writer/chatito_template.chatito
+    - translator.py
+  generate-phrases:
+    cmd: npx chatito writer/chatito_model.chatito --format=rasa --defaultDistribution=even
+      --outputPath=writer
+    deps:
+    - writer/chatito_model.chatito
+    outs:
+    - writer/rasa_dataset_testing.json
+    - writer/rasa_dataset_training.json

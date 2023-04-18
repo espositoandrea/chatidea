@@ -13,3 +13,17 @@ stages:
     - path: writer/chatito_model.chatito
       md5: a3fc3f841b3795f2e8aee0fe01299890
       size: 39596
+  generate-phrases:
+    cmd: npx chatito writer/chatito_model.chatito --format=rasa --defaultDistribution=even
+      --outputPath=writer
+    deps:
+    - path: writer/chatito_model.chatito
+      md5: a3fc3f841b3795f2e8aee0fe01299890
+      size: 39596
+    outs:
+    - path: writer/rasa_dataset_testing.json
+      md5: 6c6c0b01762470c60bd6c5c6f30c5872
+      size: 166790
+    - path: writer/rasa_dataset_training.json
+      md5: ae48eb7713b3895028911bdc754051e9
+      size: 663639
