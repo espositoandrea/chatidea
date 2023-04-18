@@ -29,8 +29,8 @@ stages:
       size: 663639
   convert-data-to-yaml:
     cmd:
-    - rasa data convert nlu -f yaml --data=writer/rasa_dataset_training.json --out=writer/rasa_dataset_training.yml
-    - rasa data convert nlu -f yaml --data=writer/rasa_dataset_testing.json --out=writer/rasa_dataset_testing.yml
+    - rasa data convert nlu -f yaml --data=writer/rasa_dataset_training.json --out=data/chatito_nlu.yml
+    - rasa data convert nlu -f yaml --data=writer/rasa_dataset_testing.json --out=data/test_chatito_nlu.yml
     deps:
     - path: writer/rasa_dataset_testing.json
       md5: 6c6c0b01762470c60bd6c5c6f30c5872
@@ -39,9 +39,25 @@ stages:
       md5: ae48eb7713b3895028911bdc754051e9
       size: 663639
     outs:
-    - path: writer/rasa_dataset_testing.yml
-      md5: 71d79fbcde3fec434bd55a1c86bf1754
-      size: 48867
-    - path: writer/rasa_dataset_training.yml
+    - path: data/chatito_nlu.yml
       md5: 45e18f1de0e1034819d441126836482a
       size: 191779
+    - path: data/test_chatito_nlu.yml
+      md5: 71d79fbcde3fec434bd55a1c86bf1754
+      size: 48867
+  train:
+    cmd: rasa train --fixed-model-name nlu_model --out models --data data/chatito_nlu.yml
+    deps:
+    - path: config.yml
+      md5: 9d7e6d9e8e13e64f823ccc0a365776db
+      size: 1422
+    - path: data/chatito_nlu.yml
+      md5: 45e18f1de0e1034819d441126836482a
+      size: 191779
+    - path: domain.yml
+      md5: 65e4c57c53635900895b120f5ed8c944
+      size: 863
+    outs:
+    - path: models/nlu_model.tar.gz
+      md5: 22b29da89e11e29d019208890cee078c
+      size: 32575503

@@ -16,11 +16,19 @@ stages:
     - writer/rasa_dataset_training.json
   convert-data-to-yaml:
     cmd:
-    - rasa data convert nlu -f yaml --data=writer/rasa_dataset_training.json --out=writer/rasa_dataset_training.yml
-    - rasa data convert nlu -f yaml --data=writer/rasa_dataset_testing.json --out=writer/rasa_dataset_testing.yml
+    - rasa data convert nlu -f yaml --data=writer/rasa_dataset_training.json --out=data/chatito_nlu.yml
+    - rasa data convert nlu -f yaml --data=writer/rasa_dataset_testing.json --out=data/test_chatito_nlu.yml
     deps:
     - writer/rasa_dataset_testing.json
     - writer/rasa_dataset_training.json
     outs:
-    - writer/rasa_dataset_testing.yml
-    - writer/rasa_dataset_training.yml
+    - data/chatito_nlu.yml
+    - data/test_chatito_nlu.yml
+  train:
+    cmd: rasa train --fixed-model-name nlu_model --out models --data data/chatito_nlu.yml
+    outs:
+    - models/nlu_model.tar.gz
+    deps:
+    - config.yml
+    - domain.yml
+    - data/chatito_nlu.yml
