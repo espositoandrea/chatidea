@@ -1,3 +1,6 @@
+# Ignore rasa temp files
+.rasa/
+
 # Created by https://www.toptal.com/developers/gitignore/api/python,node,pycharm+all,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,node,pycharm+all,visualstudiocode
 
