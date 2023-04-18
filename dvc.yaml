@@ -14,3 +14,13 @@ stages:
     outs:
     - writer/rasa_dataset_testing.json
     - writer/rasa_dataset_training.json
+  convert-data-to-yaml:
+    cmd:
+    - rasa data convert nlu -f yaml --data=writer/rasa_dataset_training.json --out=writer/rasa_dataset_training.yml
+    - rasa data convert nlu -f yaml --data=writer/rasa_dataset_testing.json --out=writer/rasa_dataset_testing.yml
+    deps:
+    - writer/rasa_dataset_testing.json
+    - writer/rasa_dataset_training.json
+    outs:
+    - writer/rasa_dataset_testing.yml
+    - writer/rasa_dataset_training.yml

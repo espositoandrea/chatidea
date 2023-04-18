@@ -27,3 +27,21 @@ stages:
     - path: writer/rasa_dataset_training.json
       md5: ae48eb7713b3895028911bdc754051e9
       size: 663639
+  convert-data-to-yaml:
+    cmd:
+    - rasa data convert nlu -f yaml --data=writer/rasa_dataset_training.json --out=writer/rasa_dataset_training.yml
+    - rasa data convert nlu -f yaml --data=writer/rasa_dataset_testing.json --out=writer/rasa_dataset_testing.yml
+    deps:
+    - path: writer/rasa_dataset_testing.json
+      md5: 6c6c0b01762470c60bd6c5c6f30c5872
+      size: 166790
+    - path: writer/rasa_dataset_training.json
+      md5: ae48eb7713b3895028911bdc754051e9
+      size: 663639
+    outs:
+    - path: writer/rasa_dataset_testing.yml
+      md5: 71d79fbcde3fec434bd55a1c86bf1754
+      size: 48867
+    - path: writer/rasa_dataset_training.yml
+      md5: 45e18f1de0e1034819d441126836482a
+      size: 191779
