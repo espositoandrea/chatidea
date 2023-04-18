@@ -1,0 +1,15 @@
+schema: '2.0'
+stages:
+  create-chatito-definitions:
+    cmd: python3 translator.py
+    deps:
+    - path: translator.py
+      md5: 4c7a36a0fe3a5f5ddcfa1b376e6ae5d9
+      size: 8937
+    - path: writer/chatito_template.chatito
+      md5: 1d37e3f5bc420ea54cd434a7c9e2d83c
+      size: 2092
+    outs:
+    - path: writer/chatito_model.chatito
+      md5: a3fc3f841b3795f2e8aee0fe01299890
+      size: 39596

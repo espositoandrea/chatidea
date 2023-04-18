@@ -1,0 +1,8 @@
+stages:
+  create-chatito-definitions:
+    cmd: python3 translator.py
+    outs:
+      - writer/chatito_model.chatito
+    deps:
+      - writer/chatito_template.chatito
+      - translator.py
