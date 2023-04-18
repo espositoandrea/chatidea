@@ -61,3 +61,37 @@ stages:
     - path: models/nlu_model.tar.gz
       md5: 22b29da89e11e29d019208890cee078c
       size: 32575503
+  test:
+    cmd: rasa test nlu -m models/nlu_model.tar.gz -u data/test_chatito_nlu.yml
+    deps:
+    - path: data/test_chatito_nlu.yml
+      md5: 71d79fbcde3fec434bd55a1c86bf1754
+      size: 48867
+    - path: models/nlu_model.tar.gz
+      md5: 22b29da89e11e29d019208890cee078c
+      size: 32575503
+    outs:
+    - path: results/DIETClassifier_confusion_matrix.png
+      md5: 46e47ad9b9f508ac8e3b76bc346dd4b7
+      size: 156658
+    - path: results/DIETClassifier_errors.json
+      md5: 45e19803afb1e83c2b0b4cfd50f1ed07
+      size: 24972
+    - path: results/DIETClassifier_histogram.png
+      md5: 982a7ef13ed77ad35aa99ed994f9e361
+      size: 45997
+    - path: results/DIETClassifier_report.json
+      md5: 4360704e7581453c7c957d6fdc96c02d
+      size: 7601
+    - path: results/intent_confusion_matrix.png
+      md5: 0a8018319ded3dadefc10bc2bfb81008
+      size: 82552
+    - path: results/intent_errors.json
+      md5: 0bb686c1ae7bfa2c2cb87c8caf67db59
+      size: 179
+    - path: results/intent_histogram.png
+      md5: cf0e6afd356aa9e05bf6d0aa270e066c
+      size: 46496
+    - path: results/intent_report.json
+      md5: 0a3e2941b910a44ebf16a0bc883c4cdd
+      size: 1990
