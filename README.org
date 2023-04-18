@@ -1,0 +1,44 @@
+#+TITLE: CHATIDEA
+#+AUTHOR: Andrea Esposito
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+
+CHATIDEA is a framework that allows the generation of a chatbot starting from a database's schema.
+
+This file holds the main documentation for the implementation of the CHATIDEA framework. Please note that this is an Org Mode file: you can either view it as a simple text file (just like MarkDown files, although the syntax is a little different), or you can open it in an editor that supports Org Mode (e.g., Emacs) to be able to run the code cells using =C-c C-c=.
+
+* Requirements
+
+This version of CHATIDEA requires the following to be installed in your machine (please refer to the official documentations for instructions on how to install them).
+
+- [[https://www.python.org/downloads][Python 3.9 (with PIP)]]
+- [[https://nodejs.org/][Node.js (with NPM)]]
+- [[https://pipenv.pypa.io][Pipenv]]
+- [[https://www.docker.com][Docker and Docker Compose]]
+
+- Prima di lanciare il chatbot ricordare di avere sul proprio sistema attivo MySql e di aver installato il database di riferimento del chatbot (**deib** nel caso corrente il cui dump è disponibile nella cartella *Chatidea\resources\db*). Seguire gli step della configurazione per collegare il chatbot al database
+- Per lanciare la chatbot dalla cartella Chatidea eseguire il comando
+  ***pipenv run python run.py***
+- Dal browser ora il chabot è raggiungibile all’indirizzo ***localhost:5080***
+
+* Execute the Pipeline
+
+** Install Pipeline Dependencies
+
+If you want to re-execute the entire NLU model training and testing pipeline, you'll need additional dependencies. To install them, execute the following commands.
+
+#+BEGIN_SRC shell :results output silent
+PIPENV_VENV_IN_PROJECT=1 pipenv install --dev
+npm install --dev
+#+END_SRC
+
+** Generate Data and Train the Model
+
+#+BEGIN_SRC shell :results output silent
+dvc repro
+#+END_SRC
+
+* Start the Rasa Server
+
+#+BEGIN_SRC shell :results output silent
+rasa run --enable-api
+#+END_SRC
