@@ -68,8 +68,9 @@ app.router.add_static('/static', './static')
 app.router.add_get('/', index)
 
 def start():
-    cert_path = os.path.dirname(os.path.realpath(__file__))
-    context = ssl.create_default_context(purpose=ssl.Purpose.CLIENT_AUTH)
-    context.load_cert_chain(certfile=cert_path+ "/certificate.crt", keyfile= cert_path+"/private.key")
-    web.run_app(app, port=5080,ssl_context=context)
+    #cert_path = os.path.dirname(os.path.realpath(__file__))
+    #context = ssl.create_default_context(purpose=ssl.Purpose.CLIENT_AUTH)
+    #context.load_cert_chain(certfile=cert_path+ "/certificate.crt", keyfile= cert_path+"/private.key")
+    #web.run_app(app, port=5080,ssl_context=context)
+    web.run_app(app, port=5080)
     #web.run_app(app, port=8080)

@@ -9,20 +9,21 @@ logger = logging.getLogger(__name__)
 db_concept = []
 db_concept_s = []
 
+
 # Database properties
 
 
 def load_db_concept():
     global db_concept
     global db_concept_s
-    logger.info('Database concept file:\n'
-                '"' + str(DB_CONCEPT_PATH) + '"')
+    logger.info('Database concept file: %s', DB_CONCEPT_PATH)
     logger.info('Loading database concept file...')
     with open(DB_CONCEPT_PATH) as f:
         db_concept = json.load(f)
     with open(DB_CONCEPT_PATH_S) as f1:
         db_concept_s = json.load(f1)
     logger.info('Database concept file has been loaded!')
+
 
 def extract_similar_values(word):
     all_words = []
@@ -33,6 +34,7 @@ def extract_similar_values(word):
     if len(all_words) == 0:
         all_words = [word]
     return all_words
+
 
 def get_all_primary_element_names():
     res = []
@@ -57,9 +59,12 @@ def get_element_aliases(element_name):
 
 def get_element_name_from_possible_alias(element_or_alias_name):
     for e in db_concept:
-        if e.get('element_name') == element_or_alias_name or element_or_alias_name in e.get('aliases', []):
+        if e.get(
+                'element_name') == element_or_alias_name or element_or_alias_name in e.get(
+            'aliases', []):
             return e.get('element_name')
     return None
+
 
 def get_element_name_from_table_name(table_name):
     for e in db_concept:
@@ -102,11 +107,13 @@ def extract_category(element_name, column_name):
             return c
     return None
 
+
 def extract_attributes_with_keyword(element_name):
     attributes = extract_all_attributes(element_name)
     if attributes:
         return [a for a in attributes if a.get('keyword')]
     return None
+
 
 def extract_attributes_alias(element_name):
     e = extract_element(element_name)
@@ -116,6 +123,7 @@ def extract_attributes_alias(element_name):
         return table_schema['column_alias_list']
     else:
         return None
+
 
 def get_attribute_by_name(element_name, attribute_name):
     attributes = extract_attributes_with_keyword(element_name)
@@ -133,11 +141,14 @@ def get_attribute_without_keyword_by_type(element_name, attribute_type):
             return a
     return None
 
+
 def get_attribute_without_keyword(element_name):
-    attributes = [a for a in extract_all_attributes(element_name) if a not in extract_attributes_with_keyword(element_name)]
+    attributes = [a for a in extract_all_attributes(element_name) if
+                  a not in extract_attributes_with_keyword(element_name)]
     for a in attributes:
         return a
     return None
+
 
 def get_element_show_string(element_name, element_value):
     show_columns = extract_show_columns(element_name)
@@ -153,11 +164,13 @@ def query_find(element_name, attributes):
     result_element['element_name'] = element_name
     return result_element
 
+
 def query_show_attributes_examples(element_name, attributes):
     e = extract_element(element_name)
     table_name = e.get('table_name')
-    result_element = broker.query_show_attributes_examples(table_name, attributes)
-    result_element = list(filter(None,result_element))
+    result_element = broker.query_show_attributes_examples(table_name,
+                                                           attributes)
+    result_element = list(filter(None, result_element))
     return result_element
 
 
@@ -165,7 +178,8 @@ def query_join(element, relation_name):
     all_relations = extract_relations(element['element_name'])
 
     # there should always be the relation we want, the control is made in the executor
-    relation = [rel for rel in all_relations if rel['keyword'] == relation_name][0]
+    relation = \
+        [rel for rel in all_relations if rel['keyword'] == relation_name][0]
 
     result_element = broker.query_join(element, relation)
     result_element['element_name'] = relation['element_name']
@@ -184,7 +198,9 @@ def query_category_value(element_name, category_column, category_value):
     e = extract_element(element_name)
     table_name = e.get('table_name')
     category = extract_category(element_name, category_column)
-    result_element = broker.query_category_value(e.get('element_name'), table_name, category, category_value)
+    result_element = broker.query_category_value(e.get('element_name'),
+                                                 table_name, category,
+                                                 category_value)
     result_element['element_name'] = element_name
     return result_element
 

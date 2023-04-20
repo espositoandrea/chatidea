@@ -11,8 +11,7 @@ inter = None
 
 def load_model():
     global inter
-    logger.info('NLU model:\n'
-                '"' + str(NLU_MODEL_PATH) + '"')
+    logger.info('NLU model: %s', NLU_MODEL_PATH)
     logger.info('Loading the NLU model WITHOUT training...')
     inter = rasa.core.agent.Agent.load(model_path=NLU_MODEL_PATH)
     # inter = nlu_model.Interpreter.load(NLU_MODEL_PATH)
@@ -41,18 +40,23 @@ def parse(message):
         split_message = message.split('{', 1)
         intent_name = split_message[0]
         entities = []
-        #added for autocomplete buttons
-        if(intent_name == 'find_el_by_attr'):
+        # added for autocomplete buttons
+        if (intent_name == 'find_el_by_attr'):
             for el in split_message:
                 splitted_el = el.split(':', 1)
                 if len(splitted_el) > 1:
-                    return(parse(splitted_el[1].replace('"', "").replace('}', "")))
+                    return (parse(
+                        splitted_el[1].replace('"', "").replace('}', "")))
         if len(split_message) > 1:  # if there are entities
             entity_list = split_message[1].split(';')
             for i, e in enumerate(entity_list):
                 import re
-                matches = re.findall(r'.*(?:\"|\')(.+?)(?:\"|\'):.*(?:\"|\')(.+?)(?:\"|\').*', e)
-                entities.append({'entity': matches[0][0], 'value': matches[0][1], 'start': i+1})
+                matches = re.findall(
+                    r'.*(?:\"|\')(.+?)(?:\"|\'):.*(?:\"|\')(.+?)(?:\"|\').*',
+                    e)
+                entities.append(
+                    {'entity': matches[0][0], 'value': matches[0][1],
+                     'start': i + 1})
 
         parsed_message['intent'] = {'name': intent_name, 'confidence': 1}
         parsed_message['entities'] = entities
@@ -61,7 +65,8 @@ def parse(message):
         parsed_message = inter.parse(message)
         for intent in parsed_message['intent_ranking']:
             if intent['confidence'] > 0.3:
-                print("Name: " + intent['name'] + " ---- Confidence: "+ str(intent['confidence']))
+                print("Name: " + intent['name'] + " ---- Confidence: " + str(
+                    intent['confidence']))
         del parsed_message['text']
         for e in parsed_message.get('entities'):
             # del e['start']
@@ -74,4 +79,3 @@ def parse(message):
 
     logger.info('Parsed message: {}'.format(parsed_message))
     return parsed_message
-
