@@ -1,13 +1,19 @@
 [
   {
-    "element_name":"customer",
-    "aliases": ["customers", "client", "clients"],
+    "element_name": "customer",
+    "aliases": [
+      "customers",
+      "client",
+      "clients"
+    ],
     "type": "primary",
     "table_name": "customers",
-    "show_columns":[
+    "show_columns": [
       {
         "keyword": "",
-        "columns": ["customerName"]
+        "columns": [
+          "customerName"
+        ]
       }
     ],
     "category": "country",
@@ -15,66 +21,102 @@
       {
         "keyword": "",
         "type": "word",
-        "columns": ["customerName"]
+        "columns": [
+          "customerName"
+        ]
       },
       {
         "keyword": "with contact",
         "type": "word",
-        "columns": ["contactLastName", "contactFirstName"]
+        "columns": [
+          "contactLastName",
+          "contactFirstName"
+        ]
       },
       {
         "keyword": "located in",
         "type": "word",
-        "columns": ["city", "state", "country"]
+        "columns": [
+          "city",
+          "state",
+          "country"
+        ]
       },
       {
         "keyword": "that paid",
         "type": "num",
-        "columns": ["amount"],
+        "columns": [
+          "amount"
+        ],
         "by": [
           {
             "from_table_name": "customers",
-            "from_columns": ["customerNumber"],
+            "from_columns": [
+              "customerNumber"
+            ],
             "to_table_name": "payments",
-            "to_columns": ["customerNumber"]
+            "to_columns": [
+              "customerNumber"
+            ]
           }
         ]
       },
       {
         "keyword": "that bought",
         "type": "word",
-        "columns": ["productName"],
+        "columns": [
+          "productName"
+        ],
         "by": [
           {
             "from_table_name": "customers",
-            "from_columns": ["customerNumber"],
+            "from_columns": [
+              "customerNumber"
+            ],
             "to_table_name": "orders",
-            "to_columns": ["customerNumber"]
+            "to_columns": [
+              "customerNumber"
+            ]
           },
           {
             "from_table_name": "orders",
-            "from_columns": ["orderNumber"],
+            "from_columns": [
+              "orderNumber"
+            ],
             "to_table_name": "orderdetails",
-            "to_columns": ["orderNumber"]
+            "to_columns": [
+              "orderNumber"
+            ]
           },
           {
             "from_table_name": "orderdetails",
-            "from_columns": ["productCode"],
+            "from_columns": [
+              "productCode"
+            ],
             "to_table_name": "products",
-            "to_columns": ["productCode"]
+            "to_columns": [
+              "productCode"
+            ]
           }
         ]
       },
       {
         "keyword": "that reported to",
         "type": "word",
-        "columns": ["lastName", "firstName"],
+        "columns": [
+          "lastName",
+          "firstName"
+        ],
         "by": [
           {
             "from_table_name": "customers",
-            "from_columns": ["salesRepEmployeeNumber"],
+            "from_columns": [
+              "salesRepEmployeeNumber"
+            ],
             "to_table_name": "employees",
-            "to_columns": ["employeeNumber"]
+            "to_columns": [
+              "employeeNumber"
+            ]
           }
         ]
       }
@@ -86,9 +128,13 @@
         "by": [
           {
             "from_table_name": "customers",
-            "from_columns": ["customerNumber"],
+            "from_columns": [
+              "customerNumber"
+            ],
             "to_table_name": "payments",
-            "to_columns": ["customerNumber"]
+            "to_columns": [
+              "customerNumber"
+            ]
           }
         ]
       },
@@ -98,9 +144,13 @@
         "by": [
           {
             "from_table_name": "customers",
-            "from_columns": ["salesRepEmployeeNumber"],
+            "from_columns": [
+              "salesRepEmployeeNumber"
+            ],
             "to_table_name": "employees",
-            "to_columns": ["employeeNumber"]
+            "to_columns": [
+              "employeeNumber"
+            ]
           }
         ]
       },
@@ -110,9 +160,13 @@
         "by": [
           {
             "from_table_name": "customers",
-            "from_columns": ["customerNumber"],
+            "from_columns": [
+              "customerNumber"
+            ],
             "to_table_name": "orders",
-            "to_columns": ["customerNumber"]
+            "to_columns": [
+              "customerNumber"
+            ]
           }
         ]
       },
@@ -122,35 +176,54 @@
         "by": [
           {
             "from_table_name": "customers",
-            "from_columns": ["customerNumber"],
+            "from_columns": [
+              "customerNumber"
+            ],
             "to_table_name": "orders",
-            "to_columns": ["customerNumber"]
+            "to_columns": [
+              "customerNumber"
+            ]
           },
           {
             "from_table_name": "orders",
-            "from_columns": ["orderNumber"],
+            "from_columns": [
+              "orderNumber"
+            ],
             "to_table_name": "orderdetails",
-            "to_columns": ["orderNumber"]
+            "to_columns": [
+              "orderNumber"
+            ]
           },
           {
             "from_table_name": "orderdetails",
-            "from_columns": ["productCode"],
+            "from_columns": [
+              "productCode"
+            ],
             "to_table_name": "products",
-            "to_columns": ["productCode"]
+            "to_columns": [
+              "productCode"
+            ]
           }
         ]
       }
     ]
   },
   {
-    "element_name":"employee",
-    "aliases": ["employees", "worker", "workers"],
+    "element_name": "employee",
+    "aliases": [
+      "employees",
+      "worker",
+      "workers"
+    ],
     "type": "primary",
     "table_name": "employees",
-    "show_columns":[
+    "show_columns": [
       {
         "keyword": "",
-        "columns": ["lastName", "firstName"]
+        "columns": [
+          "lastName",
+          "firstName"
+        ]
       }
     ],
     "category": "jobTitle",
@@ -158,42 +231,60 @@
       {
         "keyword": "",
         "type": "word",
-        "columns": ["lastName", "firstName"]
+        "columns": [
+          "lastName",
+          "firstName"
+        ]
       },
       {
         "keyword": "with first name",
         "type": "word",
-        "columns": ["firstName"]
+        "columns": [
+          "firstName"
+        ]
       },
       {
         "keyword": "with last name",
         "type": "word",
-        "columns": ["lastName"]
+        "columns": [
+          "lastName"
+        ]
       },
       {
         "keyword": "that work in",
         "type": "word",
-        "columns": ["city", "country"],
+        "columns": [
+          "city",
+          "country"
+        ],
         "by": [
           {
             "from_table_name": "employees",
-            "from_columns": ["officeCode"],
+            "from_columns": [
+              "officeCode"
+            ],
             "to_table_name": "offices",
-            "to_columns": ["officeCode"]
+            "to_columns": [
+              "officeCode"
+            ]
           }
         ]
       }
     ],
-   "relations": [
+    "relations": [
       {
         "keyword": "works in office",
         "element_name": "office",
         "by": [
           {
             "from_table_name": "employees",
-            "from_columns": ["officeCode"],
+            "from_columns": [
+              "officeCode"
+            ],
             "to_table_name": "offices",
-            "to_columns": ["officeCode"]
+            "to_columns": [
+              "officeCode"
+            ]
           }
         ]
       },
@@ -203,9 +294,13 @@
         "by": [
           {
             "from_table_name": "employees",
-            "from_columns": ["employeeNumber"],
+            "from_columns": [
+              "employeeNumber"
+            ],
             "to_table_name": "customers",
-            "to_columns": ["salesRepEmployeeNumber"]
+            "to_columns": [
+              "salesRepEmployeeNumber"
+            ]
           }
         ]
       },
@@ -215,23 +310,32 @@
         "by": [
           {
             "from_table_name": "employees",
-            "from_columns": ["reportsTo"],
+            "from_columns": [
+              "reportsTo"
+            ],
             "to_table_name": "employees",
-            "to_columns": ["employeeNumber"]
+            "to_columns": [
+              "employeeNumber"
+            ]
           }
         ]
       }
     ]
   },
   {
-    "element_name":"office",
-    "aliases": ["offices"],
+    "element_name": "office",
+    "aliases": [
+      "offices"
+    ],
     "type": "primary",
     "table_name": "offices",
-    "show_columns":[
+    "show_columns": [
       {
         "keyword": "address",
-        "columns": ["city", "addressLine1"]
+        "columns": [
+          "city",
+          "addressLine1"
+        ]
       }
     ],
     "category": "country",
@@ -239,27 +343,39 @@
       {
         "keyword": "with address",
         "type": "word",
-        "columns": ["city", "addressLine1"]
+        "columns": [
+          "city",
+          "addressLine1"
+        ]
       },
       {
         "keyword": "located in",
         "type": "word",
-        "columns": ["city", "country"]
+        "columns": [
+          "city",
+          "country"
+        ]
       },
       {
         "keyword": "of",
         "type": "word",
-        "columns": ["lastName", "firstName"],
+        "columns": [
+          "lastName",
+          "firstName"
+        ],
         "by": [
           {
             "from_table_name": "offices",
-            "from_columns": ["officeCode"],
+            "from_columns": [
+              "officeCode"
+            ],
             "to_table_name": "employees",
-            "to_columns": ["officeCode"]
+            "to_columns": [
+              "officeCode"
+            ]
           }
         ]
       }
-
     ],
     "relations": [
       {
@@ -268,27 +384,37 @@
         "by": [
           {
             "from_table_name": "offices",
-            "from_columns": ["officeCode"],
+            "from_columns": [
+              "officeCode"
+            ],
             "to_table_name": "employees",
-            "to_columns": ["officeCode"]
+            "to_columns": [
+              "officeCode"
+            ]
           }
         ]
       }
     ]
   },
   {
-    "element_name":"order",
-    "aliases": ["orders"],
+    "element_name": "order",
+    "aliases": [
+      "orders"
+    ],
     "type": "primary",
     "table_name": "orders",
-    "show_columns":[
+    "show_columns": [
       {
         "keyword": "ordered",
-        "columns": ["orderDate"]
+        "columns": [
+          "orderDate"
+        ]
       },
       {
         "keyword": "shipped",
-        "columns": ["shippedDate"]
+        "columns": [
+          "shippedDate"
+        ]
       }
     ],
     "category": "",
@@ -296,32 +422,48 @@
       {
         "keyword": "made by",
         "type": "word",
-        "columns": ["customerName"],
+        "columns": [
+          "customerName"
+        ],
         "by": [
           {
             "from_table_name": "orders",
-            "from_columns": ["customerNumber"],
+            "from_columns": [
+              "customerNumber"
+            ],
             "to_table_name": "customers",
-            "to_columns": ["customerNumber"]
+            "to_columns": [
+              "customerNumber"
+            ]
           }
         ]
       },
       {
         "keyword": "with product",
         "type": "word",
-        "columns": ["productName"],
+        "columns": [
+          "productName"
+        ],
         "by": [
           {
             "from_table_name": "orders",
-            "from_columns": ["orderNumber"],
+            "from_columns": [
+              "orderNumber"
+            ],
             "to_table_name": "orderdetails",
-            "to_columns": ["orderNumber"]
+            "to_columns": [
+              "orderNumber"
+            ]
           },
           {
             "from_table_name": "orderdetails",
-            "from_columns": ["productCode"],
+            "from_columns": [
+              "productCode"
+            ],
             "to_table_name": "products",
-            "to_columns": ["productCode"]
+            "to_columns": [
+              "productCode"
+            ]
           }
         ]
       }
@@ -333,9 +475,13 @@
         "by": [
           {
             "from_table_name": "orders",
-            "from_columns": ["customerNumber"],
+            "from_columns": [
+              "customerNumber"
+            ],
             "to_table_name": "customers",
-            "to_columns": ["customerNumber"]
+            "to_columns": [
+              "customerNumber"
+            ]
           }
         ]
       },
@@ -345,38 +491,50 @@
         "by": [
           {
             "from_table_name": "orders",
-            "from_columns": ["orderNumber"],
+            "from_columns": [
+              "orderNumber"
+            ],
             "to_table_name": "orderdetails",
-            "to_columns": ["orderNumber"]
+            "to_columns": [
+              "orderNumber"
+            ]
           },
           {
             "from_table_name": "orderdetails",
-            "from_columns": ["productCode"],
+            "from_columns": [
+              "productCode"
+            ],
             "to_table_name": "products",
-            "to_columns": ["productCode"]
+            "to_columns": [
+              "productCode"
+            ]
           }
         ]
       }
     ]
   },
   {
-    "element_name":"payment",
-    "aliases": ["payments"],
+    "element_name": "payment",
+    "aliases": [
+      "payments"
+    ],
     "type": "secondary",
     "table_name": "payments",
-    "show_columns":[
+    "show_columns": [
       {
         "keyword": "quantity",
-        "columns": ["amount"]
+        "columns": [
+          "amount"
+        ]
       },
       {
         "keyword": "date",
-        "columns": ["paymentDate"]
+        "columns": [
+          "paymentDate"
+        ]
       }
     ],
-    "attributes": [
-
-    ],
+    "attributes": [],
     "relations": [
       {
         "keyword": "made by",
@@ -384,9 +542,13 @@
         "by": [
           {
             "from_table_name": "payments",
-            "from_columns": ["customerNumber"],
+            "from_columns": [
+              "customerNumber"
+            ],
             "to_table_name": "customers",
-            "to_columns": ["customerNumber"]
+            "to_columns": [
+              "customerNumber"
+            ]
           }
         ]
       }
@@ -394,13 +556,18 @@
   },
   {
     "element_name": "product line",
-    "aliases": ["brand", "brands"],
+    "aliases": [
+      "brand",
+      "brands"
+    ],
     "type": "primary",
     "table_name": "productlines",
-    "show_columns":[
+    "show_columns": [
       {
         "keyword": "",
-        "columns": ["productLine"]
+        "columns": [
+          "productLine"
+        ]
       }
     ],
     "category": "productLine",
@@ -408,22 +575,29 @@
       {
         "keyword": "",
         "type": "word",
-        "columns": ["productLine"]
+        "columns": [
+          "productLine"
+        ]
       },
       {
         "keyword": "of product",
         "type": "word",
-        "columns": ["productName"],
+        "columns": [
+          "productName"
+        ],
         "by": [
           {
             "from_table_name": "productlines",
-            "from_columns": ["productLine"],
+            "from_columns": [
+              "productLine"
+            ],
             "to_table_name": "products",
-            "to_columns": ["productLine"]
+            "to_columns": [
+              "productLine"
+            ]
           }
         ]
       }
-
     ],
     "relations": [
       {
@@ -432,9 +606,13 @@
         "by": [
           {
             "from_table_name": "productlines",
-            "from_columns": ["productLine"],
+            "from_columns": [
+              "productLine"
+            ],
             "to_table_name": "products",
-            "to_columns": ["productLine"]
+            "to_columns": [
+              "productLine"
+            ]
           }
         ]
       }
@@ -442,17 +620,23 @@
   },
   {
     "element_name": "product",
-    "aliases": ["products"],
+    "aliases": [
+      "products"
+    ],
     "type": "primary",
     "table_name": "products",
-    "show_columns":[
+    "show_columns": [
       {
         "keyword": "",
-        "columns": ["productName"]
+        "columns": [
+          "productName"
+        ]
       },
       {
         "keyword": "of product line",
-        "columns": ["productLine"]
+        "columns": [
+          "productLine"
+        ]
       }
     ],
     "category": "productLine",
@@ -460,47 +644,68 @@
       {
         "keyword": "",
         "type": "word",
-        "columns": ["productName"]
+        "columns": [
+          "productName"
+        ]
       },
       {
         "keyword": "of product line",
         "type": "word",
-        "columns": ["productLine"],
+        "columns": [
+          "productLine"
+        ],
         "by": [
           {
             "from_table_name": "products",
-            "from_columns": ["productLine"],
+            "from_columns": [
+              "productLine"
+            ],
             "to_table_name": "productlines",
-            "to_columns": ["productLine"]
+            "to_columns": [
+              "productLine"
+            ]
           }
         ]
       },
       {
         "keyword": "bought by",
         "type": "word",
-        "columns": ["customerName"],
+        "columns": [
+          "customerName"
+        ],
         "by": [
           {
             "from_table_name": "products",
-            "from_columns": ["productCode"],
+            "from_columns": [
+              "productCode"
+            ],
             "to_table_name": "orderdetails",
-            "to_columns": ["productCode"]
+            "to_columns": [
+              "productCode"
+            ]
           },
           {
             "from_table_name": "orderdetails",
-            "from_columns": ["orderNumber"],
+            "from_columns": [
+              "orderNumber"
+            ],
             "to_table_name": "orders",
-            "to_columns": ["orderNumber"]
+            "to_columns": [
+              "orderNumber"
+            ]
           },
           {
             "from_table_name": "orders",
-            "from_columns": ["customerNumber"],
+            "from_columns": [
+              "customerNumber"
+            ],
             "to_table_name": "customers",
-            "to_columns": ["customerNumber"]
+            "to_columns": [
+              "customerNumber"
+            ]
           }
         ]
       }
-
     ],
     "relations": [
       {
@@ -509,9 +714,13 @@
         "by": [
           {
             "from_table_name": "products",
-            "from_columns": ["productLine"],
+            "from_columns": [
+              "productLine"
+            ],
             "to_table_name": "productlines",
-            "to_columns": ["productLine"]
+            "to_columns": [
+              "productLine"
+            ]
           }
         ]
       },
@@ -521,15 +730,23 @@
         "by": [
           {
             "from_table_name": "products",
-            "from_columns": ["productCode"],
+            "from_columns": [
+              "productCode"
+            ],
             "to_table_name": "orderdetails",
-            "to_columns": ["productCode"]
+            "to_columns": [
+              "productCode"
+            ]
           },
           {
             "from_table_name": "orderdetails",
-            "from_columns": ["orderNumber"],
+            "from_columns": [
+              "orderNumber"
+            ],
             "to_table_name": "orders",
-            "to_columns": ["orderNumber"]
+            "to_columns": [
+              "orderNumber"
+            ]
           }
         ]
       },
@@ -539,21 +756,33 @@
         "by": [
           {
             "from_table_name": "products",
-            "from_columns": ["productCode"],
+            "from_columns": [
+              "productCode"
+            ],
             "to_table_name": "orderdetails",
-            "to_columns": ["productCode"]
+            "to_columns": [
+              "productCode"
+            ]
           },
           {
             "from_table_name": "orderdetails",
-            "from_columns": ["orderNumber"],
+            "from_columns": [
+              "orderNumber"
+            ],
             "to_table_name": "orders",
-            "to_columns": ["orderNumber"]
+            "to_columns": [
+              "orderNumber"
+            ]
           },
           {
             "from_table_name": "orders",
-            "from_columns": ["customerNumber"],
+            "from_columns": [
+              "customerNumber"
+            ],
             "to_table_name": "customers",
-            "to_columns": ["customerNumber"]
+            "to_columns": [
+              "customerNumber"
+            ]
           }
         ]
       }
