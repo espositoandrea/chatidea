@@ -8,8 +8,8 @@ from pprint import pprint
 from mysql import connector
 from modules.database import resolver
 
-from settings import DATABASE_NAME, DB_SCHEMA_PATH, DB_VIEW_PATH, \
-    DATABASE_USER, DATABASE_PASSWORD, DATABASE_HOST, QUERY_LIMIT
+from settings import DB_NAME, DB_SCHEMA_PATH, DB_VIEW_PATH, \
+    DB_USER, DB_PASSWORD, DB_HOST, QUERY_LIMIT
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ db_view = None
 
 
 def test_connection():
-    logger.info('Database: %s', DATABASE_NAME)
+    logger.info('Database: %s', DB_NAME)
     logger.info('Testing connection with the database...')
     connection = connect()
     logger.info('Connection succeeded! Closing connection...')
@@ -28,10 +28,10 @@ def test_connection():
 
 
 def connect():
-    return connector.connect(user=DATABASE_USER,
-                             password=DATABASE_PASSWORD,
-                             host=DATABASE_HOST,
-                             database=DATABASE_NAME)
+    return connector.connect(user=DB_USER,
+                             password=DB_PASSWORD,
+                             host=DB_HOST,
+                             database=DB_NAME)
 
 
 def disconnect(connection):
