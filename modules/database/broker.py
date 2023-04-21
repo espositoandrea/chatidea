@@ -39,19 +39,19 @@ def disconnect(connection):
 
 
 def load_db_schema():
-    global db_schema
     logger.info('Database schema file: %s', DB_SCHEMA_PATH)
-    logger.info('Loading database schema file...')
+    logger.debug('Loading database schema file...')
     with open(DB_SCHEMA_PATH) as f:
+        global db_schema
         db_schema = json.load(f)
     logger.info('Database schema file has been loaded!')
 
 
 def load_db_view():
-    global db_view
     logger.info('Database view file: %s', DB_VIEW_PATH)
-    logger.info('Loading database view file...')
+    logger.debug('Loading database view file...')
     with open(DB_VIEW_PATH) as f:
+        global db_view
         db_view = json.load(f)
     logger.info('Database view file has been loaded!')
 

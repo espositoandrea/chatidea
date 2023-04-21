@@ -2,7 +2,7 @@ import datetime
 import threading
 from pprint import pformat
 
-from modules import conversation
+from modules import conversation, extractor
 from modules import actions
 from settings import INTENT_CONFIDENCE_THRESHOLD, CONTEXT_PERSISTENCE_SECONDS
 import re
@@ -12,13 +12,13 @@ context_dict = {}
 lock = threading.Lock()
 
 
-def run_action_from_parsed_message(parsed_message, chat_id):
+def run_action_from_parsed_message(parsed_message: extractor.ParsedMessage, chat_id):
 
-    intent_confidence = parsed_message.get('intent').get('confidence')
-    intent_name = parsed_message.get('intent').get('name')
+    intent_confidence = parsed_message.intent.confidence
+    intent_name = parsed_message.intent.name
 
     intent_name = re.sub('_el_\d', '', intent_name)
-    entities = parsed_message.get('entities')
+    entities = parsed_message.entities
 
     if intent_confidence < INTENT_CONFIDENCE_THRESHOLD:
         intent_name = None
@@ -29,7 +29,7 @@ def run_action_from_parsed_message(parsed_message, chat_id):
                 'Original message: {}\n'
                 'Intent matched: {}\n'
                 'Entities:\n'
-                '{}'.format(parsed_message['original_message'],
+                '{}'.format(parsed_message.original_message,
                             intent_name,
                             pformat(entities)))
    
