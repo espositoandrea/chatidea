@@ -14,6 +14,7 @@ This version of CHATIDEA requires the following to be installed in your machine 
 - [[https://nodejs.org/][Node.js (with NPM)]]
 - [[https://pipenv.pypa.io][Pipenv]]
 - [[https://www.docker.com][Docker and Docker Compose]]
+- [[https://github.com/mkleehammer/pyodbc/wiki/Install][ODBC drivers]]
 
 - Prima di lanciare il chatbot ricordare di avere sul proprio sistema attivo MySql e di aver installato il database di riferimento del chatbot (**deib** nel caso corrente il cui dump è disponibile nella cartella *Chatidea\resources\db*). Seguire gli step della configurazione per collegare il chatbot al database
 - Per lanciare la chatbot dalla cartella Chatidea eseguire il comando

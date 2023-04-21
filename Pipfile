@@ -17,6 +17,7 @@ rasa = "~=3.5"
 python-dotenv = "*"
 pyyaml = "*"
 shutup = "*"
+pyodbc = "*"
 
 [dev-packages]
 
