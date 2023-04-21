@@ -1,3 +1,4 @@
+import shutup; shutup.please()
 import logging
 import warnings
 from pprint import pprint
