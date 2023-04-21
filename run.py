@@ -43,5 +43,3 @@ if __name__ == '__main__':
     webchat.start()
     # telegram.start()
     # console_input()
-    while 1:
-        sleep(500)

@@ -9,10 +9,14 @@ nltk = "*"
 matplotlib = "*"
 click = "*"
 telepot = "*"
-python-socketio = "~=4.6"
+python-socketio = "~=4.4"
+python-engineio = "~=4.4"
 mysql-connector-python = "*"
 sqlparse = "*"
 rasa = "~=3.5"
+python-dotenv = "*"
+pyyaml = "*"
+shutup = "*"
 
 [dev-packages]
 
