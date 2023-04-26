@@ -5,11 +5,11 @@ import os
 import string
 
 from pprint import pprint
-from mysql import connector
+import pyodbc
 from modules.database import resolver
 
 from settings import DB_NAME, DB_SCHEMA_PATH, DB_VIEW_PATH, \
-    DB_USER, DB_PASSWORD, DB_HOST, QUERY_LIMIT
+    DB_USER, DB_PASSWORD, DB_HOST, QUERY_LIMIT, DB_DRIVER, DB_CHARSET
 
 logger = logging.getLogger(__name__)
 
@@ -27,14 +27,22 @@ def test_connection():
     logger.info('Connection closed.')
 
 
-def connect():
-    return connector.connect(user=DB_USER,
-                             password=DB_PASSWORD,
-                             host=DB_HOST,
-                             database=DB_NAME)
+def connect() -> pyodbc.Connection:
+    cnxn = pyodbc.connect(f'DRIVER={DB_DRIVER};'
+                          f'SERVER={DB_HOST};'
+                          f'DATABASE={DB_NAME};'
+                          f'UID={DB_USER};'
+                          f'PWD={DB_PASSWORD};'
+                          f'CHARSET={DB_CHARSET};')
+
+    # MySQL-specific options for encoding issues
+    cnxn.setdecoding(pyodbc.SQL_CHAR, encoding='utf-8')
+    cnxn.setdecoding(pyodbc.SQL_WCHAR, encoding='utf-8')
+    cnxn.setencoding(encoding='utf-8')
+    return cnxn
 
 
-def disconnect(connection):
+def disconnect(connection: pyodbc.Connection):
     connection.close()
 
 
@@ -56,18 +64,20 @@ def load_db_view():
     logger.info('Database view file has been loaded!')
 
 
-def execute_query_select(query, t=None):
+def execute_query_select(query: str, t=None) -> list[pyodbc.Row]:
     # HERE FORCING THE LIMIT OF THE QUERY
     if QUERY_LIMIT:
         query += ' LIMIT 100'
-    logger.info('Executing query...')
-    logger.info('Query: "{}"'.format(query))
+    logger.info('Executing query: %s', query)
     if t:
         logger.info('Tuple: {}'.format(t))
 
     connection = connect()
     cursor = connection.cursor()
-    cursor.execute(query, t)
+    if t:
+        cursor.execute(query, t)
+    else:
+        cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()
     disconnect(connection)
@@ -382,9 +392,7 @@ def get_WHERE_ATTRIBUTES_query_string(attributes, table_name=None, join=False):
             and_clause = False
             attr = ""
             attr += " OR ".join(
-                ["{}.{} {} %s".format(a['from_table'],  # not so pretty
-                                      col,
-                                      a['operator'])
+                ["{}.{} {} ?".format(a['from_table'], col, a['operator'])
                  for col in a['columns']])
             if 'and_or' in a:
                 if a['and_or'] == 'or':
@@ -444,11 +452,11 @@ def get_WHERE_REFERENCE_query_string(table_name):
 
 
 def get_WHERE_CATEGORY_query_string(table_name, category_column):
-    ret_string = '{}.{} LIKE %s'.format(table_name, category_column)
+    ret_string = '{}.{} LIKE ?'.format(table_name, category_column)
     for fk in get_references_from_name(table_name):
         if fk['from_attribute'] == category_column:
-            ret_string = '{}.{} LIKE %s'.format(fk['to_table'],
-                                                fk['show_attribute'])
+            ret_string = '{}.{} LIKE ?'.format(fk['to_table'],
+                                               fk['show_attribute'])
     return ret_string
 
 
@@ -482,3 +490,7 @@ def get_ORDER_BY_SHOW_COLUMNS(in_table_name):
             ["{}.{}".format(in_table_name, col) for col in
              default_order_columns])
     return order_clause
+
+
+if __name__ == '__main__':
+    test_connection()

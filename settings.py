@@ -7,10 +7,12 @@ file_path = pathlib.Path(__file__).resolve().parent
 
 # selector
 
+DB_DRIVER = env['DB_DRIVER']
 DB_USER = env['DB_USER']
 DB_PASSWORD = env['DB_PASSWORD']
 DB_HOST = env['DB_HOST']
 DB_NAME = env['DB_NAME']
+DB_CHARSET = env["DB_CHARSET"]
 
 NLU_API_ENDPOINT = "http://localhost:5005"
 # files
