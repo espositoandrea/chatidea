@@ -9,7 +9,7 @@ from typing import Optional, Any
 import pyodbc
 from pypika import MySQLQuery as Query, Table, Criterion, Field
 from pypika.queries import QueryBuilder
-from pypika.terms import BasicCriterion, Parameter
+from pypika.terms import Parameter
 
 from modules.database import resolver
 from settings import DB_NAME, DB_SCHEMA_PATH, DB_VIEW_PATH, \
@@ -46,18 +46,19 @@ def _connect() -> pyodbc.Connection:
     return cnxn
 
 
-def execute_query(query: QueryBuilder, t=None) -> list[pyodbc.Row]:
+def execute_query(query: QueryBuilder,
+                  parameters: Optional[tuple] = None) -> list[pyodbc.Row]:
     # HERE FORCING THE LIMIT OF THE QUERY
     if QUERY_LIMIT:
         query = query.limit(100)
     logger.info('Executing query: %s', query)
-    if t:
-        logger.info('Tuple: {}'.format(t))
+    if parameters:
+        logger.info('Parameters tuple: {}'.format(parameters))
 
     connection = _connect()
     cursor = connection.cursor()
-    if t:
-        cursor.execute(query.get_sql(), t)
+    if parameters:
+        cursor.execute(query.get_sql(), parameters)
     else:
         cursor.execute(query.get_sql())
     rows = cursor.fetchall()
@@ -86,19 +87,19 @@ def load_db_view():
     logger.info('Database view file has been loaded!')
 
 
-def execute_query_select(query: str, t=None) -> list[pyodbc.Row]:
+def execute_query_select(query: str, params=None) -> list[pyodbc.Row]:
     warnings.warn('This function is deprecated', DeprecationWarning)
     # HERE FORCING THE LIMIT OF THE QUERY
     if QUERY_LIMIT:
         query += ' LIMIT 100'
     logger.info('Executing query: %s', query)
-    if t:
-        logger.info('Tuple: {}'.format(t))
+    if params:
+        logger.info('Tuple: {}'.format(params))
 
     connection = _connect()
     cursor = connection.cursor()
-    if t:
-        cursor.execute(query, t)
+    if params:
+        cursor.execute(query, params)
     else:
         cursor.execute(query)
     rows = cursor.fetchall()
@@ -107,10 +108,10 @@ def execute_query_select(query: str, t=None) -> list[pyodbc.Row]:
     return rows
 
 
-def get_dictionary_result(q_string, q_tuple, rows, columns, attributes):
+def get_dictionary_result(q_string, q_tuple, rows, cols, attributes) -> dict:
     query = {'q_string': q_string, 'q_tuple': q_tuple}
 
-    value = list(map(lambda r: dict(zip(columns, r)), rows))
+    value = list(map(lambda r: dict(zip(cols, r)), rows))
 
     return {'query': query,
             'value': value,
@@ -118,15 +119,15 @@ def get_dictionary_result(q_string, q_tuple, rows, columns, attributes):
             'attributes': attributes}
 
 
-def get_table_schema_from_name(table_name):
+def get_table_schema_from_name(table_name: str) -> Optional[dict]:
     return db_schema.get(table_name)  # may return None
 
 
-def get_table_view_from_name(table_name: str):
+def get_table_view_from_name(table_name: str) -> Optional[dict]:
     return db_view.get(table_name)  # may return None
 
 
-def get_references_from_name(table_name):
+def get_references_from_name(table_name: str) -> list[dict]:
     return db_schema.get(table_name)['references']
 
 
@@ -136,13 +137,13 @@ def query_show_attributes_examples(table: str, columns: list[str]):
     return [r[0] for r in rows]
 
 
-def decipher_attributes(attributes: list[dict]) -> list[
-    tuple[BasicCriterion, str]]:
+def decipher_attributes(attributes: list[dict]) -> \
+        list[tuple[Criterion, str]]:
     flattened = [(Table(a["from_table"]).field(col), a['operator'],
                   a.get('value')) for a in attributes for col in
                  a["columns"]]
 
-    def map_operators(field: Field, op: str) -> BasicCriterion:
+    def map_operators(field: Field, op: str) -> Criterion:
         if op == "LIKE":
             return field.like(Parameter("?"))
         elif op == "=":
@@ -476,7 +477,7 @@ def get_WHERE_ATTRIBUTES_query_string(attributes, table_name=None, join=False):
     return " ".join(attr_string_list)
 
 
-def get_WHERE_REFERENCE_query_string(table_name):
+def get_WHERE_REFERENCE_query_string(table_name) -> list[Criterion]:
     warnings.warn("This function is deprecated", DeprecationWarning)
     this = Table(table_name)
     ref_string_list = []
