@@ -18,6 +18,7 @@ python-dotenv = "*"
 pyyaml = "*"
 shutup = "*"
 pyodbc = "*"
+pypika = "*"
 
 [dev-packages]
 
