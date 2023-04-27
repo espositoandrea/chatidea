@@ -34,18 +34,18 @@ def test_connection():
 
 
 def _connect() -> pyodbc.Connection:
-    cnxn = pyodbc.connect(f'DRIVER={DB_DRIVER};'
-                          f'SERVER={DB_HOST};'
-                          f'DATABASE={DB_NAME};'
-                          f'UID={DB_USER};'
-                          f'PWD={DB_PASSWORD};'
-                          f'CHARSET={DB_CHARSET};')
+    connection = pyodbc.connect(f'DRIVER={DB_DRIVER};'
+                                f'SERVER={DB_HOST};'
+                                f'DATABASE={DB_NAME};'
+                                f'UID={DB_USER};'
+                                f'PWD={DB_PASSWORD};'
+                                f'CHARSET={DB_CHARSET};')
 
     # MySQL-specific options for encoding issues
-    cnxn.setdecoding(pyodbc.SQL_CHAR, encoding='utf-8')
-    cnxn.setdecoding(pyodbc.SQL_WCHAR, encoding='utf-8')
-    cnxn.setencoding(encoding='utf-8')
-    return cnxn
+    connection.setdecoding(pyodbc.SQL_CHAR, encoding='utf-8')
+    connection.setdecoding(pyodbc.SQL_WCHAR, encoding='utf-8')
+    connection.setencoding(encoding='utf-8')
+    return connection
 
 
 def execute_query(query: QueryBuilder,
@@ -172,16 +172,16 @@ def query_find(in_table_name, attributes):
         if not a.get('operator'):
             a['operator'] = '='
 
-    tables = get_FROM_query_string(attributes, in_table_name)
-    columns = get_SELECT_query_string(columns)
+    tables = get_sql_tables(attributes, in_table_name)
+    columns = get_sql_columns(columns)
     order_by = get_order_by(attributes, in_table_name)
     where_conditions = decipher_attributes(attributes)
 
-    query: QueryBuilder = (Query.from_(tables.base_table)
+    query: QueryBuilder = (Query.from_(tables.base)
                            .select(*columns)
                            .orderby(*order_by)
-                           .where(Criterion.any([
-        x[0] for x in where_conditions]))
+                           .where(Criterion.any([x[0]
+                                                 for x in where_conditions]))
                            .distinct())
     for x in tables.joins:
         query = query.join(x.target).on(x.on)
@@ -225,11 +225,11 @@ def query_join(element, relation):
 
     label_attributes([relation], from_table_name)
 
-    tables = get_FROM_query_string([relation], to_table_name)
-    columns = get_SELECT_query_string(to_columns)
+    tables = get_sql_tables([relation], to_table_name)
+    columns = get_sql_columns(to_columns)
     where_conditions = [x[0] for x in decipher_attributes([relation])]
 
-    query: QueryBuilder = (Query.from_(tables.base_table)
+    query: QueryBuilder = (Query.from_(tables.base)
                            .select(*columns)
                            .where(Criterion.all(where_conditions))
                            .orderby(*get_order_by([], to_table_name))
@@ -307,9 +307,9 @@ def query_category_value(element_name, table_name, category_column,
     attributes = [attribute]
     label_attributes(attributes, table_name)
 
-    tables = get_FROM_query_string([], table_name)
-    query: QueryBuilder = (Query.from_(tables.base_table)
-                           .select(*get_SELECT_query_string(columns))
+    tables = get_sql_tables([], table_name)
+    query: QueryBuilder = (Query.from_(tables.base)
+                           .select(*get_sql_columns(columns))
                            .orderby(*get_order_by([], table_name)))
     query_string = query.get_sql() + " WHERE "
     where_ref_string = get_WHERE_REFERENCE_query_string(table_name)
@@ -357,7 +357,7 @@ def label_attributes(attributes, table_name):
 
 # query creators
 
-def get_SELECT_query_string(columns) -> list[Field]:
+def get_sql_columns(columns) -> list[Field]:
     return [Table(col["table"]).field(col['column']) for col in columns]
 
 
@@ -370,12 +370,12 @@ class Join:
 
 @dataclasses.dataclass
 class FromTables:
-    base_table: Optional[Table]
+    base: Optional[Table]
     joins: list[Join]
 
 
-def get_FROM_query_string(attributes,
-                          table_name: Optional[str] = None) -> FromTables:
+def get_sql_tables(attributes,
+                   table_name: Optional[str] = None) -> FromTables:
     JoinDef = namedtuple('JoinDef', ['start', 'end', 'from_attr', 'to_attr'])
     tab_string_list = []
     if table_name:
@@ -473,8 +473,8 @@ def get_WHERE_ATTRIBUTES_query_string(attributes, table_name=None, join=False):
             attr = "( "
             attr += primary_key_string
             attr += " IN ( SELECT DISTINCT " + primary_key_string
-            attr += " FROM " + get_FROM_query_string(attributes,
-                                                     table_name)
+            attr += " FROM " + get_sql_tables(attributes,
+                                              table_name)
             attr += " WHERE "
             where_join_string = get_WHERE_JOIN_query_string(attributes)
             attr += where_join_string + " AND " if where_join_string else ""

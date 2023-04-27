@@ -166,7 +166,7 @@ class TestBroker(TestCase):
         self.customer_element['attributes'].append(self.customer_self_attribute)
         self.addAttributesAndValues()
         b.label_attributes(self.customer_element['attributes'])
-        print(b.get_FROM_query_string(self.customer_element['attributes']),'customers')
+        print(b.get_sql_tables(self.customer_element['attributes']), 'customers')
 
     def test_get_WHERE_JOIN_query_string(self):
         self.customer_element['attributes'].append(self.customer_self_attribute)
