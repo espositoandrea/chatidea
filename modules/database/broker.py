@@ -1,9 +1,11 @@
 import copy
 import dataclasses
+import itertools
 import json
 import logging
 import string
 import warnings
+from collections import namedtuple
 from typing import Optional, Any
 
 import pyodbc
@@ -374,24 +376,36 @@ class FromTables:
 
 def get_FROM_query_string(attributes,
                           table_name: Optional[str] = None) -> FromTables:
+    JoinDef = namedtuple('JoinDef', ['start', 'end', 'from_attr', 'to_attr'])
     tab_string_list = []
     if table_name:
         tab_string_list.append(table_name)
-    joins = []
+    joins: set[JoinDef] = set()
     for a in attributes:
         for rel in a.get('by', []):
             for i in range(len(rel['from_columns'])):
-                joins.append(Join(Table(rel['from_table_name']),
-                                  Table(rel['to_table_name']),
-                                  Table(rel["from_table_name"]).field(
-                                      rel["from_columns"][i]) == Table(
-                                      rel["to_table_name"]).field(
-                                      rel["to_columns"][i])))
+                joins.add(JoinDef(rel['from_table_name'],
+                                  rel['to_table_name'],
+                                  rel["from_columns"][i],
+                                  rel["to_columns"][i]))
     for fk in get_references_from_name(table_name):
-        joins.append(Join(Table(table_name), Table(fk['to_table']),
-                          Table(table_name).field(fk["from_attribute"]) ==
-                          Table(fk["to_table"]).field(fk["to_attribute"])))
-    return FromTables(Table(table_name), joins)
+        joins.add(JoinDef(table_name,
+                          fk['to_table'],
+                          fk['from_attribute'],
+                          fk['to_attribute']))
+    joins: list[JoinDef] = sorted(joins, key=lambda x: (x.start, x.end))
+
+    final_joins: list[Join] = []
+    for _, b in itertools.groupby(joins, lambda x: (x.start, x.end)):
+        b = list(b)
+        final_joins.append(Join(Table(b[0].start),
+                                Table(b[0].end),
+                                Criterion.all([
+                                    Table(x.start).field(x.from_attr) == Table(
+                                        x.end).field(x.to_attr) for x in b
+                                ])))
+
+    return FromTables(Table(table_name), final_joins)
 
 
 def get_WHERE_JOIN_query_string(attributes):
