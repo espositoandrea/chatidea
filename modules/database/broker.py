@@ -374,6 +374,50 @@ class FromTables:
     joins: list[Join]
 
 
+def topological_sort(joins: list[Join]) -> list[Join]:
+    nodes = set(x.who.get_table_name() for x in joins) | set(
+        x.target.get_table_name() for x in joins)
+    dependencies: dict[str, str] = {
+        node: [x.target.get_table_name() for x in
+               filter(lambda x: x.who.get_table_name() == node, joins)] for
+        node in nodes
+    }
+
+    joins_by_starting: dict[str, Join] = {
+        node: [x for x in
+               filter(lambda x: x.who.get_table_name() == node, joins)] for
+        node in nodes
+    }
+
+    permanent = set()
+    temporary = set()
+    none = set(nodes)
+
+    final = []
+
+    def visit(node):
+        if node in permanent:
+            return
+        if node in temporary:
+            raise ValueError("The graph has at least one cycle!")
+
+        none.remove(node)
+        temporary.add(node)
+        for child in dependencies[node]:
+            visit(child)
+
+        temporary.remove(node)
+        permanent.add(node)
+
+        nonlocal final
+        final = [node] + final
+
+    while len(none | temporary) > 0:
+        node = list(none)[0]
+        visit(node)
+    return list(itertools.chain(*[joins_by_starting[x] for x in final]))
+
+
 def get_sql_tables(attributes,
                    table_name: Optional[str] = None) -> FromTables:
     JoinDef = namedtuple('JoinDef', ['start', 'end', 'from_attr', 'to_attr'])
@@ -405,7 +449,7 @@ def get_sql_tables(attributes,
                                         x.end).field(x.to_attr) for x in b
                                 ])))
 
-    return FromTables(Table(table_name), final_joins)
+    return FromTables(Table(table_name), topological_sort(final_joins))
 
 
 def get_WHERE_JOIN_query_string(attributes):
