@@ -65,6 +65,7 @@ def load_db_view():
 
 
 def execute_query_select(query: str, t=None) -> list[pyodbc.Row]:
+    warnings.warn('This function is deprecated', DeprecationWarning)
     # HERE FORCING THE LIMIT OF THE QUERY
     if QUERY_LIMIT:
         query += ' LIMIT 100'
@@ -364,6 +365,7 @@ def get_FROM_query_string(attributes, table_name=None):
 
 
 def get_WHERE_JOIN_query_string(attributes):
+    warnings.warn('This function is deprecated', DeprecationWarning)
     join_string_list = []
     for a in attributes:
         for rel in a.get('by', []):
@@ -378,6 +380,7 @@ def get_WHERE_JOIN_query_string(attributes):
 
 
 def get_WHERE_ATTRIBUTES_query_string(attributes, table_name=None, join=False):
+    warnings.warn("This function is deprecated", DeprecationWarning)
     attr_string_list = []
     already_in = []
     or_clause = False
@@ -442,6 +445,7 @@ def get_WHERE_ATTRIBUTES_query_string(attributes, table_name=None, join=False):
 
 
 def get_WHERE_REFERENCE_query_string(table_name):
+    warnings.warn("This function is deprecated", DeprecationWarning)
     ref_string_list = []
     for ref in get_references_from_name(table_name):
         ref_string_list.append('{}.{}={}.{}'.format(table_name,
@@ -452,6 +456,7 @@ def get_WHERE_REFERENCE_query_string(table_name):
 
 
 def get_WHERE_CATEGORY_query_string(table_name, category_column):
+    warnings.warn("This function is deprecated", DeprecationWarning)
     ret_string = '{}.{} LIKE ?'.format(table_name, category_column)
     for fk in get_references_from_name(table_name):
         if fk['from_attribute'] == category_column:
@@ -461,6 +466,7 @@ def get_WHERE_CATEGORY_query_string(table_name, category_column):
 
 
 def get_ORDER_BY_ATTRIBUTES_query_string(attributes, query, in_table_name):
+    warnings.warn("This function is deprecated", DeprecationWarning)
     # attr_string_list = []
     isOrder = False
     tokens = [token for token in query.split(" ") if token != ""]
@@ -481,6 +487,7 @@ def get_ORDER_BY_ATTRIBUTES_query_string(attributes, query, in_table_name):
 
 
 def get_ORDER_BY_SHOW_COLUMNS(in_table_name):
+    warnings.warn("This function is deprecated", DeprecationWarning)
     element_name = resolver.get_element_name_from_table_name(in_table_name)
     default_order_columns = resolver.extract_show_columns(element_name)[0][
         'columns']
