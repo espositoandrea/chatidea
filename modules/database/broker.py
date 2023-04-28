@@ -111,7 +111,19 @@ def execute_query_select(query: str, params=None) -> list[pyodbc.Row]:
     return rows
 
 
-def get_dictionary_result(q_string, q_tuple, rows, cols, attributes) -> dict:
+class QueryDict(typing.TypedDict):
+    q_string: str
+    q_tuple: tuple
+
+
+class Result(typing.TypedDict):
+    query: QueryDict
+    value: list[dict[str, Any]]
+    real_value_length: int
+    attributes: list[dict]
+
+
+def get_dictionary_result(q_string, q_tuple, rows, cols, attributes) -> Result:
     query = {'q_string': q_string, 'q_tuple': q_tuple}
 
     value = list(map(lambda r: dict(zip(cols, r)), rows))
