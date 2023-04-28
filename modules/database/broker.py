@@ -220,8 +220,8 @@ def query_join(element, relation):
 
     relation['columns'] = primary_columns
 
-    relation = get_reverse_relation(copy.deepcopy(
-        relation))  # HERE I REVERT THE RELATION to standardize with the attributes
+    # HERE I REVERT THE RELATION to standardize with the attributes
+    relation = get_reverse_relation(relation)
 
     label_attributes([relation], from_table_name)
 
@@ -247,16 +247,18 @@ def query_join(element, relation):
                                      relation])  # mocking the relation as attribute
 
 
-def get_reverse_relation(relation):
-    if relation.get('by'):
-        relation['by'].reverse()  # reverting the list like a boss
-        # here I swap like a boss
-        for r in relation['by']:
-            r['to_table_name'], r['from_table_name'] = r['from_table_name'], r[
-                'to_table_name']
-            r['to_columns'], r['from_columns'] = r['from_columns'], r[
-                'to_columns']
-    return relation
+def get_reverse_relation(relation: dict):
+    if 'by' not in relation:
+        return relation
+
+    final = copy.deepcopy(relation)
+    final['by'].reverse()
+    for r in final['by']:
+        r['to_table_name'], r['from_table_name'] = \
+            r['from_table_name'], r['to_table_name']
+        r['to_columns'], r['from_columns'] = \
+            r['from_columns'], r['to_columns']
+    return final
 
 
 def query_category(in_table_name, category):
