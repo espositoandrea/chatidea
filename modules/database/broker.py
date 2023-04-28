@@ -177,8 +177,7 @@ def query_find(in_table_name, attributes):
 
     label_attributes(attributes, in_table_name)
     for a in attributes:
-        if not a.get('operator'):
-            a['operator'] = '='
+        a.setdefault('operator', '=')
 
     tables = get_sql_tables(attributes, in_table_name)
     columns = get_sql_columns(columns)
@@ -211,10 +210,9 @@ def query_join(element, relation):
 
     from_schema = get_table_schema_from_name(from_table_name)
     primary_columns = from_schema['primary_key_list']
+
     relation['join_values'] = [element['value'][0][x] for x in primary_columns]
-
     relation['operator'] = '='
-
     relation['columns'] = primary_columns
 
     # HERE I REVERT THE RELATION to standardize with the attributes
@@ -236,7 +234,6 @@ def query_join(element, relation):
         query = query.join(x.target).on(x.on)
 
     tup = tuple(relation['join_values'])
-    print(tup)
     rows = execute_query(query, tup)
     return get_dictionary_result(query.get_sql(), tup, rows,
                                  get_table_schema_from_name(to_table_name)[
@@ -443,7 +440,7 @@ def get_sql_tables(attributes,
     return FromTables(Table(table_name), topological_sort(final_joins))
 
 
-def get_WHERE_JOIN_query_string(attributes):
+def get_WHERE_JOIN_query_string(attributes) -> list[Criterion]:
     warnings.warn('This function is deprecated', DeprecationWarning)
     join_string_list = []
     for a in attributes:
@@ -458,7 +455,9 @@ def get_WHERE_JOIN_query_string(attributes):
     # return " AND ".join(join_string_list)
 
 
-def get_WHERE_ATTRIBUTES_query_string(attributes, table_name=None, join=False):
+def get_WHERE_ATTRIBUTES_query_string(attributes,
+                                      table_name=None,
+                                      join=False) -> str:
     warnings.warn("This function is deprecated", DeprecationWarning)
     attributes = [a for a in attributes if a['keyword'] != 'order by']
     attr_string_list = []
@@ -508,8 +507,7 @@ def get_WHERE_ATTRIBUTES_query_string(attributes, table_name=None, join=False):
             attr = "( "
             attr += primary_key_string
             attr += " IN ( SELECT DISTINCT " + primary_key_string
-            attr += " FROM " + get_sql_tables(attributes,
-                                              table_name)
+            attr += " FROM " + get_sql_tables(attributes, table_name)
             attr += " WHERE "
             where_join_string = get_WHERE_JOIN_query_string(attributes)
             attr += where_join_string + " AND " if where_join_string else ""
@@ -539,13 +537,12 @@ def get_WHERE_REFERENCE_query_string(table_name) -> list[Criterion]:
     # return " AND ".join(ref_string_list)
 
 
-def get_WHERE_CATEGORY_query_string(table_name, category_column):
+def get_WHERE_CATEGORY_query_string(table_name, category_column) -> str:
     warnings.warn("This function is deprecated", DeprecationWarning)
-    ret_string = '{}.{} LIKE ?'.format(table_name, category_column)
+    ret_string = f'{table_name}.{category_column} LIKE ?'
     for fk in get_references_from_name(table_name):
         if fk['from_attribute'] == category_column:
-            ret_string = '{}.{} LIKE ?'.format(fk['to_table'],
-                                               fk['show_attribute'])
+            ret_string = f"{fk['to_table']}.{fk['show_attribute']} LIKE ?"
     return ret_string
 
 
