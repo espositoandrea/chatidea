@@ -308,23 +308,21 @@ def query_category_value(element_name, table_name, category_column,
     label_attributes(attributes, table_name)
 
     tables = get_sql_tables([], table_name)
+    where_category = get_WHERE_CATEGORY_query_string(table_name,
+                                                     category_column['column'])
     query: QueryBuilder = (Query.from_(tables.base)
                            .select(*get_sql_columns(columns))
+                           .where(
+        Criterion.all([where_category,
+                       get_WHERE_REFERENCE_query_string(table_name)
+                       ]))
                            .orderby(*get_order_by([], table_name)))
-    query_string = query.get_sql() + " WHERE "
-    where_ref_string = get_WHERE_REFERENCE_query_string(table_name)
-    query_string += where_ref_string + " AND " if where_ref_string else ""
-    query_string += get_WHERE_CATEGORY_query_string(table_name,
-                                                    category_column['column'])
-    print(query_string)
-
     val = str(category_value)
     val = '%' + val + '%'
     tup = tuple([val])
-    print(tup)
 
-    rows = execute_query_select(query_string, tup)
-    return get_dictionary_result(query_string, tup, rows,
+    rows = execute_query(query, tup)
+    return get_dictionary_result(query.get_sql(), tup, rows,
                                  get_table_schema_from_name(table_name)[
                                      'column_list'], attributes)
 
@@ -549,13 +547,13 @@ def get_WHERE_REFERENCE_query_string(table_name) -> list[Criterion]:
     # return " AND ".join(ref_string_list)
 
 
-def get_WHERE_CATEGORY_query_string(table_name, category_column) -> str:
+def get_WHERE_CATEGORY_query_string(table_name, category_column) -> Criterion:
     warnings.warn("This function is deprecated", DeprecationWarning)
-    ret_string = f'{table_name}.{category_column} LIKE ?'
+    ret = Table(table_name).field(category_column)
     for fk in get_references_from_name(table_name):
         if fk['from_attribute'] == category_column:
-            ret_string = f"{fk['to_table']}.{fk['show_attribute']} LIKE ?"
-    return ret_string
+            ret = Table(fk['to_table']).field(fk['show_attribute'])
+    return ret.like(Parameter('?'))
 
 
 def get_order_by(attributes: list[dict[str, str]], table: str) -> list[Field]:
