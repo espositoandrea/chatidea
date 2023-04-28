@@ -4,6 +4,7 @@ import itertools
 import json
 import logging
 import string
+import typing
 import warnings
 from collections import namedtuple
 from typing import Optional, Any
@@ -156,16 +157,23 @@ def decipher_attributes(attributes: list[dict]) -> \
             field, op, v in flattened]
 
 
-def query_find(in_table_name, attributes):
-    columns = []
-    for col in get_table_schema_from_name(in_table_name)['column_list']:
-        columns.append({'column': col, 'table': in_table_name})
+Columns = typing.TypedDict('Columns', {'column': str, 'table': str})
 
-    for fk in get_references_from_name(in_table_name):
+
+def get_columns(table_name: str) -> list[Columns]:
+    columns = [{'column': col, 'table': table_name} for col
+               in get_table_schema_from_name(table_name)['column_list']]
+
+    for fk in get_references_from_name(table_name):
         for col in columns:
             if fk['from_attribute'] == col['column']:
                 col['column'] = fk['show_attribute']
                 col['table'] = fk['to_table']
+    return columns
+
+
+def query_find(in_table_name, attributes):
+    columns = get_columns(in_table_name)
 
     label_attributes(attributes, in_table_name)
     for a in attributes:
@@ -194,23 +202,12 @@ def query_find(in_table_name, attributes):
 
 
 def query_join(element, relation):
-    to_table_name = relation['by'][-1][
-        'to_table_name']  # the table is the last one of the last "by" in the relation
+    # the table is the last one of the last "by" in the relation
+    to_table_name = relation['by'][-1]['to_table_name']
+    to_columns = get_columns(to_table_name)
 
-    to_schema = get_table_schema_from_name(to_table_name)
-
-    to_columns = []
-    for col in to_schema['column_list']:
-        to_columns.append({'column': col, 'table': to_table_name})
-
-    for fk in get_references_from_name(to_table_name):
-        for col in to_columns:
-            if fk['from_attribute'] == col['column']:
-                col['column'] = fk['show_attribute']
-                col['table'] = fk['to_table']
-
-    from_table_name = relation['by'][0][
-        'from_table_name']  # the table is the one of the first "by" in the relation
+    # the table is the one of the first "by" in the relation
+    from_table_name = relation['by'][0]['from_table_name']
 
     from_schema = get_table_schema_from_name(from_table_name)
     primary_columns = from_schema['primary_key_list']
@@ -291,15 +288,7 @@ def query_category(in_table_name, category):
 
 def query_category_value(element_name, table_name, category_column,
                          category_value):
-    columns = []
-    for col in get_table_schema_from_name(table_name)['column_list']:
-        columns.append({'column': col, 'table': table_name})
-
-    for fk in get_references_from_name(table_name):
-        for col in columns:
-            if fk['from_attribute'] == col['column']:
-                col['column'] = fk['show_attribute']
-                col['table'] = fk['to_table']
+    columns = get_columns(table_name)
 
     attribute = resolver.get_attribute_by_name(element_name,
                                                category_column['keyword'])
