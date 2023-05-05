@@ -34,13 +34,52 @@ def test_connection():
     logger.info('Connection closed.')
 
 
+class ConnectionStringBuilder:
+    def __add_to_str(self, key: str, val: Any):
+        # FIXME: multiple calls with the same key produce repetitions in the
+        #        final string.
+        self.string += f"{key.upper()}={val};"
+
+    def __init__(self, driver: str, server: str, database: str,
+                 port: Optional[typing.Union[str, int]] = None):
+        self.string = ""
+        self.__add_to_str("driver", driver)
+        self.__add_to_str("server", server)
+        self.__add_to_str("database", database)
+        if port:
+            self.__add_to_str("port", port)
+
+    def login(self, username: str,
+              password: Optional[str] = None) -> "ConnectionStringBuilder":
+        self.__add_to_str("UID", username)
+        if password:
+            self.__add_to_str("PWD", password)
+        return self
+
+    def authentication(self, auth: Optional[str]) -> "ConnectionStringBuilder":
+        if auth:
+            self.__add_to_str("authentication", auth)
+        return self
+
+    def charset(self, charset: Optional[str]) -> "ConnectionStringBuilder":
+        if charset:
+            self.__add_to_str("charset", charset)
+        return self
+
+    def __str__(self):
+        return self.string
+
+    def get_str(self) -> str:
+        return self.string
+
+
 def _connect() -> pyodbc.Connection:
-    connection = pyodbc.connect(f'DRIVER={DB_DRIVER};'
-                                f'SERVER={DB_HOST};'
-                                f'DATABASE={DB_NAME};'
-                                f'UID={DB_USER};'
-                                f'PWD={DB_PASSWORD};'
-                                f'CHARSET={DB_CHARSET};')
+    connection_str = (ConnectionStringBuilder(DB_DRIVER, DB_HOST, DB_NAME)
+                      .login(DB_USER, DB_PASSWORD)
+                      .charset(DB_CHARSET)
+                      .authentication("SqlPassword"))
+    logger.debug("Connection string: %s", connection_str)
+    connection = pyodbc.connect(connection_str.get_str())
 
     # MySQL-specific options for encoding issues
     connection.setdecoding(pyodbc.SQL_CHAR, encoding='utf-8')
