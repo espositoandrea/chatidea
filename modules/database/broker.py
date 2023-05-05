@@ -38,11 +38,11 @@ class ConnectionStringBuilder:
     def __add_to_str(self, key: str, val: Any):
         # FIXME: multiple calls with the same key produce repetitions in the
         #        final string.
-        self.string += f"{key.upper()}={val};"
+        self.parameters[key.upper()] = val
 
     def __init__(self, driver: str, server: str, database: str,
                  port: Optional[typing.Union[str, int]] = None):
-        self.string = ""
+        self.parameters = {}
         self.__add_to_str("driver", driver)
         self.__add_to_str("server", server)
         self.__add_to_str("database", database)
@@ -67,10 +67,10 @@ class ConnectionStringBuilder:
         return self
 
     def __str__(self):
-        return self.string
+        return ";".join(f"{k}={v}" for k, v in self.parameters.items())
 
     def get_str(self) -> str:
-        return self.string
+        return str(self)
 
 
 def _connect() -> pyodbc.Connection:
