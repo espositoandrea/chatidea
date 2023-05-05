@@ -9,10 +9,10 @@ file_path = pathlib.Path(__file__).resolve().parent
 
 DB_DRIVER = env['DB_DRIVER']
 DB_USER = env['DB_USER']
-DB_PASSWORD = env['DB_PASSWORD']
+DB_PASSWORD = env.get('DB_PASSWORD')
 DB_HOST = env['DB_HOST']
 DB_NAME = env['DB_NAME']
-DB_CHARSET = env["DB_CHARSET"]
+DB_CHARSET = env.get("DB_CHARSET")
 
 NLU_API_ENDPOINT = "http://localhost:5005"
 # files
@@ -21,11 +21,17 @@ LOG_DIR_PATH_AND_SEP = file_path / 'logs'
 NLU_DATA_PATH = file_path / 'writer' / 'rasa_dataset_training.json'
 NLU_MODEL_PATH = file_path / 'models' / 'nlu_model.tar.gz'
 NLU_MODEL_DIR_PATH = NLU_MODEL_PATH.parent
+
 DB_RESOURCES_PATH = file_path / 'resources' / 'db'
+DB_RESOURCES_PATH = env.get("DB_RESOURCES_PATH", DB_RESOURCES_PATH)
 DB_CONCEPT_PATH = DB_RESOURCES_PATH / f'db_concept_{DB_NAME}.json'
 DB_CONCEPT_PATH_S = DB_RESOURCES_PATH / f'db_concept_s_{DB_NAME}.json'
 DB_SCHEMA_PATH = DB_RESOURCES_PATH / f'db_schema_{DB_NAME}.json'
 DB_VIEW_PATH = DB_RESOURCES_PATH / f'db_view_{DB_NAME}.json'
+DB_CONCEPT_PATH = DB_RESOURCES_PATH / env.get("DB_CONCEPT_PATH", DB_CONCEPT_PATH)
+DB_CONCEPT_PATH_S = DB_RESOURCES_PATH / env.get("DB_CONCEPT_PATH_S", DB_CONCEPT_PATH_S)
+DB_SCHEMA_PATH = DB_RESOURCES_PATH / env.get("DB_SCHEMA_PATH", DB_SCHEMA_PATH)
+DB_VIEW_PATH = DB_RESOURCES_PATH / env.get("DB_VIEW_PATH", DB_VIEW_PATH)
 
 CHATITO_TEMPLATE_PATH = file_path / 'writer' / 'chatito_template.chatito'
 CHATITO_MODEL_PATH = file_path / 'writer' / 'chatito_model.chatito'
