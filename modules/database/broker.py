@@ -186,7 +186,7 @@ def get_references_from_name(table_name: str) -> list[dict]:
 
 
 def query_show_attributes_examples(table: str, columns: list[str]):
-    query = Query.from_(table).select(*columns).distinct()
+    query = Query.from_(table).select(*columns).distinct().orderby(*columns)
     rows = execute_query(query)
     return [r[0] for r in rows]
 
