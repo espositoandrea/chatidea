@@ -8,7 +8,7 @@ from time import sleep
 from modules import extractor, caller
 from modules.connectors import telegram, webchat
 from modules.database import resolver, broker
-from settings import LOG_DIR_PATH_AND_SEP
+from settings import LOG_DIR_PATH_AND_SEP, IS_DEBUG
 
 
 def console_input():
@@ -23,8 +23,15 @@ def console_input():
         print(response.get_printable_string())
 
 
-if __name__ == '__main__':
+def get_test_query(message: str):
+    logging.info('Sending message: "%s"', message)
 
+    parsed_message = extractor.parse(message)
+    response = caller.run_action_from_parsed_message(parsed_message, '-1')
+    print(response.get_printable_string())
+
+
+if __name__ == '__main__':
     warnings.filterwarnings('ignore')
 
     log_path = LOG_DIR_PATH_AND_SEP / 'sherbot.log'
@@ -41,6 +48,12 @@ if __name__ == '__main__':
 
     logging.info('Bot successfully started!')
 
-    webchat.start()
-    # telegram.start()
-    # console_input()
+    if not IS_DEBUG:
+        # webchat.start()
+        # telegram.start()
+        console_input()
+    else:
+        logging.warning("Running in debug mode: executing predefined queries")
+        get_test_query("find teachers")
+        get_test_query("find teacher Matera")
+        get_test_query('/cross_rel{"rel":"in research area"}')

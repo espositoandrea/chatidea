@@ -1,10 +1,13 @@
+import distutils.util
 import os
 import pathlib
+
 import dotenv
 
 env = dotenv.dotenv_values()
 file_path = pathlib.Path(__file__).resolve().parent
 
+IS_DEBUG = distutils.util.strtobool(env.get("DEBUG", "False"))
 # selector
 
 DB_DRIVER = env['DB_DRIVER']
