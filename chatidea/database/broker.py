@@ -14,8 +14,8 @@ from pypika import MySQLQuery as Query, Table, Criterion, Field
 from pypika.queries import QueryBuilder
 from pypika.terms import Parameter
 
-from modules.database import resolver
-from settings import DB_NAME, DB_SCHEMA_PATH, DB_VIEW_PATH, \
+from chatidea.database import resolver
+from chatidea.settings import DB_NAME, DB_SCHEMA_PATH, DB_VIEW_PATH, \
     DB_USER, DB_PASSWORD, DB_HOST, QUERY_LIMIT, DB_DRIVER, DB_CHARSET
 
 logger = logging.getLogger(__name__)

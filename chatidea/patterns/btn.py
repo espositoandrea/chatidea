@@ -1,5 +1,5 @@
-from modules.patterns import nlu
-from modules.database import resolver
+from chatidea.patterns import nlu
+from chatidea.database import resolver
 import re
 
 

@@ -1,8 +1,8 @@
 import logging
 import json
 
-from modules.database import broker
-from settings import DB_CONCEPT_PATH, DB_CONCEPT_PATH_S
+from chatidea.database import broker
+from chatidea.settings import DB_CONCEPT_PATH, DB_CONCEPT_PATH_S
 
 logger = logging.getLogger(__name__)
 

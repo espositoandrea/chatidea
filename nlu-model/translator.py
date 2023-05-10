@@ -1,17 +1,14 @@
 """
 This module takes in input the mapping (concept) of the db and generates the chatito file
 """
-import random
-import re
-import copy
-import sys
 import os
+import re
+import sys
 
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 import yaml
 from nltk.util import ngrams
-from modules.database import resolver, broker
-from settings import CHATITO_TEMPLATE_PATH, CHATITO_MODEL_PATH
+from chatidea.database import resolver, broker
 import argparse
 
 

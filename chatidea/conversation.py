@@ -3,9 +3,8 @@ import logging
 import pprint
 from logging import handlers
 
-from modules.database import resolver
-from modules.patterns import msg, btn
-from settings import LOG_DIR_PATH_AND_SEP, ELEMENT_VISU_LIMIT, CONTEXT_VISU_LIMIT, CONTEXT_MAX_LENGTH
+from chatidea.patterns import btn
+from chatidea.settings import LOG_DIR_PATH_AND_SEP, ELEMENT_VISU_LIMIT, CONTEXT_VISU_LIMIT, CONTEXT_MAX_LENGTH
 
 """
 {'action_name': '...found with attribute(s) "located in Spain".',

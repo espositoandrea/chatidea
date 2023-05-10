@@ -2,7 +2,7 @@ import random
 import re
 import copy
 
-from modules.database import resolver
+from chatidea.database import resolver
 
 HI_THERE = 'Hi, I am very happy to help you in exploring the database of the Dipartimento di Elettronica, Informazione e Bioingegneria (DEIB) of the Politecnico di Milano.'
            

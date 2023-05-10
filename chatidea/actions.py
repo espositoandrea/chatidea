@@ -1,17 +1,17 @@
 import copy
 import logging
-import re
-from pprint import pprint
 import random
+import re
+
 import matplotlib.pyplot as plt
-from functools import reduce
-from modules import commons, extractor
-from modules.database import resolver, broker
-from modules import patterns
-from modules.patterns import btn, msg, nlu
-from settings import ELEMENT_VISU_LIMIT, CONTEXT_VISU_LIMIT, \
+
+from chatidea import commons, extractor
+from chatidea import nltrasnslator, autocompleter
+from chatidea import patterns
+from chatidea.database import resolver
+from chatidea.patterns import btn, msg, nlu
+from chatidea.settings import ELEMENT_VISU_LIMIT, CONTEXT_VISU_LIMIT, \
     ELEMENT_SIMILARITY_DISTANCE_THRESHOLD
-from modules import nltrasnslator, autocompleter
 
 logger = logging.getLogger(__name__)
 
@@ -913,10 +913,10 @@ def action_show_more_examples(entities, response, context):
 
 def action_show_more_examples_attribute(entities: list[extractor.Entity], response, context):
     for e in entities:
-        if e.entity is 'e':
+        if e.entity == 'e':
             element_name = e.value
-        elif e.entity is 'k':
-            key = '' if e.value is ' ' else e.value
+        elif e.entity == 'k':
+            key = '' if e.value == ' ' else e.value
     attribute = resolver.get_attribute_by_name(element_name, key)
     if not attribute:
         attribute = resolver.get_attribute_without_keyword(element_name)

@@ -5,7 +5,7 @@ import pathlib
 import dotenv
 
 env = dotenv.dotenv_values()
-file_path = pathlib.Path(__file__).resolve().parent
+file_path = pathlib.Path(__file__).resolve().parent.parent
 
 IS_DEBUG = distutils.util.strtobool(env.get("DEBUG", "False"))
 # selector

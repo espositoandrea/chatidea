@@ -1,8 +1,8 @@
-from modules import commons
-from modules.database import resolver
-from modules.patterns import btn, msg, nlu
+from chatidea import commons
+from chatidea.database import resolver
+from chatidea.patterns import btn, msg, nlu
 import re
-from modules import actions
+from chatidea import actions
 
 phrases = list()
 

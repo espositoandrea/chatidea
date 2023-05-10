@@ -1,14 +1,14 @@
-import shutup; shutup.please()
+import shutup
 import logging
 import warnings
 from pprint import pprint
 
 from time import sleep
 
-from modules import extractor, caller
-from modules.connectors import telegram, webchat
-from modules.database import resolver, broker
-from settings import LOG_DIR_PATH_AND_SEP, IS_DEBUG
+from . import extractor, caller
+from .connectors import telegram, webchat
+from .database import resolver, broker
+from .settings import LOG_DIR_PATH_AND_SEP, IS_DEBUG
 
 
 def console_input():
@@ -49,9 +49,9 @@ if __name__ == '__main__':
     logging.info('Bot successfully started!')
 
     if not IS_DEBUG:
-        # webchat.start()
+        webchat.start()
         # telegram.start()
-        console_input()
+        # console_input()
     else:
         logging.warning("Running in debug mode: executing predefined queries")
         get_test_query("find teachers")

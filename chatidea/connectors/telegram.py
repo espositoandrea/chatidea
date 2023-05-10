@@ -1,11 +1,10 @@
 import telepot
-import re
 from telepot.loop import MessageLoop
 
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 
-from modules import extractor, caller
-from settings import TOKEN_TELEGRAM
+from chatidea import extractor, caller
+from chatidea.settings import TOKEN_TELEGRAM
 
 
 # on any simple message

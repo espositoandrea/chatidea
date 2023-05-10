@@ -1,13 +1,10 @@
 import dataclasses
-import json
 import logging
 import urllib.parse
 
-import rasa.core.agent
 import requests
 import re
-from rasa.nlu import model as nlu_model
-from settings import NLU_MODEL_PATH, NLU_API_ENDPOINT
+from chatidea.settings import NLU_API_ENDPOINT
 
 logger = logging.getLogger(__name__)
 

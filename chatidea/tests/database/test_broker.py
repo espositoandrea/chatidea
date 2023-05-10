@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from modules.database import broker as b
+from chatidea.database import broker as b
 
 
 class TestBroker(TestCase):

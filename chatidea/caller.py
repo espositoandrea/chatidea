@@ -2,9 +2,9 @@ import datetime
 import threading
 from pprint import pformat
 
-from modules import conversation, extractor
-from modules import actions
-from settings import INTENT_CONFIDENCE_THRESHOLD, CONTEXT_PERSISTENCE_SECONDS
+from chatidea import conversation, extractor
+from chatidea import actions
+from chatidea.settings import INTENT_CONFIDENCE_THRESHOLD, CONTEXT_PERSISTENCE_SECONDS
 import re
 
 context_dict = {}
@@ -32,7 +32,7 @@ def run_action_from_parsed_message(parsed_message: extractor.ParsedMessage, chat
                 '{}'.format(parsed_message.original_message,
                             intent_name,
                             pformat(entities)))
-   
+
     return actions.execute_action_from_intent_name(intent_name, entities, context)
 
 
