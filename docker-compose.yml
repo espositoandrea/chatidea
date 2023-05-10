@@ -2,5 +2,5 @@ version: '3'
 services:
   nlu-model:
     build:
-      context: .
+      context: nlu-model
       dockerfile: Dockerfile

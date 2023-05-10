@@ -1,6 +1,8 @@
 stages:
   create-chatito-definitions:
-    cmd: python3 translator.py
+    cmd: python3 translator.py -t "writer/chatito_template.chatito" -o "writer/chatito_model.chatito" -p params.yaml
+    params:
+    - dataset.max_ngrams
     outs:
     - writer/chatito_model.chatito
     deps:

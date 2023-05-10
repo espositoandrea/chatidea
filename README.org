@@ -21,25 +21,39 @@ This version of CHATIDEA requires the following to be installed in your machine 
   ***pipenv run python run.py***
 - Dal browser ora il chabot è raggiungibile all’indirizzo ***localhost:5080***
 
+Install all Python dependencies in a virtual environment using the following command:
+
+#+BEGIN_SRC shell :results output silent
+PIPENV_VENV_IN_PROJECT=1 pipenv install --dev
+#+END_SRC
+
 * Execute the Pipeline
+
+The NLU pipeline is fully contained in the directory =nlu-model=. Note that this README files automatically adjusts the current working directory where needed using OrgMode's =:dir= property in source blocks. If you are not using Emacs OrgMode (or other supported editors/viewers) be sure to change the directory using the following command before executing the pipeline.
+
+#+BEGIN_SRC shell
+cd nlu-model
+#+END_SRC
 
 ** Install Pipeline Dependencies
 
 If you want to re-execute the entire NLU model training and testing pipeline, you'll need additional dependencies. To install them, execute the following commands.
 
-#+BEGIN_SRC shell :results output silent
-PIPENV_VENV_IN_PROJECT=1 pipenv install --dev
+#+BEGIN_SRC shell :results output silent :dir nlu-model
 npm install --dev
 #+END_SRC
 
 ** Generate Data and Train the Model
 
-#+BEGIN_SRC shell :results output silent
+#+BEGIN_SRC shell :results output silent :dir nlu-model
 dvc repro
 #+END_SRC
 
 * Start the Rasa Server
 
-#+BEGIN_SRC shell :results output silent
+#+BEGIN_SRC shell :results output silent :dir nlu-model
 rasa run --enable-api
 #+END_SRC
+
+* Known Issues and Future Actions
+** TODO Separate NLU model's environment from the main app's environment
