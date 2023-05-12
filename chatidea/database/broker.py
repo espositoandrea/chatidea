@@ -1,3 +1,4 @@
+import contextlib
 import copy
 import dataclasses
 import itertools
@@ -86,16 +87,24 @@ def _connect() -> pyodbc.Connection:
     return connection
 
 
+@contextlib.contextmanager
+def connect() -> pyodbc.Connection:
+    connection = _connect()
+    yield connection
+    connection.close()
+
+
 def execute_query(query: QueryBuilder,
-                  parameters: Optional[tuple] = None) -> list[pyodbc.Row]:
+                  parameters: Optional[tuple] = None,
+                  connection: pyodbc.Connection = None) -> list[pyodbc.Row]:
     # HERE FORCING THE LIMIT OF THE QUERY
     if QUERY_LIMIT:
         query = query.limit(100)
     logger.info('Executing query: %s', query)
     if parameters:
         logger.info('Parameters tuple: {}'.format(parameters))
-
-    connection = _connect()
+    if not connection:
+        connection = _connect()
     cursor = connection.cursor()
     if parameters:
         cursor.execute(query.get_sql(), parameters)
@@ -103,7 +112,12 @@ def execute_query(query: QueryBuilder,
         cursor.execute(query.get_sql())
     rows = cursor.fetchall()
     cursor.close()
-    connection.close()
+    # FIXME: the function opens and closes a connection for each query. This
+    #  feels like it's expensive: maybe we should have only a single connection
+    #  that is opened when the server starts and is closed when the server is
+    #  stopped
+    if not connection:
+        connection.close()
     return rows
 
 
