@@ -55,5 +55,35 @@ dvc repro
 rasa run --enable-api
 #+END_SRC
 
+* Deploying Information
+
+The project is configured to be deployed using containerization. More precisely, one container for each micro-service is expected. Thus, this repository holds configuration files for Docker, using Dockerfiles and docker-compose (used to manage the communication between the micro-services). To build the deployment containers, run the following:
+
+#+BEGIN_SRC shell :results output silent
+docker-compose build
+#+END_SRC
+
+To execute the chatbot, run the following command (remove the =-d= at the end to avoid executing as a daemon).
+
+#+BEGIN_SRC shell :results output silent
+docker-compose up -d
+#+END_SRC
+
+To shut-down the services, you can either use =C-c= (if you are not running in daemon mode) or you can run the following command:
+
+#+BEGIN_SRC shell :results output silent
+docker-compose down
+#+END_SRC
+
+** Testing the Deployment on Apple Silicon and Other ARM Processors
+
+At the moment, the project is based on Rasa. Sadly, the official Docker image of Rasa does not support the ARM architecture. As a workaround, until an official version is released, an unofficial image can be downloaded from DockerHub. To use it, in the file =nlu-model/Dockerfile= replace the =FROM= image by changing =rasa/rasa= to =khalosa/rasa-aarch64:3.5.2=. The following command does that automatically (note: =sed='s inplace option =-i= is not used to ensure POSIX compatibility, as macOS system do not ship by default with the GNU version of =sed=).
+
+#+BEGIN_SRC shell :results output none
+TEMP_FILE=$(mktemp) && \
+    sed '1s;rasa/rasa;khalosa/rasa-aarch64:3.5.2;' nlu-model/Dockerfile > $TEMP_FILE && \
+    mv $TEMP_FILE nlu-model/Dockerfile
+#+END_SRC
+
 * Known Issues and Future Actions
 ** TODO Separate NLU model's environment from the main app's environment
