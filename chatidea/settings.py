@@ -17,7 +17,7 @@ DB_HOST = env['DB_HOST']
 DB_NAME = env['DB_NAME']
 DB_CHARSET = env.get("DB_CHARSET")
 
-NLU_API_ENDPOINT = "http://localhost:5005"
+NLU_API_ENDPOINT = env.get("NLU_API_ENDPOINT", "http://localhost:5005")
 # files
 
 LOG_DIR_PATH_AND_SEP = file_path / 'logs'

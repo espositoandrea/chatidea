@@ -33,6 +33,7 @@ def get_test_query(message: str):
 
 if __name__ == '__main__':
     warnings.filterwarnings('ignore')
+    LOG_DIR_PATH_AND_SEP.mkdir(parents=True, exist_ok=True)
 
     log_path = LOG_DIR_PATH_AND_SEP / 'sherbot.log'
     # logging.basicConfig(filename=log_path, level=logging.INFO)

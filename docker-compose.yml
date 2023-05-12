@@ -4,3 +4,17 @@ services:
     build:
       context: nlu-model
       dockerfile: Dockerfile
+    ports:
+      - "5005"
+  middleware:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: bash -c 'while [[ "$$(curl --connect-timeout 2 -s -o /dev/null -w ''%{http_code}'' nlu-model:5005/status)" != "200" ]]; do echo Waiting for NLU model...; sleep 5; done; echo NLU model is up, starting...;python3 -m chatidea'
+    ports:
+      - "5080:5080"
+    depends_on:
+      - nlu-model
+    restart: on-failure
+    links:
+      - nlu-model
