@@ -36,8 +36,6 @@ def test_connection():
 
 class ConnectionStringBuilder:
     def __add_to_str(self, key: str, val: Any):
-        # FIXME: multiple calls with the same key produce repetitions in the
-        #        final string.
         self.parameters[key.upper()] = val
 
     def __init__(self, driver: str, server: str, database: str,
