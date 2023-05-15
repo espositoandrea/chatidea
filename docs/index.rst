@@ -11,6 +11,10 @@ Welcome to CHATIDEA's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   architecture.rst
+   nlu-pipeline.rst
+   middleware.rst
+   deploying.rst
 
 
 ==================
