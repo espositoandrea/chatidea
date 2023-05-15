@@ -1,1 +1,0 @@
-release: python run.py

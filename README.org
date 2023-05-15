@@ -13,6 +13,7 @@ This file holds a brief documentation to get contributors up and running with th
 
 This version of CHATIDEA requires the following to be installed in your machine (please refer to the official documentations for instructions on how to install them).
 
+- [[https://rasa.com][Rasa]]
 - [[https://www.python.org/downloads][Python 3.9 (with PIP)]]
 - [[https://nodejs.org/][Node.js (with NPM)]]
 - [[https://pipenv.pypa.io][Pipenv]]
