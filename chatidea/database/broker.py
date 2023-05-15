@@ -4,6 +4,7 @@ import dataclasses
 import itertools
 import json
 import logging
+import re
 import string
 import typing
 import warnings
@@ -12,6 +13,7 @@ from typing import Optional, Any
 
 import pyodbc
 from pypika import MSSQLQuery as Query, Table, Criterion, Field
+from pypika.dialects import Dialects
 from pypika.queries import QueryBuilder
 from pypika.terms import Parameter
 
@@ -99,6 +101,14 @@ def execute_query(query: QueryBuilder,
                   connection: pyodbc.Connection = None) -> list[pyodbc.Row]:
     # HERE FORCING THE LIMIT OF THE QUERY
     if QUERY_LIMIT:
+        if query.dialect == Dialects.MSSQL and 'ORDER BY' not in str(query):
+            # When on MS SQL Server, the limit operation requires an ORDER BY
+            # statement, so if the SQL does not contain one, we add it using
+            # all the columns specified in the SELECT clause (in the same
+            # order).
+            cols = re.findall(r"SELECT (?:DISTINCT)? (.*?) FROM", str(query))
+            cols = [x.split(query.QUOTE_CHAR)[1] for x in cols]
+            query = query.orderby(*cols)
         query = query.limit(100)
     logger.info('Executing query: %s', query)
     if parameters:
