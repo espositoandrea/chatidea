@@ -8,10 +8,14 @@ class TestBroker(TestCase):
         'element_name': 'customer',
         'value': [
             {
-                'customerNumber': 114, 'customerName': 'Australian Collectors, Co.',
-                'contactLastName': 'Ferguson', 'contactFirstName': 'Peter', 'phone': '03 9520 4555',
-                'addressLine1': '636 St Kilda Road', 'addressLine2': 'Level 3', 'city': 'Melbourne',
-                'state': 'Victoria', 'postalCode': '3004', 'country': 'Australia', 'salesRepEmployeeNumber': 1611,
+                'customerNumber': 114,
+                'customerName': 'Australian Collectors, Co.',
+                'contactLastName': 'Ferguson', 'contactFirstName': 'Peter',
+                'phone': '03 9520 4555',
+                'addressLine1': '636 St Kilda Road', 'addressLine2': 'Level 3',
+                'city': 'Melbourne',
+                'state': 'Victoria', 'postalCode': '3004',
+                'country': 'Australia', 'salesRepEmployeeNumber': 1611,
                 'creditLimit': '117300.00'
             }  # it should be Decimal('117300.00')
         ]
@@ -163,22 +167,28 @@ class TestBroker(TestCase):
         # self.fail()
 
     def test_get_FROM_query_string(self):
-        self.customer_element['attributes'].append(self.customer_self_attribute)
+        self.customer_element['attributes'].append(
+            self.customer_self_attribute)
         self.addAttributesAndValues()
         b.label_attributes(self.customer_element['attributes'])
-        print(b.get_sql_tables(self.customer_element['attributes']), 'customers')
+        print(b.get_sql_tables(self.customer_element['attributes']),
+              'customers')
 
     def test_get_WHERE_JOIN_query_string(self):
-        self.customer_element['attributes'].append(self.customer_self_attribute)
+        self.customer_element['attributes'].append(
+            self.customer_self_attribute)
         self.addAttributesAndValues()
         b.label_attributes(self.customer_element['attributes'])
-        print(b.get_WHERE_JOIN_query_string(self.customer_element['attributes']))
+        print(
+            b.get_WHERE_JOIN_query_string(self.customer_element['attributes']))
 
     def test_get_WHERE_ATTRIBUTES_query_string(self):
-        self.customer_element['attributes'].append(self.customer_self_attribute)
+        self.customer_element['attributes'].append(
+            self.customer_self_attribute)
         self.addAttributesAndValues()
         b.label_attributes(self.customer_element['attributes'])
-        print(b.get_WHERE_ATTRIBUTES_query_string(self.customer_element['attributes']))
+        print(b.get_WHERE_ATTRIBUTES_query_string(
+            self.customer_element['attributes']))
 
     def test_execute_query_find(self):
         b.load_db_schema()
@@ -192,6 +202,7 @@ class TestBroker(TestCase):
     def test_execute_query_join(self):
         b.load_db_schema()
         b.test_connection()
-        res = b.query_join(self.customer_in_context, self.customer_element['relations'][1])
+        res = b.query_join(self.customer_in_context,
+                           self.customer_element['relations'][1])
         print(res['query']['q_string'])
         print(res['value'])

@@ -1,13 +1,11 @@
 import logging
+import time
+import uuid
 from pathlib import Path
 
-from aiohttp import web
 import socketio
-import uuid
-import re
-import os.path
-import ssl
-import time
+from aiohttp import web
+
 from chatidea import extractor, caller
 
 logger = logging.getLogger(__name__)
@@ -77,6 +75,7 @@ async def handle_message(sid, message_dict):
             } for b in x.get('buttons', [])]
             send_message = {"text": text, "quick_replies": all_quick_replies}
             await sio.emit('bot_uttered', send_message, room=sid)
+
 
 Path('./static').mkdir(parents=True, exist_ok=True)
 app.router.add_static('/static', './static')

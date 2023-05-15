@@ -1,19 +1,20 @@
 import datetime
+import re
 import threading
 from pprint import pformat
 
-from chatidea import conversation, extractor
 from chatidea import actions
-from chatidea.settings import INTENT_CONFIDENCE_THRESHOLD, CONTEXT_PERSISTENCE_SECONDS
-import re
+from chatidea import conversation, extractor
+from chatidea.settings import INTENT_CONFIDENCE_THRESHOLD, \
+    CONTEXT_PERSISTENCE_SECONDS
 
 context_dict = {}
 
 lock = threading.Lock()
 
 
-def run_action_from_parsed_message(parsed_message: extractor.ParsedMessage, chat_id):
-
+def run_action_from_parsed_message(parsed_message: extractor.ParsedMessage,
+                                   chat_id):
     intent_confidence = parsed_message.intent.confidence
     intent_name = parsed_message.intent.name
 
@@ -33,14 +34,14 @@ def run_action_from_parsed_message(parsed_message: extractor.ParsedMessage, chat
                             intent_name,
                             pformat(entities)))
 
-    return actions.execute_action_from_intent_name(intent_name, entities, context)
+    return actions.execute_action_from_intent_name(intent_name, entities,
+                                                   context)
 
 
 def get_context(chat_id):
-
     lock.acquire()
 
-    #check_timestamps()
+    # check_timestamps()
 
     # conversation was already defined
     if context_dict.get(chat_id):
@@ -62,8 +63,8 @@ def get_context(chat_id):
 
 
 def check_timestamps():
-
-    max_age = datetime.datetime.now() - datetime.timedelta(seconds=CONTEXT_PERSISTENCE_SECONDS)
+    max_age = datetime.datetime.now() - datetime.timedelta(
+        seconds=CONTEXT_PERSISTENCE_SECONDS)
 
     for k, v in list(context_dict.items()):
         if v['timestamp'] < max_age:

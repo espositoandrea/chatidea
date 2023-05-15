@@ -1,22 +1,23 @@
 import dataclasses
 import logging
+import re
 import urllib.parse
 
 import requests
-import re
+
 from chatidea.settings import NLU_API_ENDPOINT
 
 logger = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass
-class Intent():
+class Intent:
     name: str
     confidence: float
 
 
 @dataclasses.dataclass
-class Entity():
+class Entity:
     entity: str
     value: str
     start: int
@@ -24,7 +25,7 @@ class Entity():
 
 
 @dataclasses.dataclass
-class ParsedMessage():
+class ParsedMessage:
     original_message: str
     intent: Intent
     entities: list[Entity]

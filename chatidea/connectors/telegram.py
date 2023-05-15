@@ -1,10 +1,13 @@
+from typing import Optional
+
 import telepot
 from telepot.loop import MessageLoop
-
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 
 from chatidea import extractor, caller
 from chatidea.settings import TOKEN_TELEGRAM
+
+bot: Optional[telepot.Bot] = None
 
 
 # on any simple message
@@ -16,8 +19,10 @@ def on_chat_message(msg):
 
 # buttons have been clicked
 def on_callback_query(msg):
-    query_id, chat_id, query_data = telepot.glance(msg, flavor='callback_query')
-    message_text = msg.get('message').get('reply_markup').get('inline_keyboard')
+    query_id, chat_id, query_data = telepot.glance(msg,
+                                                   flavor='callback_query')
+    message_text = msg.get('message').get('reply_markup').get(
+        'inline_keyboard')
     """if re.match("/sel_by_pos{\"pos\":\"\d+\"}",query_data): #check if sel_by_pos intent
         for m in message_text:
             if query_data == m[0]['callback_data']:
@@ -30,7 +35,9 @@ def on_callback_query(msg):
 
 def respond(chat_id, msg):
     parsed_message = extractor.parse(msg)
-    response = caller.run_action_from_parsed_message(parsed_message, "TELEGRAM_"+str(chat_id))
+    response = caller.run_action_from_parsed_message(parsed_message,
+                                                     "TELEGRAM_" + str(
+                                                         chat_id))
     # print(response.get_printable_string())
     for x in response.get_telegram_or_webchat_format():
         text = x['message']
@@ -40,7 +47,8 @@ def respond(chat_id, msg):
         else:
             inline_keyboard = InlineKeyboardMarkup(
                 inline_keyboard=[
-                    [InlineKeyboardButton(text=b['title'], callback_data=b['payload'])]
+                    [InlineKeyboardButton(text=b['title'],
+                                          callback_data=b['payload'])]
                     for b in x['buttons']
                 ]
             ) if x['buttons'] else None
@@ -52,7 +60,8 @@ def respond(chat_id, msg):
                 ]
             ) if x['buttons'] else None
             """
-            bot.sendMessage(chat_id=chat_id, text=text, reply_markup=inline_keyboard)
+            bot.sendMessage(chat_id=chat_id, text=text,
+                            reply_markup=inline_keyboard)
 
 
 def start():

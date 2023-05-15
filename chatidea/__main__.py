@@ -1,12 +1,8 @@
-import shutup
 import logging
 import warnings
-from pprint import pprint
-
-from time import sleep
 
 from . import extractor, caller
-from .connectors import telegram, webchat
+from .connectors import webchat
 from .database import resolver, broker
 from .settings import LOG_DIR_PATH_AND_SEP, IS_DEBUG
 

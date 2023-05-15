@@ -37,6 +37,7 @@ def extract_similar_value(keyword, keyword_list, threshold=5):
                 if cur < sim and cur < threshold:
                     sim = cur
                     winner = el_name
-            logger.info('...I decided on: {}, with similarity distance: {}'.format(winner, sim))
+            logger.info(
+                '...I decided on: {}, with similarity distance: {}'.format(
+                    winner, sim))
     return winner
-

@@ -4,7 +4,8 @@ import pprint
 from logging import handlers
 
 from chatidea.patterns import btn
-from chatidea.settings import LOG_DIR_PATH_AND_SEP, ELEMENT_VISU_LIMIT, CONTEXT_VISU_LIMIT, CONTEXT_MAX_LENGTH
+from chatidea.settings import LOG_DIR_PATH_AND_SEP, ELEMENT_VISU_LIMIT, \
+    CONTEXT_VISU_LIMIT, CONTEXT_MAX_LENGTH
 
 """
 {'action_name': '...found with attribute(s) "located in Spain".',
@@ -142,7 +143,8 @@ class Context:
         """
         Returns None if the element is not found
         """
-        return next(filter(lambda el: el['element_name'] == element_name, self.context_list), None)
+        return next(filter(lambda el: el['element_name'] == element_name,
+                           self.context_list), None)
 
     def get_last_element(self):
         """
@@ -154,7 +156,8 @@ class Context:
         """
         Returns None if the context_list is empty
         """
-        return self.context_list[-2] if self.context_list and len(self.context_list) > 1 else None
+        return self.context_list[-2] if self.context_list and len(
+            self.context_list) > 1 else None
 
     def view_last_element(self):
         if self.reset_show_last_element:
@@ -186,30 +189,36 @@ class Context:
 
         self.context_list.append(copy.deepcopy(element))  # deep copying here
         self.show_last_element_from_start()
-        self.log('Element {} has been added to the context'.format(element['element_name']))
+        self.log('Element {} has been added to the context'.format(
+            element['element_name']))
         # max length context
         if len(self.context_list) > CONTEXT_MAX_LENGTH:
-            del self.context_list[: len(self.context_list)-CONTEXT_MAX_LENGTH]
+            del self.context_list[
+                : len(self.context_list) - CONTEXT_MAX_LENGTH]
             self.log('Context length is exceeding maximum of {},'
                      ' I remove old concepts.'.format(CONTEXT_MAX_LENGTH))
 
-        #self.log_context()
+        # self.log_context()
 
     def show_last_element_from_start(self):
         element = self.context_list[-1]
         if element['real_value_length'] > 1:
-            element['show'] = {'from': 0, 'to': min(ELEMENT_VISU_LIMIT, element['real_value_length'])}
+            element['show'] = {'from': 0, 'to': min(ELEMENT_VISU_LIMIT,
+                                                    element[
+                                                        'real_value_length'])}
 
     def show_second_to_last_element_from_start(self):
         if len(self.context_list) > 1:
             element = self.context_list[-2]
             if element['real_value_length'] > 1:
-                element['show'] = {'from': 0, 'to': min(ELEMENT_VISU_LIMIT, element['real_value_length'])}
+                element['show'] = {'from': 0, 'to': min(ELEMENT_VISU_LIMIT,
+                                                        element[
+                                                            'real_value_length'])}
 
     def go_back_to_position(self, position):
         del self.context_list[position:]
         self.log('Going back to position {} in the context'.format(position))
-        #self.log_context()
+        # self.log_context()
         self.show_last_element_from_start()
 
     def get_context_list(self):
@@ -223,7 +232,8 @@ class Context:
 
     def show_context_list_from_start(self):
         self.context_list_indices['up'] = len(self.context_list)
-        self.context_list_indices['down'] = max(len(self.context_list) - CONTEXT_VISU_LIMIT, 0)
+        self.context_list_indices['down'] = max(
+            len(self.context_list) - CONTEXT_VISU_LIMIT, 0)
 
     def log_context(self):
         """
@@ -232,16 +242,18 @@ class Context:
         string_log = 'The context of the conversation at this moment' \
                      ' is {} element(s) long:\n'.format(len(self.context_list))
         for i, el in enumerate(self.context_list):
-            string_log += 'POSITION {}:'.format(i+1)
-            if i == len(self.context_list)-1:
+            string_log += 'POSITION {}:'.format(i + 1)
+            if i == len(self.context_list) - 1:
                 el_mod = copy.deepcopy(el)
                 if el_mod.get('real_value_length', 0) > 1:
                     el_mod['show']['to'] = el_mod['real_value_length']
-                    el_mod['value'] = [b['title'] for b in btn.get_buttons_select_element(el_mod)]
+                    el_mod['value'] = [b['title'] for b in
+                                       btn.get_buttons_select_element(el_mod)]
             else:
                 el_mod = {'action_name': copy.deepcopy(el['action_name']),
                           'element_name': copy.deepcopy(el['element_name']),
-                          'real_value_length': copy.deepcopy(el['real_value_length'])}
+                          'real_value_length': copy.deepcopy(
+                              el['real_value_length'])}
             string_log += '\n' \
                           '{}\n'.format(pprint.pformat(el_mod))
 

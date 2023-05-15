@@ -1,5 +1,9 @@
+import re
+
 from chatidea.database import resolver
 from chatidea.patterns import nlu
+from . import actions
+from . import nltrasnslator
 
 
 def autocomplete_from_word(entities, response, context):

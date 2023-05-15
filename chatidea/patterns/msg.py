@@ -1,11 +1,11 @@
+import copy
 import random
 import re
-import copy
 
 from chatidea.database import resolver
 
 HI_THERE = 'Hi, I am very happy to help you in exploring the database of the Dipartimento di Elettronica, Informazione e Bioingegneria (DEIB) of the Politecnico di Milano.'
-           
+
 REMEMBER_HISTORY = "You can always check the history of the conversation, just ask!\n " \
                    "For instance you can try with: \"show me the history\" or maybe just \"history\".\n" \
                    "I will help you to go back in the past, if you want, or just reset it completely."
@@ -29,11 +29,12 @@ NO_GO_BACK = 'You can not go back any further than that'
 REMEMBER_RESET_HISTORY = 'If you want you can reset the history of the conversation ' \
                          'by clicking the reset button:'
 
+
 def element_attributes(element):
-    #value = copy.deepcopy(element['value'][0])
-    #value_with_alias = {}
-    #attributes_alias = resolver.extract_attributes_alias(element['element_name'])
-    #if attributes_alias:
+    # value = copy.deepcopy(element['value'][0])
+    # value_with_alias = {}
+    # attributes_alias = resolver.extract_attributes_alias(element['element_name'])
+    # if attributes_alias:
     #    for k,v in value.items():
     #        if k in attributes_alias:
     #            value_with_alias[attributes_alias[k]] = v
@@ -42,12 +43,15 @@ def element_attributes(element):
     #    value = copy.deepcopy(value_with_alias)
     msg = '{}\n'.format(element['element_name'].upper())
     displayable_attributes = resolver.simulate_view(element['element_name'])
-    attribute_names = [i['attribute'] for i in displayable_attributes if 'attribute' in i]
-    displayed_names = [i['display'] for i in displayable_attributes if 'display' in i]
+    attribute_names = [i['attribute'] for i in displayable_attributes if
+                       'attribute' in i]
+    displayed_names = [i['display'] for i in displayable_attributes if
+                       'display' in i]
     for k, v in element['value'][0].items():
         if k in attribute_names:
             i = attribute_names.index(k)
-            msg +=  '\n\n- {0}: {1}'.format(displayed_names[i], cleanhtml(str(v)))
+            msg += '\n\n- {0}: {1}'.format(displayed_names[i],
+                                           cleanhtml(str(v)))
     # taking only first value
     # msg += '\n'.join(['- {0}: {1}'.format(k, v) for k, v in value.items()])
     return msg
@@ -56,7 +60,8 @@ def element_attributes(element):
 def element_list(element):
     msg = ''
     for i in range(element['show']['from'], element['show']['to']):
-        msg += '{}. {}\n'.format(i+1, resolver.get_element_show_string(element['element_name'], element['value'][i]))
+        msg += '{}. {}\n'.format(i + 1, resolver.get_element_show_string(
+            element['element_name'], element['value'][i]))
     return msg
 
 
@@ -68,7 +73,8 @@ def find_element_action_name(element_name, ordered_entities):
             se += oe['attribute'] + ' '
         se += str(oe['value']) + '"'
         stringified_entities.append(se)
-    return '[Finding by attributes] {}'.format(element_name, ' ,'.join(stringified_entities))
+    return '[Finding by attributes] {}'.format(element_name,
+                                               ' ,'.join(stringified_entities))
 
 
 def element_names_examples():
@@ -89,12 +95,15 @@ def get_message_example(element_name, a, keyword_list):
         message += "more than / less than "
     if 'by' in a:
         new_table_name = a.get('by')[-1]['to_table_name']
-        new_element_name = resolver.get_element_name_from_table_name(new_table_name)
-        examples = resolver.query_show_attributes_examples(new_element_name, a['columns'])
-        #attributes_alias = resolver.extract_attributes_alias(new_element_name)
+        new_element_name = resolver.get_element_name_from_table_name(
+            new_table_name)
+        examples = resolver.query_show_attributes_examples(new_element_name,
+                                                           a['columns'])
+        # attributes_alias = resolver.extract_attributes_alias(new_element_name)
     else:
-        #attributes_alias = resolver.extract_attributes_alias(element_name)
-        examples = resolver.query_show_attributes_examples(element_name, a['columns'])
+        # attributes_alias = resolver.extract_attributes_alias(element_name)
+        examples = resolver.query_show_attributes_examples(element_name,
+                                                           a['columns'])
     """if attributes_alias:
         for c in a['columns']:
             if c in attributes_alias:
@@ -116,18 +125,20 @@ def get_message_example(element_name, a, keyword_list):
             keyword_list_with_col[a.get('keyword')] = a.get('columns')
         columns = a.get('columns')"""
 
-    #message += "{} (e.g. {},{},{})\n" .format(columns,random.choice(examples),random.choice(examples),random.choice(examples))
+    # message += "{} (e.g. {},{},{})\n" .format(columns,random.choice(examples),random.choice(examples),random.choice(examples))
     message += "{} \n".format(random.choice(examples))
     return message
 
+
 def find_element_examples(element_name):
-    #message = 'I am able to find elements of type {} in many different ways. ' \
-              #'Here some options, I hope they can fit your purposes!\n Inside the bracket [ ]   you will find the names of the attributes accepted and in the [e.g] you can find some examples of that attributes that you can use \n\n'.format(element_name)
-    message = "I am able to find {}'s properties in many different ways. \nHere some examples, I hope they can fit your purposes!\n".format(element_name)
+    # message = 'I am able to find elements of type {} in many different ways. ' \
+    # 'Here some options, I hope they can fit your purposes!\n Inside the bracket [ ]   you will find the names of the attributes accepted and in the [e.g] you can find some examples of that attributes that you can use \n\n'.format(element_name)
+    message = "I am able to find {}'s properties in many different ways. \nHere some examples, I hope they can fit your purposes!\n".format(
+        element_name)
 
     keyword_list = []
     attributes = resolver.extract_all_attributes(element_name)
-    #all_el_names = [element_name] + resolver.get_element_aliases(element_name)
+    # all_el_names = [element_name] + resolver.get_element_aliases(element_name)
     if attributes:  # will be deleted when all elements will have at least 1 attribute
         for a in attributes:
             message += get_message_example(element_name, a, keyword_list)
@@ -140,44 +151,59 @@ def find_element_examples(element_name):
                 attributes_copy.remove(attr)
                 attr2 = random.choice(attributes_copy)
 
-                message_to_add = get_and_or_examples(element_name, attr, keyword_list)
+                message_to_add = get_and_or_examples(element_name, attr,
+                                                     keyword_list)
                 message += "- Find {} {} ".format(element_name, message_to_add)
-                message_to_add = get_and_or_examples(element_name, attr2, keyword_list)
+                message_to_add = get_and_or_examples(element_name, attr2,
+                                                     keyword_list)
                 message += "{}\n".format(message_to_add)
                 attributes_copy.append(attr)
 
                 attr = random.choice(attributes_copy)
                 attributes_copy.remove(attr)
                 attr2 = random.choice(attributes_copy)
-                
-                message_to_add = get_and_or_examples(element_name, attr, keyword_list)
+
+                message_to_add = get_and_or_examples(element_name, attr,
+                                                     keyword_list)
                 message += "- Find {} {} ".format(element_name, message_to_add)
-                message_to_add = get_and_or_examples(element_name, attr2, keyword_list)
+                message_to_add = get_and_or_examples(element_name, attr2,
+                                                     keyword_list)
                 message += "{} ".format(message_to_add)
                 attributes_copy.append(attr)
                 attr = random.choice(attributes_copy)
-                message_to_add = get_and_or_examples(element_name, attr, keyword_list)
+                message_to_add = get_and_or_examples(element_name, attr,
+                                                     keyword_list)
                 message += "{}\n".format(message_to_add)
 
                 attr = random.choice(attributes_copy)
                 attributes_copy.remove(attr)
                 attr2 = random.choice(attributes_copy)
-                message_to_add = get_and_or_examples(element_name, attr, keyword_list)
-                message += "- Find {} {} or ".format(element_name, message_to_add)
-                message_to_add = get_and_or_examples(element_name, attr2, keyword_list)
+                message_to_add = get_and_or_examples(element_name, attr,
+                                                     keyword_list)
+                message += "- Find {} {} or ".format(element_name,
+                                                     message_to_add)
+                message_to_add = get_and_or_examples(element_name, attr2,
+                                                     keyword_list)
                 message += "{}\n".format(message_to_add)
             else:
-                or1 = get_and_or_examples(element_name, attributes[0], keyword_list)
-                or2 = get_and_or_examples(element_name, attributes[0], keyword_list)
+                or1 = get_and_or_examples(element_name, attributes[0],
+                                          keyword_list)
+                or2 = get_and_or_examples(element_name, attributes[0],
+                                          keyword_list)
                 message += "- Find {} {} or {}".format(element_name, or1, or2)
         else:
-            or1 = get_and_or_examples(element_name, attributes[0], keyword_list)
-            or2 = get_and_or_examples(element_name, attributes[0], keyword_list)
+            or1 = get_and_or_examples(element_name, attributes[0],
+                                      keyword_list)
+            or2 = get_and_or_examples(element_name, attributes[0],
+                                      keyword_list)
             message += "- Find {} {} or {}".format(element_name, or1, or2)
     else:
-        message = '- no attribute- Find {}  has been defined for {} yet -'.format(element_name, element_name)
+        message = '- no attribute- Find {}  has been defined for {} yet -'.format(
+            element_name, element_name)
     print(message)
-    return message.replace("[", "(").replace("]",")")  #these 2 replace are just here in case of webchat interface
+    return message.replace("[", "(").replace("]",
+                                             ")")  # these 2 replace are just here in case of webchat interface
+
 
 def get_and_or_examples(element_name, attribute, keyword_list):
     message_to_add = get_message_example(element_name, attribute, keyword_list)
@@ -233,8 +259,10 @@ def get_and_or_examples(element_name, attribute, keyword_list):
         message += " or "+ random_choice + '\n'
     return message"""
 
+
 def filter_element_examples(element_name):
-    message = 'How to filter concepts of type {}? Here some hints:\n'.format(element_name)
+    message = 'How to filter concepts of type {}? Here some hints:\n'.format(
+        element_name)
     attributes = resolver.extract_all_attributes(element_name)
     if attributes:  # will be deleted when all elements will have at least 1 attribute
         for a in attributes:
@@ -242,10 +270,12 @@ def filter_element_examples(element_name):
             if a.get('keyword'):
                 message += "{} ".format(a['keyword'])
             if a.get('type') == 'num':
-                message += "more than " if random.randint(0, 1) else "less than "
+                message += "more than " if random.randint(0,
+                                                          1) else "less than "
             message += "...\n"
     else:
-        message = '- no attribute has been defined for {} yet -'.format(element_name)
+        message = '- no attribute has been defined for {} yet -'.format(
+            element_name)
 
     return message
 

@@ -24,7 +24,7 @@ def extract_entities(entities: list[extractor.Entity], entity_name: str) -> \
 
 
 def extract_single_entity_value(entities: list[extractor.Entity],
-                                entity_name) -> str:
+                                entity_name) -> None:
     found = extract_entities(entities, entity_name)
     if found:
         return found[0].value  # the first one
@@ -82,7 +82,8 @@ def compute_ordered_entity_list(entities: list[extractor.Entity]):
                 if index2 == index + 1:
                     if e2.entity == 'or':
                         oe['and_or'] = 'or'
-                    elif re.match('attr_\d+_\d+', e2.entity) or e2.entity == 'and':
+                    elif re.match('attr_\d+_\d+',
+                                  e2.entity) or e2.entity == 'and':
                         oe['and_or'] = 'and'
             if ty == 'columns':
                 attr = next((a.value for a in entities if
@@ -127,7 +128,7 @@ def get_attributes_from_ordered_entities(element_name, ordered_entities,
                     attr = new_attr.copy()
                 else:
                     attr = None
-                if attr == None and attribute_name in order_by_alias:
+                if attr is None and attribute_name in order_by_alias:
                     columns = oe['value']
                     columns_element = handle_columns_name_similarity(
                         element_name, columns)
@@ -412,7 +413,7 @@ def find_word_el_number(entities):
         if match:
             what = match.group(1)
             if what == nlu.ENTITY_WORD:
-                return (match.group(2))
+                return match.group(2)
 
 
 def find_el_number(entities):
@@ -421,7 +422,7 @@ def find_el_number(entities):
         if match:
             what = match.group(1)
             if what == nlu.ENTITY_ELEMENT:
-                return (int(match.group(2)))
+                return int(match.group(2))
     return 0
 
 
@@ -462,7 +463,8 @@ def remove_el(entities: list[extractor.Entity]):
                 entities.remove(i)
 
 
-def action_ambiguity_solver(entities: list[extractor.Entity], response, context):
+def action_ambiguity_solver(entities: list[extractor.Entity], response,
+                            context):
     element_name = handle_element_name_similarity(
         extract_single_entity_value(entities, nlu.ENTITY_ELEMENT))
     replace_el_name(entities, element_name)
@@ -496,7 +498,7 @@ def action_ambiguity_solver(entities: list[extractor.Entity], response, context)
 
 
 def contain(entities: list[extractor.Entity], word):
-    if (word == nlu.ENTITY_ELEMENT):
+    if word == nlu.ENTITY_ELEMENT:
         for i in entities:
             match = re.match("(\w+)_(\d+)", i.entity)
             if match:
@@ -690,7 +692,8 @@ def action_show_relations(entities, response, context):
         response.add_message(msg.EMPTY_CONTEXT_LIST)
 
 
-def action_select_element_by_position(entities: list[extractor.Entity], response, context):
+def action_select_element_by_position(entities: list[extractor.Entity],
+                                      response, context):
     pos = extract_single_entity_value(entities, nlu.ENTITY_POSITION)
     title = extract_single_entity_value(entities, 'title')
 
@@ -911,7 +914,8 @@ def action_show_more_examples(entities, response, context):
     response.add_button(btn.get_button_go_back_to_context_position('- GO BACK! -', len(context.get_context_list()) - 1))"""
 
 
-def action_show_more_examples_attribute(entities: list[extractor.Entity], response, context):
+def action_show_more_examples_attribute(entities: list[extractor.Entity],
+                                        response, context):
     for e in entities:
         if e.entity == 'e':
             element_name = e.value

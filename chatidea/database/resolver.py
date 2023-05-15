@@ -1,5 +1,5 @@
-import logging
 import json
+import logging
 
 from chatidea.database import broker
 from chatidea.settings import DB_CONCEPT_PATH, DB_CONCEPT_PATH_S

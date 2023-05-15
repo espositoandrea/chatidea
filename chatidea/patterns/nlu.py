@@ -20,7 +20,7 @@ INTENT_ORDER_BY = 'order_by'
 INTENT_ORDER_BY_ATTRIBUTE = 'order_by_attribute'
 
 INTENT_SHOW_MORE_EXAMPLES = 'show_more_examples'
-INTENT_SHOW_MORE_EXAMPLES_ATTRIBUTE = 'sm' #1-64 bit telegram limitation
+INTENT_SHOW_MORE_EXAMPLES_ATTRIBUTE = 'sm'  # 1-64 bit telegram limitation
 INTENT_SHOW_ATTRIBUTES_COMBINATIONS = 'ac'
 
 VIEW_CONTEXT_ELEMENT = 'view_context_el'

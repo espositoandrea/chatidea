@@ -18,7 +18,7 @@ class Response:
     def add_buttons(self, buttons):
         for b in buttons:
             self.add_button(b)
-            
+
     def isEmpty(self):
         return False if self.response_list else True
 
@@ -29,7 +29,8 @@ class Response:
                 string_list.append('> {}'.format(r['value']))
             else:
                 string_list.append('[B] {} => {}'.format(r['value']['title'],
-                                                         r['value']['payload']))
+                                                         r['value'][
+                                                             'payload']))
         return '\n'.join(string_list)
 
     def get_telegram_or_webchat_format(self):
@@ -39,8 +40,10 @@ class Response:
             if r['type'] == 'button':
                 buttons_tmp.insert(0, r['value'])
             else:
-                result_list.insert(0, {'message': r['value'], 'buttons': buttons_tmp})  # buttons_tmp may be None
+                result_list.insert(0, {'message': r['value'],
+                                       'buttons': buttons_tmp})  # buttons_tmp may be None
                 buttons_tmp = []
         if not result_list:
-            result_list.append({'message': 'ERROR: no message', 'buttons': buttons_tmp})
+            result_list.append(
+                {'message': 'ERROR: no message', 'buttons': buttons_tmp})
         return result_list
