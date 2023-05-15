@@ -10,6 +10,7 @@ import yaml
 from nltk.util import ngrams
 from chatidea.database import resolver, broker
 import argparse
+from chatidea.database.broker import Query
 
 
 def setup_args():
@@ -112,15 +113,12 @@ if __name__ == "__main__":
                                                            idx_e, idx_a)
 
                 for col in a.get('columns', []):
-                    q_string = "SELECT DISTINCT {} FROM {}".format(col,
-                                                                   e.get(
-                                                                       'table_name')
-                                                                   if not a.get(
-                                                                       'by') else
-                                                                   a.get('by')[
-                                                                       -1].get(
-                                                                       'to_table_name'))
-                    res = list(broker.execute_query_select(q_string))
+                    query = (Query.from_(e.get('table_name')
+                                         if 'by' not in a
+                                         else a['by'][-1].get('to_table_name'))
+                             .select(col)
+                             .distinct())
+                    res = list(broker.execute_query(query))
                     if res:
                         for r in res[:50]:  # max 50 examples each
                             if r[0]:
