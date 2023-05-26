@@ -12,6 +12,7 @@ Welcome to CHATIDEA's documentation!
    :caption: Contents:
 
    architecture.rst
+   db-configuration.rst
    nlu-pipeline.rst
    middleware.rst
    deploying.rst
