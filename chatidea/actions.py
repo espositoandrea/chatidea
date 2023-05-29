@@ -9,6 +9,7 @@ from chatidea import commons, extractor
 from chatidea import nltrasnslator, autocompleter
 from chatidea import patterns
 from chatidea.database import resolver
+from chatidea.extractor import Entity
 from chatidea.patterns import btn, msg, nlu
 from chatidea.settings import ELEMENT_VISU_LIMIT, CONTEXT_VISU_LIMIT, \
     ELEMENT_SIMILARITY_DISTANCE_THRESHOLD
@@ -407,18 +408,18 @@ def action_more_info_filter(entities, response, context):
     response.add_button(btn.get_button_history())
 
 
-def find_word_el_number(entities):
+def find_word_el_number(entities: list[Entity]):
     for i in range(0, len(entities)):
-        match = re.match("(\w+)_(\d+)_(\d+)", entities[i]['entity'])
+        match = re.match(r"(\w+)_(\d+)_(\d+)", entities[i].entity)
         if match:
             what = match.group(1)
             if what == nlu.ENTITY_WORD:
                 return match.group(2)
 
 
-def find_el_number(entities):
+def find_el_number(entities: list[Entity]):
     for i in range(0, len(entities)):
-        match = re.match("(\w+)_(\d+)", entities[i]['entity'])
+        match = re.match(r"(\w+)_(\d+)", entities[i].entity)
         if match:
             what = match.group(1)
             if what == nlu.ENTITY_ELEMENT:
@@ -426,9 +427,9 @@ def find_el_number(entities):
     return 0
 
 
-def find_word_numbers(entities):
+def find_word_numbers(entities: list[Entity]):
     for i in range(0, len(entities)):
-        match = re.match("(\w+)_(\d+)_(\d+)", entities[i]['entity'])
+        match = re.match(r"(\w+)_(\d+)_(\d+)", entities[i].entity)
         if match:
             what = match.group(1)
             if what == nlu.ENTITY_WORD:
@@ -436,13 +437,13 @@ def find_word_numbers(entities):
     return 0
 
 
-def replace_el_name(entities, name):
+def replace_el_name(entities: list[Entity], name):
     for i in range(0, len(entities)):
-        match = re.match("(\w+)_(\d+)", entities[i]['entity'])
+        match = re.match("(\w+)_(\d+)", entities[i].entity)
         if match:
             what = match.group(1)
             if what == nlu.ENTITY_ELEMENT:
-                entities[i]['value'] = name
+                entities[i].value = name
 
 
 def replace_word_numbers(entities, numbers):
@@ -1110,12 +1111,12 @@ def action_go_back_to_context_position(entities, response, context):
         response.add_button(btn.get_button_history())
 
 
-def action_find_element_by_category(entities, response, context):
+def action_find_element_by_category(entities: list[Entity], response, context):
     element = context.get_last_element()
     if element:
         element_name = element['element_value']
-        category_name = entities[0]['entity']
-        category_value = entities[0]['value']
+        category_name = entities[0].entity
+        category_value = entities[0].value
         if element_name and category_value:
             element = resolver.query_category_value(element_name,
                                                     category_name,
@@ -1135,9 +1136,10 @@ def action_find_element_by_category(entities, response, context):
             response.add_message(msg.ERROR)
 
 
-def action_show_table_categories(entities, response, context, add=True):
-    element_name = entities[0]['entity']
-    category_column = entities[0]['value']
+def action_show_table_categories(entities: list[Entity], response, context,
+                                 add=True):
+    element_name = entities[0].entity
+    category_column = entities[0].value
     category = resolver.extract_category(element_name, category_column)
     if element_name:
         if category:

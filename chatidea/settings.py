@@ -26,7 +26,7 @@ NLU_MODEL_PATH = file_path / 'models' / 'nlu_model.tar.gz'
 NLU_MODEL_DIR_PATH = NLU_MODEL_PATH.parent
 
 DB_RESOURCES_PATH = file_path / 'resources' / 'db'
-DB_RESOURCES_PATH = env.get("DB_RESOURCES_PATH", DB_RESOURCES_PATH)
+DB_RESOURCES_PATH = pathlib.Path(env.get("DB_RESOURCES_PATH", DB_RESOURCES_PATH))
 DB_CONCEPT_PATH = DB_RESOURCES_PATH / f'db_concept_{DB_NAME}.json'
 DB_CONCEPT_PATH_S = DB_RESOURCES_PATH / f'db_concept_s_{DB_NAME}.json'
 DB_SCHEMA_PATH = DB_RESOURCES_PATH / f'db_schema_{DB_NAME}.json'

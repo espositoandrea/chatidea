@@ -12,7 +12,8 @@ from collections import namedtuple
 from typing import Optional, Any
 
 import pyodbc
-from pypika import MSSQLQuery as Query, Table, Criterion, Field
+from pypika import MSSQLQuery as Query, Table, Criterion, Field, functions, \
+    Order
 from pypika.dialects import Dialects
 from pypika.queries import QueryBuilder
 from pypika.terms import Parameter
@@ -98,9 +99,10 @@ def connect() -> pyodbc.Connection:
 
 def execute_query(query: QueryBuilder,
                   parameters: Optional[tuple] = None,
-                  connection: pyodbc.Connection = None) -> list[pyodbc.Row]:
+                  connection: pyodbc.Connection = None,
+                  limit: bool = True) -> list[pyodbc.Row]:
     # HERE FORCING THE LIMIT OF THE QUERY
-    if QUERY_LIMIT:
+    if limit and QUERY_LIMIT:
         if query.dialect == Dialects.MSSQL and 'ORDER BY' not in str(query):
             # When on MS SQL Server, the limit operation requires an ORDER BY
             # statement, so if the SQL does not contain one, we add it using
@@ -151,10 +153,11 @@ def load_db_view():
     logger.info('Database view file has been loaded!')
 
 
-def execute_query_select(query: str, params=None) -> list[pyodbc.Row]:
+def execute_query_select(query: str, params=None, limit=True) -> list[
+    pyodbc.Row]:
     warnings.warn('This function is deprecated', DeprecationWarning)
     # HERE FORCING THE LIMIT OF THE QUERY
-    if QUERY_LIMIT:
+    if limit and QUERY_LIMIT:
         query += ' LIMIT 100'
     logger.info('Executing query: %s', query)
     if params:
@@ -336,30 +339,35 @@ def query_category(in_table_name, category):
         if fk['from_attribute'] == category:
             ref = fk
 
+    from_table = Table(in_table_name)
+    from_field = from_table.field(category)
     if ref:
-        query_string = "SELECT " + ref['to_table'] + "." + ref[
-            'show_attribute'] + ", COUNT(*)"
-        query_string += " FROM " + in_table_name + ", " + ref['to_table']
-        query_string += " WHERE " + in_table_name + "." + category + " = " + \
-                        ref['to_table'] + "." + ref['to_attribute']
-        query_string += " GROUP BY " + in_table_name + "." + category
-        query_string += " ORDER BY COUNT(*) DESC"
+        to_table = Table(ref['to_table'])
+        query: QueryBuilder = (Query.from_(from_table)
+                               .left_join(to_table)
+                               .on(
+            from_field == to_table.field(ref['to_attribute']))
+                               .select(to_table.field(ref['show_attribute']),
+                                       functions.Count('*'))
+                               .groupby(from_field, to_table.field(ref['show_attribute']))
+                               .orderby(functions.Count('*'), order=Order.desc)
+                               )
+        query_string = str(query)
     else:
-        query_string = "SELECT " + category + ", COUNT(*)"
-        query_string += " FROM " + in_table_name
-        query_string += " GROUP BY " + category
-        query_string += " ORDER BY COUNT(*) DESC"
+        query: QueryBuilder = (Query.from_(from_table)
+                               .select(from_field, functions.Count('*'))
+                               .groupby(from_field)
+                               .orderby(functions.Count('*'), order=Order.desc))
+        query_string = str(query)
 
-    print(query_string)
     tup = None
-    rows = execute_query_select(query_string, tup)
+    rows = execute_query_select(query_string, tup, limit=False)
     return get_dictionary_result(query_string, tup, rows, columns, category)
 
 
 def query_category_value(element_name, table_name, category_column,
                          category_value):
     columns = get_columns(table_name)
-
     attribute = resolver.get_attribute_by_name(element_name,
                                                category_column['keyword'])
     attribute['value'] = category_value
@@ -371,13 +379,16 @@ def query_category_value(element_name, table_name, category_column,
     tables = get_sql_tables([], table_name)
     where_category = get_WHERE_CATEGORY_query_string(table_name,
                                                      category_column['column'])
+    print(where_category)
     query: QueryBuilder = (Query.from_(tables.base)
                            .select(*get_sql_columns(columns))
                            .where(
         Criterion.all([where_category,
-                       get_WHERE_REFERENCE_query_string(table_name)
+                       # get_WHERE_REFERENCE_query_string(table_name)
                        ]))
                            .orderby(*get_order_by([], table_name)))
+    for table in tables.joins:
+        query = query.left_join(table.target).on(table.on)
     val = str(category_value)
     val = '%' + val + '%'
     tup = tuple([val])
