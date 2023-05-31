@@ -1,8 +1,11 @@
 import distutils.util
+import json
+import logging
 import os
 import pathlib
 
 import dotenv
+import jsonschema
 
 env = dotenv.dotenv_values()
 file_path = pathlib.Path(__file__).resolve().parent.parent
@@ -26,7 +29,8 @@ NLU_MODEL_PATH = file_path / 'models' / 'nlu_model.tar.gz'
 NLU_MODEL_DIR_PATH = NLU_MODEL_PATH.parent
 
 DB_RESOURCES_PATH = file_path / 'resources' / 'db'
-DB_RESOURCES_PATH = pathlib.Path(env.get("DB_RESOURCES_PATH", DB_RESOURCES_PATH))
+DB_RESOURCES_PATH = pathlib.Path(
+    env.get("DB_RESOURCES_PATH", DB_RESOURCES_PATH))
 DB_CONCEPT_PATH = DB_RESOURCES_PATH / f'db_concept_{DB_NAME}.json'
 DB_CONCEPT_PATH_S = DB_RESOURCES_PATH / f'db_concept_s_{DB_NAME}.json'
 DB_SCHEMA_PATH = DB_RESOURCES_PATH / f'db_schema_{DB_NAME}.json'
@@ -63,3 +67,16 @@ remote = True if os.environ.get('PYTHONANYWHERE_SITE') else False
 
 NLU_CONFIG_PIPELINE = "supervised_embeddings"  # "spacy_sklearn"
 NLU_CONFIG_LANGUAGE = "en"
+
+with open(DB_SCHEMA_PATH) as f:
+    with open(file_path / 'resources/schema.schema.json') as schemaf:
+        logging.info("Validating DB schema")
+        jsonschema.validate(instance=json.load(f), schema=json.load(schemaf))
+with open(DB_VIEW_PATH) as f:
+    with open(file_path / 'resources/view.schema.json') as schemaf:
+        logging.info("Validating DB view")
+        jsonschema.validate(instance=json.load(f), schema=json.load(schemaf))
+with open(DB_CONCEPT_PATH) as f:
+    with open(file_path / 'resources/concept.schema.json') as schemaf:
+        logging.info("Validating DB concept")
+        jsonschema.validate(instance=json.load(f), schema=json.load(schemaf))
