@@ -26,6 +26,7 @@ sphinx = "^6.2,<7"
 sphinx-rtd-theme = "^1.2.0"
 sphinx-autobuild = "^2021.3.14"
 myst-parser = "^1.0.0"
+sphinx-jsonschema = "^1.19.1"
 
 [build-system]
 requires = ["poetry-core"]

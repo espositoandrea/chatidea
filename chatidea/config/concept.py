@@ -47,3 +47,8 @@ class Concept(BaseModel):
 
 class DatabaseConcepts(BaseModel):
     __root__: list[Concept]
+
+    class Config:
+        schema_extra = {
+            'title': 'Concepts List'
+        }

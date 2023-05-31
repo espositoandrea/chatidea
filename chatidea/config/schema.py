@@ -19,3 +19,8 @@ class TableSchema(BaseModel):
 
 class DatabaseSchema(BaseModel):
     __root__: dict[str, TableSchema]
+
+    class Config:
+        schema_extra = {
+            'title': 'Database Schema'
+        }
