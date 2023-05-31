@@ -29,10 +29,6 @@ def get_db_config(config_type: CONFIG_TYPES) -> \
     logger.info('Loading database %s file...', config_type)
     with path.open("r") as f:
         config = json.load(f) if path.suffix == ".json" else yaml.safe_load(f)
-    if config_type != "concept_s":
-        with open(file_path / f'resources/{config_type}.schema.json') as f:
-            logging.info("Validating %s file against schema", config_type)
-            jsonschema.validate(instance=config, schema=json.load(f))
     logger.info('Database %s file has been loaded!', config_type)
     return config
 
