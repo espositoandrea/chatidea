@@ -8,6 +8,9 @@ from typing import Literal, Union, Any
 import dotenv
 import jsonschema
 import yaml
+from pydantic import parse_obj_as
+
+from .config import *
 
 env = dotenv.dotenv_values()
 file_path = pathlib.Path(__file__).resolve().parent.parent
@@ -52,10 +55,10 @@ NLU_DATA_PATH = file_path / 'writer' / 'rasa_dataset_training.json'
 NLU_MODEL_PATH = file_path / 'models' / 'nlu_model.tar.gz'
 NLU_MODEL_DIR_PATH = NLU_MODEL_PATH.parent
 
-DB_VIEW = get_db_config("view")
-DB_CONCEPT = get_db_config("concept")
+DB_VIEW = parse_obj_as(DatabaseView, get_db_config('view'))
+DB_CONCEPT = parse_obj_as(DatabaseConcepts, get_db_config('concept'))
 DB_CONCEPT_S = get_db_config("concept_s")
-DB_SCHEMA = get_db_config("schema")
+DB_SCHEMA = parse_obj_as(DatabaseSchema, get_db_config("schema"))
 
 CHATITO_TEMPLATE_PATH = file_path / 'writer' / 'chatito_template.chatito'
 CHATITO_MODEL_PATH = file_path / 'writer' / 'chatito_model.chatito'

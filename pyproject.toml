@@ -16,7 +16,7 @@ pyodbc = "^4.0.39"
 nltk = "^3.8.1"
 telepot = {version = "^12.7", optional = true}
 aiohttp = "^3.8.4"
-jsonschema = "^4.17.3"
+pydantic = "^1.10.8"
 
 [tool.poetry.extras]
 telegram = ["telepot"]
