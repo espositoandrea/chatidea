@@ -45,4 +45,5 @@ class Concept(BaseModel):
     relations: list[Relation]
 
 
-DatabaseConcepts = list[Concept]
+class DatabaseConcepts(BaseModel):
+    __root__: list[Concept]

@@ -17,4 +17,5 @@ class TableSchema(BaseModel):
     references: list[Reference]
 
 
-DatabaseSchema = dict[str, TableSchema]
+class DatabaseSchema(BaseModel):
+    __root__: dict[str, TableSchema]

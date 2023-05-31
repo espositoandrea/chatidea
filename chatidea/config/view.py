@@ -10,4 +10,5 @@ class TableView(BaseModel):
     column_list: list[ColumnView]
 
 
-DatabaseView = dict[str, TableView]
+class DatabaseView(BaseModel):
+    __root__: dict[str, TableView]
