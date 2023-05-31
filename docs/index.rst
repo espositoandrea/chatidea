@@ -16,6 +16,7 @@ Welcome to CHATIDEA's documentation!
    nlu-pipeline.rst
    middleware.rst
    deploying.rst
+   license.rst
 
 
 ==================
