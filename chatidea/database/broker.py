@@ -2,7 +2,6 @@ import contextlib
 import copy
 import dataclasses
 import itertools
-import json
 import logging
 import re
 import string
@@ -19,7 +18,7 @@ from pypika.queries import QueryBuilder
 from pypika.terms import Parameter
 
 from chatidea.database import resolver
-from chatidea.settings import DB_NAME, DB_SCHEMA_PATH, DB_VIEW_PATH, \
+from chatidea.settings import DB_NAME, DB_SCHEMA, DB_VIEW, \
     DB_USER, DB_PASSWORD, DB_HOST, QUERY_LIMIT, DB_DRIVER, DB_CHARSET
 
 logger = logging.getLogger(__name__)
@@ -134,23 +133,14 @@ def execute_query(query: QueryBuilder,
 
 
 def load_db_schema():
-    logger.info('Database schema file: %s', DB_SCHEMA_PATH)
-    logger.debug('Loading database schema file...')
-    with open(DB_SCHEMA_PATH) as f:
-        # TODO: Remove global variable
-        global db_schema
-        db_schema = json.load(f)
-    logger.info('Database schema file has been loaded!')
+    # TODO: Remove global variable
+    global db_schema
+    db_schema = DB_SCHEMA
 
 
 def load_db_view():
-    logger.info('Database view file: %s', DB_VIEW_PATH)
-    logger.debug('Loading database view file...')
-    with open(DB_VIEW_PATH) as f:
-        # TODO: Remove global variable
-        global db_view
-        db_view = json.load(f)
-    logger.info('Database view file has been loaded!')
+    global db_view
+    db_view = DB_VIEW
 
 
 def execute_query_select(query: str, params=None, limit=True) -> list[
@@ -349,7 +339,8 @@ def query_category(in_table_name, category):
             from_field == to_table.field(ref['to_attribute']))
                                .select(to_table.field(ref['show_attribute']),
                                        functions.Count('*'))
-                               .groupby(from_field, to_table.field(ref['show_attribute']))
+                               .groupby(from_field,
+                                        to_table.field(ref['show_attribute']))
                                .orderby(functions.Count('*'), order=Order.desc)
                                )
         query_string = str(query)
@@ -357,7 +348,8 @@ def query_category(in_table_name, category):
         query: QueryBuilder = (Query.from_(from_table)
                                .select(from_field, functions.Count('*'))
                                .groupby(from_field)
-                               .orderby(functions.Count('*'), order=Order.desc))
+                               .orderby(functions.Count('*'),
+                                        order=Order.desc))
         query_string = str(query)
 
     tup = None
@@ -641,4 +633,5 @@ def get_order_by(attributes: list[dict[str, str]], table: str) -> list[Field]:
 
 
 if __name__ == '__main__':
+    logger.setLevel(logging.INFO)
     test_connection()

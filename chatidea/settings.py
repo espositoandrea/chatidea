@@ -3,12 +3,36 @@ import json
 import logging
 import os
 import pathlib
+from typing import Literal, Union, Any
 
 import dotenv
 import jsonschema
+import yaml
 
 env = dotenv.dotenv_values()
 file_path = pathlib.Path(__file__).resolve().parent.parent
+logger = logging.getLogger(__name__)
+CONFIG_TYPES = Literal["concept", "concept_s", "view", "schema"]
+
+
+def get_db_config(config_type: CONFIG_TYPES) -> \
+        Union[dict[str, Any], list[dict[str, Any]]]:
+    DB_RESOURCES_PATH = pathlib.Path(
+        env.get("DB_RESOURCES_PATH")) or file_path / 'resources' / 'db'
+    file_name = env.get(f'DB_{config_type.upper()}_PATH',
+                        f'db_{config_type}_{DB_NAME}.json')
+    path = DB_RESOURCES_PATH / file_name
+    logger.info('Database %s file: %s', config_type, path)
+    logger.info('Loading database %s file...', config_type)
+    with path.open("r") as f:
+        config = json.load(f) if path.suffix == ".json" else yaml.safe_load(f)
+    if config_type != "concept_s":
+        with open(file_path / f'resources/{config_type}.schema.json') as f:
+            logging.info("Validating %s file against schema", config_type)
+            jsonschema.validate(instance=config, schema=json.load(f))
+    logger.info('Database %s file has been loaded!', config_type)
+    return config
+
 
 IS_DEBUG = distutils.util.strtobool(env.get("DEBUG", "False"))
 # selector
@@ -28,19 +52,10 @@ NLU_DATA_PATH = file_path / 'writer' / 'rasa_dataset_training.json'
 NLU_MODEL_PATH = file_path / 'models' / 'nlu_model.tar.gz'
 NLU_MODEL_DIR_PATH = NLU_MODEL_PATH.parent
 
-DB_RESOURCES_PATH = file_path / 'resources' / 'db'
-DB_RESOURCES_PATH = pathlib.Path(
-    env.get("DB_RESOURCES_PATH", DB_RESOURCES_PATH))
-DB_CONCEPT_PATH = DB_RESOURCES_PATH / f'db_concept_{DB_NAME}.json'
-DB_CONCEPT_PATH_S = DB_RESOURCES_PATH / f'db_concept_s_{DB_NAME}.json'
-DB_SCHEMA_PATH = DB_RESOURCES_PATH / f'db_schema_{DB_NAME}.json'
-DB_VIEW_PATH = DB_RESOURCES_PATH / f'db_view_{DB_NAME}.json'
-DB_CONCEPT_PATH = DB_RESOURCES_PATH / env.get("DB_CONCEPT_PATH",
-                                              DB_CONCEPT_PATH)
-DB_CONCEPT_PATH_S = DB_RESOURCES_PATH / env.get("DB_CONCEPT_PATH_S",
-                                                DB_CONCEPT_PATH_S)
-DB_SCHEMA_PATH = DB_RESOURCES_PATH / env.get("DB_SCHEMA_PATH", DB_SCHEMA_PATH)
-DB_VIEW_PATH = DB_RESOURCES_PATH / env.get("DB_VIEW_PATH", DB_VIEW_PATH)
+DB_VIEW = get_db_config("view")
+DB_CONCEPT = get_db_config("concept")
+DB_CONCEPT_S = get_db_config("concept_s")
+DB_SCHEMA = get_db_config("schema")
 
 CHATITO_TEMPLATE_PATH = file_path / 'writer' / 'chatito_template.chatito'
 CHATITO_MODEL_PATH = file_path / 'writer' / 'chatito_model.chatito'
@@ -67,16 +82,3 @@ remote = True if os.environ.get('PYTHONANYWHERE_SITE') else False
 
 NLU_CONFIG_PIPELINE = "supervised_embeddings"  # "spacy_sklearn"
 NLU_CONFIG_LANGUAGE = "en"
-
-with open(DB_SCHEMA_PATH) as f:
-    with open(file_path / 'resources/schema.schema.json') as schemaf:
-        logging.info("Validating DB schema")
-        jsonschema.validate(instance=json.load(f), schema=json.load(schemaf))
-with open(DB_VIEW_PATH) as f:
-    with open(file_path / 'resources/view.schema.json') as schemaf:
-        logging.info("Validating DB view")
-        jsonschema.validate(instance=json.load(f), schema=json.load(schemaf))
-with open(DB_CONCEPT_PATH) as f:
-    with open(file_path / 'resources/concept.schema.json') as schemaf:
-        logging.info("Validating DB concept")
-        jsonschema.validate(instance=json.load(f), schema=json.load(schemaf))

@@ -1,8 +1,7 @@
-import json
 import logging
 
 from chatidea.database import broker
-from chatidea.settings import DB_CONCEPT_PATH, DB_CONCEPT_PATH_S
+from chatidea.settings import DB_CONCEPT, DB_CONCEPT_S
 
 logger = logging.getLogger(__name__)
 
@@ -16,13 +15,8 @@ db_concept_s = []
 def load_db_concept():
     global db_concept
     global db_concept_s
-    logger.info('Database concept file: %s', DB_CONCEPT_PATH)
-    logger.info('Loading database concept file...')
-    with open(DB_CONCEPT_PATH) as f:
-        db_concept = json.load(f)
-    with open(DB_CONCEPT_PATH_S) as f1:
-        db_concept_s = json.load(f1)
-    logger.info('Database concept file has been loaded!')
+    db_concept = DB_CONCEPT
+    db_concept_s = DB_CONCEPT_S
 
 
 def extract_similar_values(word):
