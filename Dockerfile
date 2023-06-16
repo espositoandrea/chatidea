@@ -30,10 +30,11 @@ RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - 
     curl -sSL https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
     apt-get update && \
     ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18
-COPY --from=builder /venv /venv
+#COPY --from=builder /venv /venv
 COPY --from=builder /usr/src/app/dist .
-COPY .env resources ./
-RUN . /venv/bin/activate
 RUN pip install *.whl
+#RUN . /venv/bin/activate
+COPY .env .env
+COPY database database
 
 CMD ["python3", "-m", "chatidea"]
