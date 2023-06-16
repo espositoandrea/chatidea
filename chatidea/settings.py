@@ -6,13 +6,12 @@ import pathlib
 from typing import Literal, Union, Any
 
 import dotenv
-import jsonschema
 import yaml
 from pydantic import parse_obj_as
 
 from .config import *
 
-env = dotenv.dotenv_values()
+env = dotenv.dotenv_values(dotenv.find_dotenv(usecwd=True))
 file_path = pathlib.Path(__file__).resolve().parent.parent
 logger = logging.getLogger(__name__)
 CONFIG_TYPES = Literal["concept", "concept_s", "view", "schema"]

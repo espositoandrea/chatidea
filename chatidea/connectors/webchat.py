@@ -78,7 +78,7 @@ async def handle_message(sid, message_dict):
 
 
 Path('./static').mkdir(parents=True, exist_ok=True)
-app.router.add_static('/static', './static')
+app.router.add_static('/static', Path(__file__).absolute().parent / '../static')
 app.router.add_get('/', index)
 
 
