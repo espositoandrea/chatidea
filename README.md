@@ -81,7 +81,7 @@ avoid executing as a daemon).
 docker-compose up -d
 ```
 
-To shut-down the services, you can either use `C-c` (if you are not running in
+To shut down the services, you can either use `C-c` (if you are not running in
 daemon mode) or you can run the following command:
 
 ```shell
