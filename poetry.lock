@@ -1872,4 +1872,4 @@ telegram = ["telepot"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9,<3.11"
-content-hash = "dbafb6b845d955ecf42dff286360d27c602536400b78c5fb1099407c091173e2"
+content-hash = "8981282078379da5df230f3e406156b1dfdd60830b7b0e7993afb64c851f013c"

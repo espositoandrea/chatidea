@@ -22,7 +22,10 @@ python-socketio = "^5.8.0"
 [tool.poetry.extras]
 telegram = ["telepot"]
 
-[tool.poetry.group.dev.dependencies]
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
 sphinx = "^6.2,<7"
 sphinx-rtd-theme = "^1.2.0"
 sphinx-autobuild = "^2021.3.14"
