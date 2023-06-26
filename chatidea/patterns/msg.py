@@ -2,6 +2,7 @@ import copy
 import random
 import re
 
+from chatidea.config.concept import Attribute
 from chatidea.database import resolver
 
 HI_THERE = 'Hi, I am very happy to help you in exploring the database of the Dipartimento di Elettronica, Informazione e Bioingegneria (DEIB) of the Politecnico di Milano.'
@@ -85,25 +86,26 @@ def element_names_examples():
     return message
 
 
-def get_message_example(element_name, a, keyword_list):
+def get_message_example(element_name, a:Attribute, keyword_list):
     message = "- Find {} ".format(element_name)
-    if a.get('keyword'):
-        keyword_list.append(a.get('keyword'))
+    if a.keyword:
+        keyword_list.append(a.keyword)
         #  keyword_list_with_col[a.get('keyword')] = a.get('columns')
-        message += "{} ".format(a['keyword'])
-    if a.get('type') == 'num':
+        message += "{} ".format(a.keyword)
+    if a.type == 'num':
         message += "more than / less than "
-    if 'by' in a:
-        new_table_name = a.get('by')[-1]['to_table_name']
+    if a.by:
+        new_table_name = a.by[-1].to_table_name
         new_element_name = resolver.get_element_name_from_table_name(
             new_table_name)
+
         examples = resolver.query_show_attributes_examples(new_element_name,
-                                                           a['columns'])
+                                                           a.columns)
         # attributes_alias = resolver.extract_attributes_alias(new_element_name)
     else:
         # attributes_alias = resolver.extract_attributes_alias(element_name)
         examples = resolver.query_show_attributes_examples(element_name,
-                                                           a['columns'])
+                                                           a.columns)
     """if attributes_alias:
         for c in a['columns']:
             if c in attributes_alias:
@@ -267,11 +269,10 @@ def filter_element_examples(element_name):
     if attributes:  # will be deleted when all elements will have at least 1 attribute
         for a in attributes:
             message += "- Filter those "
-            if a.get('keyword'):
-                message += "{} ".format(a['keyword'])
-            if a.get('type') == 'num':
-                message += "more than " if random.randint(0,
-                                                          1) else "less than "
+            if a.keyword:
+                message += "{} ".format(a.keyword)
+            if a.type == 'num':
+                message += "more than " if random.randint(0, 1) else "less than "
             message += "...\n"
     else:
         message = '- no attribute has been defined for {} yet -'.format(

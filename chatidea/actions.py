@@ -2,6 +2,7 @@ import copy
 import logging
 import random
 import re
+from typing import Optional
 
 import matplotlib.pyplot as plt
 
@@ -25,11 +26,9 @@ def extract_entities(entities: list[extractor.Entity], entity_name: str) -> \
 
 
 def extract_single_entity_value(entities: list[extractor.Entity],
-                                entity_name) -> None:
+                                entity_name) -> Optional[str]:
     found = extract_entities(entities, entity_name)
-    if found:
-        return found[0].value  # the first one
-    return None
+    return found[0].value if found else None
 
 
 # takes entities
@@ -113,7 +112,7 @@ def get_attributes_from_ordered_entities(element_name, ordered_entities,
         # if the entity has an attribute, i.e. if it not implied
         if oe.get('attribute'):
             order_by_alias = ['order by', 'ordered by', 'sort by', 'sorted by']
-            keyword_list = [a['keyword'] for a in
+            keyword_list = [a.keyword for a in
                             resolver.extract_attributes_with_keyword(
                                 element_name)]
             for alias in order_by_alias:
@@ -124,7 +123,7 @@ def get_attributes_from_ordered_entities(element_name, ordered_entities,
 
             if attribute_name:
                 new_attr = resolver.get_attribute_by_name(element_name,
-                                                          attribute_name)
+                                                          attribute_name).dict()
                 if new_attr:
                     attr = new_attr.copy()
                 else:
@@ -156,7 +155,7 @@ def get_attributes_from_ordered_entities(element_name, ordered_entities,
         # if the entity does not have an attribute
         else:
             new_attr = resolver.get_attribute_without_keyword_by_type(
-                element_name, oe.get('type'))
+                element_name, oe.get('type')).dict()
             if new_attr:
                 attr = new_attr.copy()
                 attr['value'] = oe.get('value')
@@ -1143,18 +1142,17 @@ def action_show_table_categories(entities: list[Entity], response, context,
     category = resolver.extract_category(element_name, category_column)
     if element_name:
         if category:
-            element = resolver.query_category(element_name, category['column'])
-            create_plot(element, category['alias'].upper())
+            element = resolver.query_category(element_name, category.column)
+            create_plot(element, category.alias.upper())
             response.add_message(
                 'The concepts of type {} can be categorized based on {}.'.format(
-                    element_name, category['alias']))
+                    element_name, category.alias))
             response.add_message('Pie chart')
             response.add_message(
                 'You can select {}s related to a specific category by clicking on the related button.'.format(
                     element_name))
             response.add_buttons(btn.get_buttons_select_category(element_name,
-                                                                 category[
-                                                                     'column'],
+                                                                 category.column,
                                                                  element[
                                                                      'value']))
 

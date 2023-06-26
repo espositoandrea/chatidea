@@ -4,6 +4,7 @@ from chatidea.database import resolver
 from chatidea.patterns import nlu
 from . import actions
 from . import nltrasnslator
+from .extractor import Entity
 
 
 def autocomplete_from_word(entities, response, context):
@@ -31,35 +32,34 @@ def autocomplete_from_word(entities, response, context):
     nltrasnslator.traslate_to_nl(entities, response)
 
 
-def contain(entities, word):
+def contain(entities: list[Entity], word):
     for e in entities:
-        match = re.match("(\w+)_(\d+)_(\d+)", e['entity'])
+        match = re.match("(\w+)_(\d+)_(\d+)", e.entity)
         if match and match.group(1) == word:
             return True
     return False
 
 
-def add_entity_from_word(entities):
+def add_entity_from_word(entities: list[Entity]):
     for i in range(0, len(entities)):
-        match = re.match("(\w+)_(\d+)_(\d+)", entities[i]['entity'])
+        match = re.match("(\w+)_(\d+)_(\d+)", entities[i].entity)
         if match:
             what = match.group(1)
             if what == nlu.ENTITY_WORD:
                 entity_number = match.group(2)
                 entity_name = get_el_name_from_number(
                     entity_number)  # order can be different?
-                entities.insert(0, {'start': 0, 'value': entity_name,
-                                    'entity': nlu.ENTITY_ELEMENT + "_" + str(
-                                        entity_number)})  # starting point doesn't really matter
+                entities.insert(0, Entity(**{'start': 0, 'value': entity_name,
+                                             'entity': nlu.ENTITY_ELEMENT + "_" + str(
+                                                 entity_number)}))  # starting point doesn't really matter
                 i += 1  # else it adds infinite enitities
     return entities
 
 
-def add_attribute_from_word_number_and_el_number(entities):
+def add_attribute_from_word_number_and_el_number(entities:list[Entity]):
     for i in range(0, len(entities)):
 
-        match = re.match("(\w+)_(\d+)", entities[i][
-            'entity'])  # devi fare il numero e dividere i gruppi
+        match = re.match("(\w+)_(\d+)", entities[i].entity)  # devi fare il numero e dividere i gruppi
         if match:
 
             what = match.group(1)
@@ -69,7 +69,7 @@ def add_attribute_from_word_number_and_el_number(entities):
                 entity_number = int(match.group(2))
 
     for i in range(0, len(entities)):
-        match = re.match("(\w+)_(\d+)_(\d+)", entities[i]['entity'])
+        match = re.match("(\w+)_(\d+)_(\d+)", entities[i].entity)
         if match:
             what = match.group(1)
             if what == nlu.ENTITY_WORD:
@@ -82,11 +82,11 @@ def add_attribute_from_word_number_and_el_number(entities):
         return entities
     # now searching for the right attribute from all the list found
     if attribute_number and attributes:
-        entities.insert(position, {'start': 0, 'value':
+        entities.insert(position, Entity(**{'start': 0, 'value':
             attributes[int(attribute_number) - 1]['keyword'],
                                    'entity': nlu.ENTITY_ATTRIBUTE + "_" + str(
                                        entity_number) + "_" + str(
-                                       attribute_number)})
+                                       attribute_number)}))
     return entities
 
 

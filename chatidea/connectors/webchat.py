@@ -77,7 +77,7 @@ async def handle_message(sid, message_dict):
             await sio.emit('bot_uttered', send_message, room=sid)
 
 
-Path('./static').mkdir(parents=True, exist_ok=True)
+(Path(__file__).absolute().parent / '../static').mkdir(parents=True, exist_ok=True)
 app.router.add_static('/static', Path(__file__).absolute().parent / '../static')
 app.router.add_get('/', index)
 

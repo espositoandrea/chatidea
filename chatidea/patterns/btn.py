@@ -206,10 +206,10 @@ def get_button_help_on_elements():
 def get_button_show_table_categories(element):
     buttons = []
     for cat in resolver.extract_categories(element):
-        title = "+ SHOW THE {}S OF {} +".format(cat['alias'].upper(),
+        title = "+ SHOW THE {}S OF {} +".format(cat.alias.upper(),
                                                 element.upper())
         payload = extract_payload(nlu.INTENT_SHOW_TABLE_CATEGORIES,
-                                  [element, cat['column']])
+                                  [element, cat.column])
         buttons.append({'title': title, 'payload': payload})
     return buttons
 

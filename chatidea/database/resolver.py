@@ -34,105 +34,102 @@ def extract_similar_values(word):
 def get_all_primary_element_names():
     res = []
     for e in db_concept:
-        if e.get('type') == 'primary':
-            res.append(e.get('element_name'))
+        if e.type == 'primary':
+            res.append(e.element_name)
     return res
 
 
 def get_all_primary_element_names_and_aliases():
     res = []
     for e in db_concept:
-        if e.get('type') == 'primary':
-            res.extend([e.get('element_name')] + e.get('aliases', []))
+        if e.type == 'primary':
+            res.extend([e.element_name] + (e.aliases or []))
     return res
 
 
-def get_element_aliases(element_name):
+def get_element_aliases(element_name: str):
     element = extract_element(element_name)
-    return element.get('aliases', [])
+    return element.aliases or []
 
 
-def get_element_name_from_possible_alias(element_or_alias_name):
+def get_element_name_from_possible_alias(element_or_alias_name: str):
     for e in db_concept:
-        if e.get(
-                'element_name') == element_or_alias_name or element_or_alias_name in e.get(
-            'aliases', []):
-            return e.get('element_name')
+        if e.element_name == element_or_alias_name or element_or_alias_name in (
+                e.aliases or []):
+            return e.element_name
     return None
 
 
-def get_element_name_from_table_name(table_name):
+def get_element_name_from_table_name(table_name: str):
     for e in db_concept:
-        if e.get('table_name') == table_name:
-            return e.get('element_name')
+        if e.table_name == table_name:
+            return e.element_name
     return None
 
 
-def extract_element(element_name):
+def extract_element(element_name: str):
     for e in db_concept:
         if e.element_name == element_name:
             return e
     return None
 
 
-def extract_show_columns(element_name):
+def extract_show_columns(element_name: str):
     e = extract_element(element_name)
     return e.show_columns if e else None
 
 
-def extract_relations(element_name):
+def extract_relations(element_name: str):
     e = extract_element(element_name)
-    return e.get('relations') if e else None
+    return e.relations if e else None
 
 
-def extract_all_attributes(element_name):
+def extract_all_attributes(element_name: str):
     e = extract_element(element_name)
-    return e.get('attributes') if e else None
+    return e.attributes if e else None
 
 
-def extract_categories(element_name):
+def extract_categories(element_name: str):
     e = extract_element(element_name)
-    return e.get('category') if e else None
+    return e.category if e else None
 
 
-def extract_category(element_name, column_name):
+def extract_category(element_name: str, column_name: str):
     e = extract_element(element_name)
-    for c in e.get('category'):
-        if c['column'] == column_name:
+    for c in e.category:
+        if c.column == column_name:
             return c
     return None
 
 
-def extract_attributes_with_keyword(element_name):
+def extract_attributes_with_keyword(element_name: str):
     attributes = extract_all_attributes(element_name)
     if attributes:
-        return [a for a in attributes if a.get('keyword')]
+        return [a for a in attributes if a.keyword]
     return None
 
 
-def extract_attributes_alias(element_name):
+def extract_attributes_alias(element_name: str):
     e = extract_element(element_name)
-    table_name = e.get('table_name')
+    table_name = e.table_name
     table_schema = broker.get_table_schema_from_name(table_name)
-    if 'column_alias_list' in table_schema:
-        return table_schema['column_alias_list']
-    else:
-        return None
+    return table_schema.column_alias_list
 
 
-def get_attribute_by_name(element_name, attribute_name):
+def get_attribute_by_name(element_name: str, attribute_name: str):
     attributes = extract_attributes_with_keyword(element_name)
     for a in attributes:
-        if a.get('keyword') == attribute_name:
+        if a.keyword == attribute_name:
             return a
     return None
 
 
-def get_attribute_without_keyword_by_type(element_name, attribute_type):
+def get_attribute_without_keyword_by_type(element_name: str,
+                                          attribute_type: str):
     attributes = [a for a in extract_all_attributes(element_name)
                   if a not in extract_attributes_with_keyword(element_name)]
     for a in attributes:
-        if a.get('type') == attribute_type:
+        if a.type == attribute_type:
             return a
     return None
 
@@ -147,14 +144,14 @@ def get_attribute_without_keyword(element_name):
 
 def get_element_show_string(element_name, element_value):
     show_columns = extract_show_columns(element_name)
-    return ', '.join((sh['keyword'] + ': ' if sh.get('keyword') else '')
-                     + ' '.join(str(element_value[x]) for x in sh['columns'])
+    return ', '.join((sh.keyword + ': ' if sh.keyword else '')
+                     + ' '.join(str(element_value[x]) for x in sh.columns)
                      for sh in show_columns)
 
 
 def query_find(element_name, attributes):
     e = extract_element(element_name)
-    table_name = e.get('table_name')
+    table_name = e.table_name
     result_element = broker.query_find(table_name, attributes)
     result_element['element_name'] = element_name
     return result_element
@@ -162,7 +159,7 @@ def query_find(element_name, attributes):
 
 def query_show_attributes_examples(element_name, attributes):
     e = extract_element(element_name)
-    table_name = e.get('table_name')
+    table_name = e.table_name
     result_element = broker.query_show_attributes_examples(table_name,
                                                            attributes)
     result_element = list(filter(None, result_element))
@@ -183,7 +180,7 @@ def query_join(element, relation_name):
 
 def query_category(element_name, category):
     e = extract_element(element_name)
-    table_name = e.get('table_name')
+    table_name = e.table_name
     result_element = broker.query_category(table_name, category)
     result_element['element_name'] = element_name
     return result_element
@@ -191,9 +188,9 @@ def query_category(element_name, category):
 
 def query_category_value(element_name, category_column, category_value):
     e = extract_element(element_name)
-    table_name = e.get('table_name')
+    table_name = e.table_name
     category = extract_category(element_name, category_column)
-    result_element = broker.query_category_value(e.get('element_name'),
+    result_element = broker.query_category_value(e.element_name,
                                                  table_name, category,
                                                  category_value)
     result_element['element_name'] = element_name
@@ -202,6 +199,6 @@ def query_category_value(element_name, category_column, category_value):
 
 def simulate_view(element_name):
     e = extract_element(element_name)
-    table_name = e.get('table_name')
+    table_name = e.table_name
     result_element = broker.simulate_view(table_name)
     return result_element

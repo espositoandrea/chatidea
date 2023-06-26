@@ -8,7 +8,7 @@ import string
 import typing
 import warnings
 from collections import namedtuple
-from typing import Optional, Any
+from typing import Optional, Any, List
 
 import pyodbc
 from pypika import MSSQLQuery as Query, Table, Criterion, Field, functions, \
@@ -17,16 +17,19 @@ from pypika.dialects import Dialects
 from pypika.queries import QueryBuilder
 from pypika.terms import Parameter
 
-from chatidea.config.schema import TableSchema
+from chatidea.config import DatabaseSchema, DatabaseView
+from chatidea.config.concept import Category
+from chatidea.config.schema import TableSchema, Reference
+from chatidea.config.view import TableView, ColumnView
 from chatidea.database import resolver
 from chatidea.settings import DB_NAME, DB_SCHEMA, DB_VIEW, \
     DB_USER, DB_PASSWORD, DB_HOST, QUERY_LIMIT, DB_DRIVER, DB_CHARSET
 
 logger = logging.getLogger(__name__)
 
-db_schema: Optional[dict[str, Any]] = None
+db_schema: Optional[DatabaseSchema] = None
 
-db_view: Optional[dict[str, Any]] = None
+db_view: Optional[DatabaseView] = None
 
 
 def test_connection():
@@ -193,12 +196,12 @@ def get_table_schema_from_name(table_name: str) -> Optional[TableSchema]:
     return db_schema.get(table_name)  # may return None
 
 
-def get_table_view_from_name(table_name: str) -> Optional[dict]:
+def get_table_view_from_name(table_name: str) -> Optional[TableView]:
     return db_view.get(table_name)  # may return None
 
 
-def get_references_from_name(table_name: str) -> list[dict]:
-    return db_schema.get(table_name)['references']
+def get_references_from_name(table_name: str) -> list[Reference]:
+    return db_schema.get(table_name).references
 
 
 def query_show_attributes_examples(table: str, columns: list[str]):
@@ -229,13 +232,13 @@ Columns = typing.TypedDict('Columns', {'column': str, 'table': str})
 
 def get_columns(table_name: str) -> list[Columns]:
     columns = [{'column': col, 'table': table_name} for col
-               in get_table_schema_from_name(table_name)['column_list']]
+               in get_table_schema_from_name(table_name).column_list]
 
     for fk in get_references_from_name(table_name):
         for col in columns:
-            if fk['from_attribute'] == col['column']:
-                col['column'] = fk['show_attribute']
-                col['table'] = fk['to_table']
+            if fk.from_attribute == col['column']:
+                col['column'] = fk.show_attribute
+                col['table'] = fk.to_table
     return columns
 
 
@@ -263,20 +266,20 @@ def query_find(in_table_name, attributes):
     rows = execute_query(query, tup)
 
     return get_dictionary_result(query.get_sql(), tup, rows,
-                                 get_table_schema_from_name(in_table_name)[
-                                     'column_list'], attributes)
+                                 get_table_schema_from_name(
+                                     in_table_name).column_list, attributes)
 
 
 def query_join(element, relation):
     # the table is the last one of the last "by" in the relation
-    to_table_name = relation['by'][-1]['to_table_name']
+    to_table_name = relation.by[-1]['to_table_name']
     to_columns = get_columns(to_table_name)
 
     # the table is the one of the first "by" in the relation
     from_table_name = relation['by'][0]['from_table_name']
 
     from_schema = get_table_schema_from_name(from_table_name)
-    primary_columns = from_schema['primary_key_list']
+    primary_columns = from_schema.primary_key_list
 
     relation['join_values'] = [element['value'][0][x] for x in primary_columns]
     relation['operator'] = '='
@@ -303,8 +306,7 @@ def query_join(element, relation):
     tup = tuple(relation['join_values'])
     rows = execute_query(query, tup)
     return get_dictionary_result(query.get_sql(), tup, rows,
-                                 get_table_schema_from_name(to_table_name)[
-                                     'column_list'], [
+                                 get_table_schema_from_name(to_table_name).column_list, [
                                      relation])  # mocking the relation as attribute
 
 
@@ -327,21 +329,21 @@ def query_category(in_table_name, category):
     ref = {}
 
     for fk in get_references_from_name(in_table_name):
-        if fk['from_attribute'] == category:
+        if fk.from_attribute == category:
             ref = fk
 
     from_table = Table(in_table_name)
     from_field = from_table.field(category)
     if ref:
-        to_table = Table(ref['to_table'])
+        to_table = Table(ref.to_table)
         query: QueryBuilder = (Query.from_(from_table)
                                .left_join(to_table)
                                .on(
-            from_field == to_table.field(ref['to_attribute']))
-                               .select(to_table.field(ref['show_attribute']),
+            from_field == to_table.field(ref.to_attribute))
+                               .select(to_table.field(ref.show_attribute),
                                        functions.Count('*'))
                                .groupby(from_field,
-                                        to_table.field(ref['show_attribute']))
+                                        to_table.field(ref.show_attribute))
                                .orderby(functions.Count('*'), order=Order.desc)
                                )
         query_string = str(query)
@@ -358,11 +360,11 @@ def query_category(in_table_name, category):
     return get_dictionary_result(query_string, tup, rows, columns, category)
 
 
-def query_category_value(element_name, table_name, category_column,
+def query_category_value(element_name, table_name, category_column:Category,
                          category_value):
     columns = get_columns(table_name)
     attribute = resolver.get_attribute_by_name(element_name,
-                                               category_column['keyword'])
+                                               category_column.keyword).dict()
     attribute['value'] = category_value
     attribute['operator'] = 'LIKE'
 
@@ -371,7 +373,7 @@ def query_category_value(element_name, table_name, category_column,
 
     tables = get_sql_tables([], table_name)
     where_category = get_WHERE_CATEGORY_query_string(table_name,
-                                                     category_column['column'])
+                                                     category_column.column)
     print(where_category)
     query: QueryBuilder = (Query.from_(tables.base)
                            .select(*get_sql_columns(columns))
@@ -388,12 +390,12 @@ def query_category_value(element_name, table_name, category_column,
 
     rows = execute_query(query, tup)
     return get_dictionary_result(query.get_sql(), tup, rows,
-                                 get_table_schema_from_name(table_name)[
-                                     'column_list'], attributes)
+                                 get_table_schema_from_name(
+                                     table_name).column_list, attributes)
 
 
-def simulate_view(table_name: str) -> list[dict[str, str]]:
-    return get_table_view_from_name(table_name)['column_list']
+def simulate_view(table_name: str) -> list[ColumnView]:
+    return get_table_view_from_name(table_name).column_list
 
 
 # query helper
@@ -489,7 +491,7 @@ def get_sql_tables(attributes,
         tab_string_list.append(table_name)
     joins: set[JoinDef] = set()
     for a in attributes:
-        for rel in a.get('by', []):
+        for rel in (a.get('by', None) or []):
             for i in range(len(rel['from_columns'])):
                 joins.add(JoinDef(rel['from_table_name'],
                                   rel['to_table_name'],
@@ -497,9 +499,9 @@ def get_sql_tables(attributes,
                                   rel["to_columns"][i]))
     for fk in get_references_from_name(table_name):
         joins.add(JoinDef(table_name,
-                          fk['to_table'],
-                          fk['from_attribute'],
-                          fk['to_attribute']))
+                          fk.to_table,
+                          fk.from_attribute,
+                          fk.to_attribute))
     joins: list[JoinDef] = sorted(joins, key=lambda x: (x.start, x.end))
 
     final_joins: list[Join] = []
@@ -604,9 +606,9 @@ def get_WHERE_REFERENCE_query_string(table_name) -> list[Criterion]:
     this = Table(table_name)
     ref_string_list = []
     for ref in get_references_from_name(table_name):
-        other = Table(ref["to_table"])
-        from_att = this.field(ref["from_attribute"])
-        to_att = other.field(ref["to_attribute"])
+        other = Table(ref.to_table)
+        from_att = this.field(ref.from_attribute)
+        to_att = other.field(ref.to_attribute)
         ref_string_list.append(from_att == to_att)
     return ref_string_list
     # return " AND ".join(ref_string_list)
@@ -616,8 +618,8 @@ def get_WHERE_CATEGORY_query_string(table_name, category_column) -> Criterion:
     warnings.warn("This function is deprecated", DeprecationWarning)
     ret = Table(table_name).field(category_column)
     for fk in get_references_from_name(table_name):
-        if fk['from_attribute'] == category_column:
-            ret = Table(fk['to_table']).field(fk['show_attribute'])
+        if fk.from_attribute == category_column:
+            ret = Table(fk.to_table).field(fk.show_attribute)
     return ret.like(Parameter('?'))
 
 
@@ -627,7 +629,7 @@ def get_order_by(attributes: list[dict[str, str]], table: str) -> list[Field]:
         # If we do not have any keywords to order by, we'll simply order by
         # the attributes that we should show
         element_name = resolver.get_element_name_from_table_name(table)
-        columns = resolver.extract_show_columns(element_name)[0]['columns']
+        columns = resolver.extract_show_columns(element_name)[0].columns
         return [Table(table).field(col) for col in columns]
 
     return [Table(a['from_table']).field(a['value']) for a in order_attrs]

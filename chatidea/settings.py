@@ -20,7 +20,7 @@ CONFIG_TYPES = Literal["concept", "concept_s", "view", "schema"]
 def get_db_config(config_type: CONFIG_TYPES) -> \
         Union[dict[str, Any], list[dict[str, Any]]]:
     DB_RESOURCES_PATH = pathlib.Path(
-        env.get("DB_RESOURCES_PATH")) or file_path / 'resources' / 'db'
+        file_path / env.get("DB_RESOURCES_PATH")) or file_path / 'resources' / 'db'
     file_name = env.get(f'DB_{config_type.upper()}_PATH',
                         f'db_{config_type}_{DB_NAME}.json')
     path = DB_RESOURCES_PATH / file_name
