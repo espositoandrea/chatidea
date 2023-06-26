@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import Literal, Optional, Iterator
 
 from pydantic import BaseModel
 
@@ -47,6 +47,12 @@ class Concept(BaseModel):
 
 class DatabaseConcepts(BaseModel):
     __root__: list[Concept]
+
+    def __iter__(self) -> Iterator[Concept]:
+        return iter(self.__root__)
+
+    def __getitem__(self, item) -> Concept:
+        return self.__root__[item]
 
     class Config:
         schema_extra = {

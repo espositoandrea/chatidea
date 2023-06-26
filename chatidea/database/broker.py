@@ -17,6 +17,7 @@ from pypika.dialects import Dialects
 from pypika.queries import QueryBuilder
 from pypika.terms import Parameter
 
+from chatidea.config.schema import TableSchema
 from chatidea.database import resolver
 from chatidea.settings import DB_NAME, DB_SCHEMA, DB_VIEW, \
     DB_USER, DB_PASSWORD, DB_HOST, QUERY_LIMIT, DB_DRIVER, DB_CHARSET
@@ -188,7 +189,7 @@ def get_dictionary_result(q_string, q_tuple, rows, cols, attributes) -> Result:
             'attributes': attributes}
 
 
-def get_table_schema_from_name(table_name: str) -> Optional[dict]:
+def get_table_schema_from_name(table_name: str) -> Optional[TableSchema]:
     return db_schema.get(table_name)  # may return None
 
 

@@ -1,11 +1,12 @@
 import logging
 
+from chatidea.config import DatabaseConcepts
 from chatidea.database import broker
 from chatidea.settings import DB_CONCEPT, DB_CONCEPT_S
 
 logger = logging.getLogger(__name__)
 
-db_concept = []
+db_concept: DatabaseConcepts = []
 db_concept_s = []
 
 
@@ -69,14 +70,14 @@ def get_element_name_from_table_name(table_name):
 
 def extract_element(element_name):
     for e in db_concept:
-        if e.get('element_name') == element_name:
+        if e.element_name == element_name:
             return e
     return None
 
 
 def extract_show_columns(element_name):
     e = extract_element(element_name)
-    return e.get('show_columns') if e else None
+    return e.show_columns if e else None
 
 
 def extract_relations(element_name):

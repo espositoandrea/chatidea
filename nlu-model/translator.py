@@ -65,17 +65,17 @@ if __name__ == "__main__":
 
     for e in db_concept:
         idx_tot += 1
-        if e.get('type') != 'primary':
+        if e.type != 'primary':
             continue
 
         # aggiunta 10/03
-        e_name = resolver.extract_element(e['element_name'])["table_name"]
+        e_name = resolver.extract_element(e.element_name).table_name
         table_schema = broker.get_table_schema_from_name(e_name)
-        all_columns_name = table_schema.get('column_list')
+        all_columns_name = table_schema.column_list
         whole_column_text += "\n".join(
             f"    {c}" for c in all_columns_name) + "\n"
-        if table_schema.get('column_alias_list'):
-            all_columns_name_alias = table_schema.get('column_alias_list')
+        if table_schema.column_alias_list:
+            all_columns_name_alias = table_schema.column_alias_list
             for k, v in all_columns_name_alias.items():
                 column_text = "    "
                 column_text += v
@@ -88,26 +88,26 @@ if __name__ == "__main__":
 
         element_text = f"@[el_{idx_e}]\n    "
         element_text += "\n    ".join(
-            [e['element_name']] + e.get('aliases', []))
+            [e.element_name] + (e.aliases or []))
         whole_element_text += element_text + "\n\n"
 
-        idx_e_alias += 1 + len(e.get('aliases', []))
+        idx_e_alias += 1 + len(e.aliases or [])
 
         idx_a = 1
-        for a in e.get('attributes', []):
+        for a in (e.attributes or []):
             idx_tot += 1
             # aggiunta 10/03
-            if a.get('keyword'):
+            if a.keyword:
                 attribute_text = f"@[attr_{idx_e}_{idx_a}]\n" \
-                                 f"    {a.get('keyword')}"
+                                 f"    {a.keyword}"
                 whole_attribute_text += attribute_text + "\n\n"
 
-            example_type_text = f"@[{a['type']}_{idx_e}_{idx_a}]\n"
+            example_type_text = f"@[{a.type}_{idx_e}_{idx_a}]\n"
 
-            for col in a.get('columns', []):
-                query = (Query.from_(e.get('table_name')
-                                     if 'by' not in a
-                                     else a['by'][-1].get('to_table_name'))
+            for col in (a.columns or []):
+                query = (Query.from_(e.table_name
+                                     if not a.by
+                                     else a.by[-1].to_table_name)
                          .select(col)
                          .distinct())
                 print(query)
@@ -148,23 +148,22 @@ if __name__ == "__main__":
                                     example_type_text += "\n"
                                 except IndexError:
                                     logging.error("%s %s %s", col,
-                                                  e.get('table_name')
-                                                  if 'by' not in a
-                                                  else a['by'][-1].get(
-                                                      'to_table_name'), r)
+                                                  e.table_name
+                                                  if not a.by
+                                                  else a.by[-1].to_table_name, r)
                                     # raise
             # fine aggiunta
             whole_example_type_text += example_type_text + "\n"
             # da qui
             text = ""
 
-            if a.get('keyword'):
+            if a.keyword:
                 text += "@[attr_{}_{}] ".format(idx_e, idx_a)
 
-                if a.get('type') == 'num':  # use nlu.ENTITY_ATTR?
+                if a.type == 'num':  # use nlu.ENTITY_ATTR?
                     text += '@[op_num?] '
 
-            text += "@[{}_{}_{}]".format(a.get('type'), idx_e, idx_a)
+            text += "@[{}_{}_{}]".format(a.type, idx_e, idx_a)
 
             whole_text_find += "    ~[find] @[el_{}] ".format(
                 idx_e) + text + " ~[and_or_clause_el_{}?]".format(
