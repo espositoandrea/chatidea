@@ -9,6 +9,7 @@ Welcome to CHATIDEA's documentation!
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: Contents:
 
    architecture.rst
@@ -17,6 +18,9 @@ Welcome to CHATIDEA's documentation!
    middleware.rst
    deploying.rst
    license.rst
+
+.. include:: ../README.md
+   :parser: myst_parser.sphinx_
 
 
 ==================
