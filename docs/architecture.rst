@@ -22,6 +22,34 @@ Docker container, allows for a deployment architecture that makes use of
 Kubernetes, managing multiple instances of the same component to balance load
 and allow better overall availability to final users.
 
+.. uml::
+   :caption: UML Diagram of the architecture of the system
+   :align: center
+   :scale: 50%
+
+   skinparam linetype ortho
+   'left to right direction
+
+   component "CHATIDEA" {
+     together {
+       left to right direction
+       component "Database Server" as DBServer <<container>> {
+          ODBC -r- [Database]
+       }
+       component "AI Server" as AI <<container>> {
+         SocketIO - [NLU Model]
+       }
+       [NLU Model] -[hidden]- [Database]
+       [ODBC] -[hidden]- [SocketIO]
+     }
+
+     component "Python Server" <<container>> {
+       [Middleware] - HTTPS
+     }
+     Middleware -up-( ODBC
+     Middleware --( SocketIO
+   }
+
 The following sections describe the three components of CHATIDEA and their
 relationship with the system. Details on the interfaces that let the components
 communicate are also given.

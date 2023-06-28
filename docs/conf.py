@@ -17,7 +17,8 @@ release = '0.0.1'
 extensions = [
     "sphinx.ext.autodoc",
     'myst_parser',
-    'sphinx-jsonschema'
+    'sphinx-jsonschema',
+    'sphinxcontrib.plantuml',
 ]
 
 templates_path = ['_templates']
@@ -35,3 +36,7 @@ html_extra_path = ['extras']
 latex_elements = {
     'papersize': 'a4paper'
 }
+
+# PlantUML options
+plantuml_latex_output_format = "pdf"
+plantuml_output_format = "svg"

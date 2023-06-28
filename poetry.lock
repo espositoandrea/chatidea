@@ -1644,6 +1644,23 @@ files = [
 test = ["flake8", "mypy", "pytest"]
 
 [[package]]
+name = "sphinxcontrib-plantuml"
+version = "0.25"
+description = "Sphinx \"plantuml\" extension"
+category = "dev"
+optional = false
+python-versions = "*"
+files = [
+    {file = "sphinxcontrib-plantuml-0.25.tar.gz", hash = "sha256:8fde531d92d1cfc2817fe3647b3f2d07e76682c4a84889c04a53e831f7c54432"},
+]
+
+[package.dependencies]
+Sphinx = ">=1.6"
+
+[package.extras]
+test = ["Pillow", "flake8", "pytest"]
+
+[[package]]
 name = "sphinxcontrib-qthelp"
 version = "1.0.3"
 description = "sphinxcontrib-qthelp is a sphinx extension which outputs QtHelp document."
@@ -1872,4 +1889,4 @@ telegram = ["telepot"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9,<3.11"
-content-hash = "8981282078379da5df230f3e406156b1dfdd60830b7b0e7993afb64c851f013c"
+content-hash = "7bde4827cf873377e567e44cfe8e7d1acf2a985f389acdc1e07ac2f30e6f80b1"
