@@ -410,7 +410,7 @@ def action_ambiguity_solver(entities: list[extractor.Entity], context) -> Action
     replace_el_name(entities, element_name)
 
     if not contain(entities, nlu.ENTITY_WORD) and not contain(entities, nlu.ENTITY_NUMBER):
-        return action_find_element_by_attribute(entities)
+        return action_find_element_by_attribute(entities).get_components()
 
     el_number = int(find_el_number(entities))
     word_el_number = int(find_word_el_number(entities))
@@ -495,7 +495,7 @@ def action_find_element_by_attribute(entities: list[extractor.Entity], context) 
     element['action_type'] = 'find'
     context.append_element(element)
     # handle_response_for_quantity_found_element(response, element, context)
-    return action_view_context_element(entities, context)
+    return action_view_context_element(entities, context).get_components()
 
 
 @action
@@ -517,7 +517,7 @@ def action_filter_element_by_attribute(entities, context) -> ActionReturn:
         element['element_name'], ordered_entities)
 
     if not attributes:
-        msg, btns = action_more_info_filter(entities, context)
+        msg, btns = action_more_info_filter(entities, context).get_components()
         return ["I didn't understand for what do you want to filter by\n", msg], btns
 
     # here down union of attributes
@@ -541,7 +541,7 @@ def action_filter_element_by_attribute(entities, context) -> ActionReturn:
     result_element['action_type'] = 'filter'
     context.append_element(result_element)
     m1, b1 = handle_response_for_quantity_found_element(result_element)
-    m2, b2 = action_view_context_element(entities, context)
+    m2, b2 = action_view_context_element(entities, context).get_components()
     return m1 + m2, b1 + b2
 
 
@@ -570,7 +570,7 @@ def action_cross_relation(entities, context) -> ActionReturn:
     result_element['action_name'] = f'...reached with the relation "{relation_name}", from {element["element_name"]}:'
     result_element['action_type'] = 'cross'
     context.append_element(result_element)
-    return action_view_context_element(entities, context)
+    return action_view_context_element(entities, context).get_components()
 
 
 @action
@@ -612,7 +612,7 @@ def action_select_element_by_position(entities: list[extractor.Entity], context)
     if not is_value_in_selection_valid(element, position, title):
         return ['Error! The selected element not belonging to the context!'], base_buttons
     add_selected_element_to_context(element, position, context)
-    return action_view_context_element(entities, context)
+    return action_view_context_element(entities, context).get_components()
 
 
 @action
@@ -627,13 +627,13 @@ def action_view_context_element(entities, context, show_less=False) -> ActionRet
     if not element:
         return [msg.EMPTY_CONTEXT_LIST], base_buttons
     if element['element_name'] == "more_info_find":
-        return action_more_info_find(element['entities'], context, False)
+        return action_more_info_find(element['entities'], context, False).get_components()
 
     if element['element_name'] == "start":
-        return meta.start(element['entities'], context, False)
+        return meta.start(element['entities'], context, False).get_components()
 
     if element['element_name'] == "show_table_categories":
-        return action_show_table_categories(element['entities'], context, False)
+        return action_show_table_categories(element['entities'], context, False).get_components()
 
     messages = []
     buttons = []
@@ -648,7 +648,7 @@ def action_view_context_element(entities, context, show_less=False) -> ActionRet
                 messages.append(previous_results_list)
         messages.append(msg.element_attributes(element))
         if element.get('element_name') in resolver.get_all_primary_element_names():
-            m, b = action_show_relations(entities, context)
+            m, b = action_show_relations(entities, context).get_components()
             messages += m
             buttons += b
     else:
@@ -678,7 +678,7 @@ def action_show_more_elements(entities, context) -> ActionReturn:
     element['show']['to'] = min(element['real_value_length'],
                                 element['show']['to'] + ELEMENT_VISU_LIMIT)
     context.reset_show_last_element = False
-    return action_view_context_element(entities, context)
+    return action_view_context_element(entities, context).get_components()
 
 
 @action
@@ -694,7 +694,7 @@ def action_show_less_elements(entities, context) -> ActionReturn:
     element['show']['to'] += diff
     element['show']['from'] = max(0, element['show']['from'] - ELEMENT_VISU_LIMIT)
     context.reset_show_last_element = False
-    return action_view_context_element(entities, context, show_less=True)
+    return action_view_context_element(entities, context, show_less=True).get_components()
 
 
 @action
@@ -720,7 +720,7 @@ def action_order_by_attribute(entities, context) -> ActionReturn:
     value = sorted(value, key=lambda k: (k[attribute_to_order_by] is None, k[attribute_to_order_by]))
     element['value'] = value
     context.reset_show_last_element = False
-    return action_view_context_element(entities, context)
+    return action_view_context_element(entities, context).get_components()
 
 
 @action
@@ -825,7 +825,7 @@ def action_show_more_context(entities, context) -> ActionReturn:
     context.context_list_indices['down'] = max(context.context_list_indices['down'] - CONTEXT_VISU_LIMIT, 0)
     context.context_list_indices['up'] = context.context_list_indices['up'] - CONTEXT_VISU_LIMIT
     context.reset_show_context_list = False
-    return action_show_context(entities, context)
+    return action_show_context(entities, context).get_components()
 
 
 @action
@@ -846,17 +846,17 @@ def action_go_back_to_context_position(entities, context) -> ActionReturn:
             return [msg.NO_GO_BACK], btn.get_base_buttons(context)
     elif position - 1 < length:
         context.go_back_to_position(position)
-        m, b = action_view_context_element(entities, context)
+        m, b = action_view_context_element(entities, context).get_components()
         return [
                    f'Ok, now resuming your history of {length - position} position{"s" if length - position > 1 else ""}... DONE!'] + m, b
 
     else:
         # wrong selection
-        return action_show_context(entities, context)
+        return action_show_context(entities, context).get_components()
 
 
 @action
-def action_find_element_by_category(entities: list[Entity], response: Response, context) -> ActionReturn:
+def action_find_element_by_category(entities: list[Entity], context) -> ActionReturn:
     element = context.get_last_element()
     if not element:
         return [], []
@@ -865,9 +865,7 @@ def action_find_element_by_category(entities: list[Entity], response: Response, 
     category_value = entities[0].value
     if not element_name or not category_value:
         return [msg.ERROR], []
-    element = resolver.query_category_value(element_name,
-                                            category_name,
-                                            category_value)
+    element = resolver.query_category_value(element_name, category_name, category_value)
     if not element['value']:
         return [msg.NOTHING_FOUND], []
 
@@ -875,7 +873,7 @@ def action_find_element_by_category(entities: list[Entity], response: Response, 
     element['action_type'] = 'find'
     context.append_element(element)
     # handle_response_for_quantity_found_element(response, element, context)
-    return action_view_context_element(entities, context)
+    return action_view_context_element(entities, context).get_components()
 
 
 @action
