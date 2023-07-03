@@ -1,7 +1,6 @@
 import re
 import typing
 
-from chatidea.conversation import Context
 from chatidea.database import resolver
 from chatidea.patterns import nlu
 
@@ -13,9 +12,9 @@ class Button(typing.TypedDict):
 
 def get_buttons_element_relations(element_name) -> list[Button]:
     relations = resolver.extract_relations(element_name)
-    buttons = []
+    buttons: list[Button] = []
     for rel in relations:
-        title = rel['keyword']
+        title: str = rel['keyword']
         payload = extract_payload(nlu.INTENT_CROSS_RELATION,
                                   [nlu.ENTITY_RELATION, rel['keyword']])
         buttons.append({'title': title, 'payload': payload})
@@ -33,7 +32,7 @@ def get_button_history() -> Button:
 
 
 def get_buttons_select_element(element) -> list[Button]:
-    buttons = []
+    buttons: list[Button] = []
     for i in range(element['show']['from'], element['show']['to']):
         title = resolver.get_element_show_string(element['element_name'],
                                                  element['value'][i])
@@ -51,7 +50,7 @@ def get_buttons_select_element(element) -> list[Button]:
 
 
 def get_buttons_select_phrases(phrases) -> list[Button]:
-    buttons = []
+    buttons: list[Button] = []
     for i in phrases:
         payload = extract_payload(nlu.INTENT_FIND_ELEMENT_BY_ATTRIBUTE,
                                   [nlu.ENTITY_PHRASE,
@@ -79,7 +78,7 @@ def get_button_order_by() -> Button:
 
 
 def get_buttons_order_by_attribute(element, element_name) -> list[Button]:
-    buttons = []
+    buttons: list[Button] = []
     """ attribute_alias = resolver.extract_attributes_alias(element_name)
     for e in element:
         title_payload = e
@@ -112,7 +111,7 @@ def get_button_show_more_examples(element) -> Button:
 
 
 def get_buttons_show_more_ex_attr(element_name, attributes) -> list[Button]:
-    buttons = []
+    buttons: list[Button] = []
     for a in attributes:
         """if 'by' in a:
             new_table_name = a.get('by')[-1]['to_table_name']
@@ -148,7 +147,7 @@ def get_button_show_more_context() -> Button:
 
 def get_buttons_tell_me_more() -> list[Button]:
     elements = resolver.get_all_primary_element_names()
-    buttons = []
+    buttons: list[Button] = []
     for e in elements:
         title = "Tell me more about {}".format(e)
         payload = extract_payload(nlu.INTENT_MORE_INFO_FIND,
@@ -177,7 +176,7 @@ def get_button_go_back_to_context_position(action_name, pos) -> Button:
 
 
 def get_buttons_help() -> list[Button]:
-    buttons = [{'title': '- SHOW ALL THE CONCEPTS -',
+    buttons: list[Button] = [{'title': '- SHOW ALL THE CONCEPTS -',
                 'payload': extract_payload(nlu.INTENT_HELP_ELEMENTS)},
                {'title': '- Help on HISTORY -',
                 'payload': extract_payload(nlu.INTENT_HELP_HISTORY)},
@@ -187,7 +186,7 @@ def get_buttons_help() -> list[Button]:
 
 
 def get_buttons_select_category(element, category_column, categories) -> list[Button]:
-    buttons = []
+    buttons: list[Button] = []
     displayed_categories = categories[:5]
     for c in displayed_categories:
         title = c['category']
@@ -210,10 +209,10 @@ def get_button_help_on_elements() -> Button:
 
 
 def get_button_show_table_categories(element) -> list[Button]:
-    buttons = []
+    buttons: list[Button] = []
     for cat in resolver.extract_categories(element):
-        title = "+ SHOW THE {}S OF {} +".format(cat.alias.upper(),
-                                                element.upper())
+        name = cat.name or (cat.source if isinstance(cat.source, str) else cat.source.show_as_column or cat.source.to_table)
+        title = f"+ SHOW THE {name.upper()}S OF {element.upper()} +"
         payload = extract_payload(nlu.INTENT_SHOW_TABLE_CATEGORIES,
                                   [element, cat.column])
         buttons.append({'title': title, 'payload': payload})
@@ -231,7 +230,7 @@ def extract_payload(intent_name, *entity_pairs) -> str:
     return payload
 
 
-def get_base_buttons(context: Context) -> list[Button]:
+def get_base_buttons(context) -> list[Button]:
     return [
         get_button_help_on_elements(),
         get_button_go_back_to_context_position('- GO BACK! -', len(context.get_context_list()) - 1),
