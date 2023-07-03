@@ -304,8 +304,9 @@ def action_more_info_find(entities, context, add=True) -> ActionReturn:
         btn.get_button_go_back_to_context_position('- GO BACK! -', len(context.get_context_list()) - 1),
         btn.get_button_history()
     ]
-    element_name = handle_element_name_similarity(
-        extract_single_entity_value(entities, nlu.ENTITY_ELEMENT))
+
+    name = extract_single_entity_value(entities, nlu.ENTITY_ELEMENT)
+    element_name = handle_element_name_similarity(name) if name else None
 
     if not element_name:
         return ['I am sorry, I understood that you want more info, but not on what...'], base_buttons
@@ -334,8 +335,8 @@ def action_more_info_filter(entities, context) -> ActionReturn:
         btn.get_button_go_back_to_context_position('- GO BACK! -', len(context.get_context_list()) - 1),
         btn.get_button_history()
     ]
-    element_name = handle_element_name_similarity(
-        extract_single_entity_value(entities, nlu.ENTITY_ELEMENT))
+    name = extract_single_entity_value(entities, nlu.ENTITY_ELEMENT)
+    element_name = handle_element_name_similarity(name) if name else None
     if element_name:
         return msg.filter_element_examples(element_name), base_buttons
     element = context.get_last_element()
@@ -404,8 +405,8 @@ def remove_el(entities: list[extractor.Entity]):
 
 @action
 def action_ambiguity_solver(entities: list[extractor.Entity], context) -> ActionReturn:
-    element_name = handle_element_name_similarity(
-        extract_single_entity_value(entities, nlu.ENTITY_ELEMENT))
+    name = extract_single_entity_value(entities, nlu.ENTITY_ELEMENT)
+    element_name = handle_element_name_similarity(name) if name else None
     replace_el_name(entities, element_name)
 
     if not contain(entities, nlu.ENTITY_WORD) and not contain(entities, nlu.ENTITY_NUMBER):
@@ -451,8 +452,8 @@ def contain(entities: list[extractor.Entity], word):
 
 @action
 def action_find_element_by_attribute(entities: list[extractor.Entity], context) -> ActionReturn:
-    element_name = handle_element_name_similarity(
-        extract_single_entity_value(entities, nlu.ENTITY_ELEMENT))
+    name = extract_single_entity_value(entities, nlu.ENTITY_ELEMENT)
+    element_name = handle_element_name_similarity(name) if name else None
     ordered_entities = compute_ordered_entity_list(entities)
 
     if not element_name:
