@@ -1,20 +1,21 @@
 import re
 
+from chatidea.actions.common import ActionReturn
 from chatidea.extractor import Entity
 from chatidea.patterns import btn, msg, nlu
 
 phrases = list()
 
 
-def traslate_to_nl(entities:list[Entity], response, begin="Find"):
+def traslate_to_nl(entities: list[Entity], begin="Find"):
     ordered_entities = order_entities(entities)
-    phrase = create_phrase(ordered_entities, response, begin)
+    phrase = create_phrase(ordered_entities, begin)
 
     if phrase not in phrases:
         phrases.append(phrase)
 
 
-def create_phrase(entities: list[Entity], response,
+def create_phrase(entities: list[Entity],
                   begin="Find"):  # begin = Find to be changed in future applications, to force reiterate
     el_added = False  # these 3 are used to ensure that every phrase has every part only once
     attr_added = False
@@ -38,16 +39,10 @@ def create_phrase(entities: list[Entity], response,
     return phrase
 
 
-def build_response(response, context):
-    response.add_message(msg.AMBIGUITY_FOUND)
-    response.add_buttons(btn.get_buttons_select_phrases(phrases))
-    response.add_button(btn.get_button_help_on_elements())
-    # response.add_message('Remember that you can always go back, just click the button')
-    response.add_button(
-        btn.get_button_go_back_to_context_position('- GO BACK! -',
-                                                   len(context.get_context_list()) - 1))
-    response.add_button(btn.get_button_history())
+def build_response(context) -> ActionReturn:
+    m, b = msg.AMBIGUITY_FOUND, btn.get_buttons_select_phrases(phrases) + btn.get_base_buttons(context)
     phrases.clear()
+    return m, b
 
 
 def order_entities(
