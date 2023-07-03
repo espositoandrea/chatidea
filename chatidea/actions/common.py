@@ -24,3 +24,15 @@ def action(func: ActionFunction):
         return response
 
     return wrapper
+
+
+def add_to_context(name, entities, context):
+    selected_element = dict()
+    selected_element['value'] = "     "
+    selected_element['entities'] = entities
+    selected_element['query'] = None
+    selected_element['real_value_length'] = 777
+    selected_element['action_name'] = name
+    selected_element['action_type'] = name
+    selected_element['element_name'] = name
+    context.append_element(selected_element)

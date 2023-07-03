@@ -271,18 +271,6 @@ def add_selected_element_to_context(element, position, context):
     context.append_element(selected_element)
 
 
-def add_to_context(name, entities, context):
-    selected_element = dict()
-    selected_element['value'] = "     "
-    selected_element['entities'] = entities
-    selected_element['query'] = None
-    selected_element['real_value_length'] = 777
-    selected_element['action_name'] = name
-    selected_element['action_type'] = name
-    selected_element['element_name'] = name
-    context.append_element(selected_element)
-
-
 def is_value_in_selection_valid(element, position, title):
     # copying the dictionary
     selected_element = dict(element)

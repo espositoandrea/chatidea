@@ -1,7 +1,6 @@
-from chatidea.actions.common import action, ActionReturn
+from chatidea.actions.common import action, ActionReturn, add_to_context
 from chatidea.conversation import Context
 from chatidea.patterns import msg, btn
-from .actions import add_to_context
 
 
 @action
