@@ -894,16 +894,11 @@ def action_show_table_categories(entities: list[Entity], context, add=True) -> A
     create_plot(element, category.name.upper())
 
     if add:
-        element = dict()
-        element['value'] = 0
-        element['element_name'] = 'show_table_categories'
-        element['element_value'] = element_name
-        element['action_name'] = 'show_table_categories'
-        element['action_type'] = 'show_table_categories'
-        element['entities'] = entities
-        element['query'] = None
-        element['real_value_length'] = 1
-        context.append_element(element)
+        context.append_element({
+            'value': 0, 'element_name': 'show_table_categories', 'element_value': element_name,
+            'action_name': 'show_table_categories', 'action_type': 'show_table_categories', 'entities': entities,
+            'query': None, 'real_value_length': 1
+        })
 
     return [
         f'The concepts of type {element_name} can be categorized based on {category.name}.',
