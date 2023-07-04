@@ -72,13 +72,13 @@ class Relation(BaseModel):
 
 class Concept(BaseModel):
     element_name: str
-    aliases: list[str]
+    aliases: list[str] = []
     type: Literal["primary", "secondary", "crossable"]
     table_name: str
-    show_columns: list[ColumnDescriptor]
-    category: list[Category]
-    attributes: list[Attribute]
-    relations: list[Relation]
+    show_columns: list[ColumnDescriptor] = []
+    category: list[Category] = []
+    attributes: list[Attribute] = []
+    relations: list[Relation] = []
 
     def __getitem__(self, item: str) -> Any:
         warnings.warn('This function is deprecated', DeprecationWarning)
