@@ -46,149 +46,167 @@
 
 
 <script type="text/javascript">
-
-
-var db_concept
-var primary_elements
-var all_keyword = []
-fetch("static/db_concept.json")
-  .then(response => response.json())
-  .then(
-    json => {
-      db_concept = json
-      primary_elements = get_all_primary_element_names()
-    }
-    
-    );
-
-window.setInterval(function(){
-  format_buttons()
-  format_tell_me_more()
-}, 200);
-
-
-
-  function get_all_primary_element_names(){
-    var results = [];
-    for (var i = 0; i < db_concept.length; i++){
-      var obj = db_concept[i];
-      if (obj['type'] == 'primary')
-        results.push(obj['element_name']);
-      if (typeof obj['attributes'] != 'undefined' && obj['attributes'].length > 0){
-        for (var j = 0; j < obj['attributes'].length; j++){
-          var attr = obj['attributes'][j];
-          if (attr['keyword'])
-            if (all_keyword.indexOf(attr['keyword']) === -1 ) 
-              all_keyword.push(attr['keyword']);
-        }
-      }
-      }
-      return results
-  }
-
-  function format_tell_me_more(){
-    var exampleList = document.getElementsByTagName("li")
-    var pattern1 = ("Find (" + primary_elements.join("|") + ") " + "(" + all_keyword.join("|") + ")?" + " (.*) (or) (" + all_keyword.join("|") +")? (.*)")
-    var pattern2 = ("Find (" + primary_elements.join("|") + ") " + "(" + all_keyword.join("|") + ")?" + " (.*) (" + all_keyword.join("|") +")? (.*) (" + all_keyword.join("|") +")? (.*)")
-    var pattern3 = ("Find (" + primary_elements.join("|") + ") " + "(" + all_keyword.join("|") + ")?" + " (.*) (" + all_keyword.join("|") +")? (.*)")
-    var pattern4 = ("Find (" + primary_elements.join("|") + ") " + "(" + all_keyword.join("|") + ")?" + " (.*)")
-    var pattern5 = ("Find (" + primary_elements.join("|") + ")" + " (.*) or (.*)")
-    var pattern6 = ("Find (" + primary_elements.join("|") + ")" + " (.*)")
-    var regExp1 = new RegExp(pattern1)
-    var regExp2 = new RegExp(pattern2)
-    var regExp3 = new RegExp(pattern3)
-    var regExp4 = new RegExp(pattern4)
-    var regExp5 = new RegExp(pattern5)
-    var regExp6 = new RegExp(pattern6)
-    for (var i=0; i<exampleList.length; i++){
-      str = exampleList[i].innerText
-      if (regExp1.test(str)){
-        res = str.replace(regExp1, "Find $1 $2 <i>$3</i> $4 $5 <i>$6</i>")
-        exampleList[i].innerHTML = res;
-      }
-      else if (regExp2.test(str)){
-        res = str.replace(regExp2, "Find $1 $2 <i>$3</i>  $4 <i>$5</i> $6 <i>$7</i>")
-        exampleList[i].innerHTML = res;
-      }
-      else if (regExp3.test(str)){
-        res = str.replace(regExp3, "Find $1 $2 <i>$3</i>  $4 <i>$5</i>")
-        exampleList[i].innerHTML = res;
-      }
-      else if (regExp4.test(str)){
-        res = str.replace(regExp4, "Find $1 $2 <i>$3</i>")
-        exampleList[i].innerHTML = res;
-      }
-      else if(regExp5.test(str)){
-        res = str.replace(regExp5, "Find $1 <i>$2</i> or <i>$3</i>")
-        exampleList[i].innerHTML = res;
-      }
-      else if(regExp6.test(str)){
-        res = str.replace(regExp6, "Find $1 <i>$2</i>")
-        exampleList[i].innerHTML = res;
-      }
-    }
-  }
-
-
-  function format_buttons(){
-    var reply = document.getElementsByClassName("css-1aibqey");
-    var state = 0;
-    var num_service_button = 0;
-    var num_funct_button = 0;
-
-    for ( var i=0; i<reply.length; i++ ) {
-      if(state == 0){
-        if (!reply[i].innerText.startsWith("-")){
-                   state = 1;
-        }
-      }
-      else if(state == 1){
-        if (reply[i].innerText.startsWith("-")){
-          reply[i].classList.add("service_button");//color green all the service buttons
-          if (num_service_button==0){//create a margin top on the first service button
-            reply[i].setAttribute("style","margin-top:20px");
-            num_service_button++;
-            if (reply[i].parentElement.previousSibling.innerHTML != "Service buttons"){
-            	var newItem = document.createElement("div");
-                newItem .setAttribute('class', 'service_label');
-           	var textnode = document.createTextNode("Service buttons");
-            	newItem.appendChild(textnode);
-            	reply[i].parentNode.parentNode.insertBefore(newItem, reply[i].parentElement);
+    let db_concept;
+    let primary_elements;
+    const all_keyword = [];
+    fetch("static/db_concept.json")
+        .then(response => response.json())
+        .then(
+            json => {
+                db_concept = json
+                primary_elements = get_all_primary_element_names()
             }
-          }
-        }
+        );
 
-       if (reply[i].innerText.startsWith("+")){
-          reply[i].classList.add("function_button");//color orange all the service buttons
-          if (num_funct_button==0){//create a margin top on the first service button
-            reply[i].setAttribute("style","margin-top:20px");
-            num_funct_button++;
-            if (reply[i].parentElement.previousSibling.innerHTML != "Functional buttons"){
-            	var newItem = document.createElement("div");
-                newItem .setAttribute('class', 'service_label');
-           	var textnode = document.createTextNode("Functional buttons");
-            	newItem.appendChild(textnode);
-            	reply[i].parentNode.parentNode.insertBefore(newItem, reply[i].parentElement);
+    window.setInterval(function () {
+        format_buttons()
+        format_tell_me_more()
+    }, 200);
+
+
+    function get_all_primary_element_names() {
+        const results = [];
+        for (let i = 0; i < db_concept.length; i++) {
+            const obj = db_concept[i];
+            if (obj['type'] === 'primary')
+                results.push(obj['element_name']);
+            if (typeof obj['attributes'] != 'undefined' && obj['attributes'].length > 0) {
+                for (let j = 0; j < obj['attributes'].length; j++) {
+                    const attr = obj['attributes'][j];
+                    if (attr['keyword'])
+                        if (all_keyword.indexOf(attr['keyword']) === -1)
+                            all_keyword.push(attr['keyword']);
+                }
             }
-          }
         }
-      }
+        return results
     }
-  }
-  
-  </script>
-  <style> 
-      .function_button{border-color: orange;color: orange;}
-      .service_label{margin-top:20px;margin-bottom:-20px; max-width: 215px;}
-      .reply.service_button:first-of-type {margin-top:20px;}
-      .service_button{border-color: #198c33;color: #198c33;}
-      .response {max-width: 500px;background-color: #f2f2f2;border-radius: 30px;}
-      .client {background-color: #2476ff; border-radius: 30px;}
-      .widget-embedded{margin: auto; max-width: 800px;height: 100%;text-align:center;}
-      body, p, ul, li, div, html, .reply {font: 13px/18px Tahoma,sans-serif,Arial,Helvetica;; line-height: 150%;}
-      #webchat{text-align:center; }
-      
-  </style>
+
+    function format_tell_me_more() {
+        const exampleList = document.getElementsByTagName("li");
+        const elements = primary_elements.join("|");
+        const keywords = all_keyword.join("|");
+        const regExp1 = new RegExp((`Find (${elements}) (${keywords})? (.*) (or) (${keywords})? (.*)`));
+        const regExp2 = new RegExp((`Find (${elements}) (${keywords})? (.*) (${keywords})? (.*) (${keywords})? (.*)`));
+        const regExp3 = new RegExp((`Find (${elements}) (${keywords})? (.*) (${keywords})? (.*)`))
+        const regExp4 = new RegExp((`Find (${elements}) (${keywords})? (.*)`))
+        const regExp5 = new RegExp((`Find (${elements}) (.*) or (.*)`))
+        const regExp6 = new RegExp((`Find (${elements}) (.*)`))
+        Array.from(exampleList).forEach(el => {
+            const str = el.innerText;
+            let res = str;
+            if (regExp1.test(str)) {
+                res = str.replace(regExp1, "Find $1 $2 <i>$3</i> $4 $5 <i>$6</i>")
+            } else if (regExp2.test(str)) {
+                res = str.replace(regExp2, "Find $1 $2 <i>$3</i>  $4 <i>$5</i> $6 <i>$7</i>")
+            } else if (regExp3.test(str)) {
+                res = str.replace(regExp3, "Find $1 $2 <i>$3</i>  $4 <i>$5</i>")
+            } else if (regExp4.test(str)) {
+                res = str.replace(regExp4, "Find $1 $2 <i>$3</i>")
+            } else if (regExp5.test(str)) {
+                res = str.replace(regExp5, "Find $1 <i>$2</i> or <i>$3</i>")
+            } else if (regExp6.test(str)) {
+                res = str.replace(regExp6, "Find $1 <i>$2</i>")
+            }
+            el.innerHTML = res;
+        })
+    }
+
+
+    function format_buttons() {
+        const reply = document.getElementsByClassName("css-1aibqey");
+        let state = 0;
+        let num_service_button = 0;
+        let num_funct_button = 0;
+
+        Array.from(reply).forEach(btn => {
+            if (state === 0) {
+                if (!btn.innerText.startsWith("-")) {
+                    state = 1;
+                }
+            } else if (state === 1) {
+                if (btn.innerText.startsWith("-")) {
+                    btn.classList.add("service_button");//color green all the service buttons
+                    if (num_service_button === 0) {//create a margin top on the first service button
+                        btn.setAttribute("style", "margin-top:20px");
+                        num_service_button++;
+                        if (btn.parentElement.previousSibling.innerHTML !== "Service buttons") {
+                            const newItem = document.createElement("div");
+                            newItem.setAttribute('class', 'service_label');
+                            const textnode = document.createTextNode("Service buttons");
+                            newItem.appendChild(textnode);
+                            reply[i].parentNode.parentNode.insertBefore(newItem, btn.parentElement);
+                        }
+                    }
+                }
+
+                if (btn.innerText.startsWith("+")) {
+                    btn.classList.add("function_button");//color orange all the service buttons
+                    if (num_funct_button === 0) {//create a margin top on the first service button
+                        btn.setAttribute("style", "margin-top:20px");
+                        num_funct_button++;
+                        if (btn.parentElement.previousSibling.innerHTML !== "Functional buttons") {
+                            const newItem = document.createElement("div");
+                            newItem.setAttribute('class', 'service_label');
+                            const textnode = document.createTextNode("Functional buttons");
+                            newItem.appendChild(textnode);
+                            btn.parentNode.parentNode.insertBefore(newItem, btn.parentElement);
+                        }
+                    }
+                }
+            }
+        })
+    }
+</script>
+<style>
+    .function_button {
+        border-color: orange;
+        color: orange;
+    }
+
+    .service_label {
+        margin-top: 20px;
+        margin-bottom: -20px;
+        max-width: 215px;
+    }
+
+    .reply.service_button:first-of-type {
+        margin-top: 20px;
+    }
+
+    .service_button {
+        border-color: #198c33;
+        color: #198c33;
+    }
+
+    .response {
+        max-width: 500px;
+        background-color: #f2f2f2;
+        border-radius: 30px;
+    }
+
+    .client {
+        background-color: #2476ff;
+        border-radius: 30px;
+    }
+
+    .widget-embedded {
+        margin: auto;
+        max-width: 800px;
+        height: 100%;
+        text-align: center;
+    }
+
+    body, p, ul, li, div, html, .reply {
+        font: 13px/18px Tahoma, sans-serif, Arial, Helvetica;;
+        line-height: 150%;
+    }
+
+    #webchat {
+        text-align: center;
+    }
+
+</style>
 
 </body>
 
