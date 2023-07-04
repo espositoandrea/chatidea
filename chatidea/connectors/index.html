@@ -12,38 +12,6 @@
 
 <div id="rasa-chat-widget" data-websocket-url="http://localhost:5080"></div>
 <script src="https://unpkg.com/@rasahq/rasa-chat" type="application/javascript"></script>
-<script>
-  localStorage.clear()
-  WebChat.default.init({
-    embedded: true,
-    selector: "#webchat",
-    initPayload: "/start",
-    interval: 1000, // 1000 ms between each message
-    //customData: {"userId": "123"}, // arbitrary custom data. Stay minimal as this will be added to the socket
-    socketUrl: "https://localhost:5080",
-    clearCache: true,
-    socketPath: "/socket.io/",
-    title: "Sherbot",
-    subtitle: "Data exploration chatbot",
-    inputTextFieldHint: "Type a message...",
-    connectingText: "Waiting for server...",
-    hideWhenNotConnected: false,
-    fullScreenMode: true,
-//    profileAvatar: "http://to.avat.ar",
-//    openLauncherImage: 'myCustomOpenImage.png',
-//    closeLauncherImage: 'myCustomCloseImage.png',
-    params: {
-      images: {
-        dims: {
-          width: 400,
-          height: 420,
-        }
-      },
-      storage: "local"
-    }
-  })
-</script>
-
 
 <script type="text/javascript">
     let db_concept;
