@@ -11,7 +11,7 @@ from collections import namedtuple
 from typing import Optional, Any, List
 
 import pyodbc
-from pypika import MSSQLQuery as Query, Table, Criterion, Field, functions, \
+from pypika import MySQLQuery as Query, Table, Criterion, Field, functions, \
     Order
 from pypika.dialects import Dialects
 from pypika.queries import QueryBuilder

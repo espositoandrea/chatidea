@@ -51,11 +51,6 @@ if __name__ == '__main__':
         # console_input()
     else:
         logging.warning("Running in debug mode: executing predefined queries")
-        broker.query_category_value("sample", "Samples", {
-				"column": "IdState",
-				"alias": "state",
-				"keyword": "in state"
-			}, "Convalidato")
         get_test_query("find teachers")
         get_test_query("find teacher Matera")
         get_test_query('/cross_rel{"rel":"in research area"}')
