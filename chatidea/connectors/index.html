@@ -131,7 +131,7 @@ window.setInterval(function(){
 
 
   function format_buttons(){
-    var reply = document.getElementsByClassName("reply");
+    var reply = document.getElementsByClassName("css-1aibqey");
     var state = 0;
     var num_service_button = 0;
     var num_funct_button = 0;
@@ -148,12 +148,12 @@ window.setInterval(function(){
           if (num_service_button==0){//create a margin top on the first service button
             reply[i].setAttribute("style","margin-top:20px");
             num_service_button++;
-            if (reply[i].previousSibling.innerHTML != "Service buttons"){	
+            if (reply[i].parentElement.previousSibling.innerHTML != "Service buttons"){
             	var newItem = document.createElement("div");
                 newItem .setAttribute('class', 'service_label');
            	var textnode = document.createTextNode("Service buttons");
             	newItem.appendChild(textnode);
-            	reply[i].parentNode.insertBefore(newItem, reply[i]);
+            	reply[i].parentNode.parentNode.insertBefore(newItem, reply[i].parentElement);
             }
           }
         }
@@ -163,12 +163,12 @@ window.setInterval(function(){
           if (num_funct_button==0){//create a margin top on the first service button
             reply[i].setAttribute("style","margin-top:20px");
             num_funct_button++;
-            if (reply[i].previousSibling.innerHTML != "Functional buttons"){	
+            if (reply[i].parentElement.previousSibling.innerHTML != "Functional buttons"){
             	var newItem = document.createElement("div");
                 newItem .setAttribute('class', 'service_label');
            	var textnode = document.createTextNode("Functional buttons");
             	newItem.appendChild(textnode);
-            	reply[i].parentNode.insertBefore(newItem, reply[i]);
+            	reply[i].parentNode.parentNode.insertBefore(newItem, reply[i].parentElement);
             }
           }
         }
