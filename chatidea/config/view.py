@@ -16,7 +16,7 @@
 import warnings
 from typing import Optional, Iterator, Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, RootModel
 
 
 class ColumnView(BaseModel):
@@ -36,26 +36,24 @@ class TableView(BaseModel):
         return getattr(self, item)
 
 
-class DatabaseView(BaseModel):
-    __root__: dict[str, TableView]
+class DatabaseView(RootModel):
+    root: dict[str, TableView]
+    model_config = ConfigDict(json_schema_extra={
+        '$id': "https://chatidea.gihub.io/chatidea/schemas/view.schema.json",
+        'title': 'Database View',
+        'description': 'A configuration object that allows to define how'
+                       ' each table is presented to the user. It contains,'
+                       ' for each table, a mapping between the name of the'
+                       ' columns that should be shown as saved in the'
+                       ' database and the name of the columns in "natural'
+                       ' language".'
+    })
 
     def __iter__(self) -> Iterator[str]:
-        return iter(self.__root__)
+        return iter(self.root)
 
     def __getitem__(self, item) -> TableView:
-        return self.__root__[item]
+        return self.root[item]
 
     def get(self, item, default=None) -> Optional[TableView]:
-        return self.__root__.get(item, default)
-
-    class Config:
-        schema_extra = {
-            '$id': "https://chatidea.gihub.io/chatidea/schemas/view.schema.json",
-            'title': 'Database View',
-            'description': 'A configuration object that allows to define how'
-                           ' each table is presented to the user. It contains,'
-                           ' for each table, a mapping between the name of the'
-                           ' columns that should be shown as saved in the'
-                           ' database and the name of the columns in "natural'
-                           ' language".'
-        }
+        return self.root.get(item, default)

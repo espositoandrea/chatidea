@@ -16,7 +16,7 @@
 import warnings
 from typing import Literal, Optional, Iterator, Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, RootModel, ConfigDict
 
 
 class ColumnDescriptor(BaseModel):
@@ -85,16 +85,14 @@ class Concept(BaseModel):
         return getattr(self, item)
 
 
-class DatabaseConcepts(BaseModel):
-    __root__: list[Concept]
+class DatabaseConcepts(RootModel):
+    root: list[Concept]
+    model_config = ConfigDict(json_schema_extra={
+        'title': 'Concepts List'
+    })
 
     def __iter__(self) -> Iterator[Concept]:
-        return iter(self.__root__)
+        return iter(self.root)
 
     def __getitem__(self, item) -> Concept:
-        return self.__root__[item]
-
-    class Config:
-        schema_extra = {
-            'title': 'Concepts List'
-        }
+        return self.root[item]

@@ -16,7 +16,7 @@
 import warnings
 from typing import Optional, Iterator, Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, RootModel, ConfigDict
 
 
 class Reference(BaseModel):
@@ -41,19 +41,17 @@ class TableSchema(BaseModel):
         return getattr(self, item)
 
 
-class DatabaseSchema(BaseModel):
-    __root__: dict[str, TableSchema]
+class DatabaseSchema(RootModel):
+    root: dict[str, TableSchema]
+    model_config = ConfigDict(json_schema_extra={
+        'title': 'Database Schema'
+    })
 
     def __iter__(self) -> Iterator[str]:
-        return iter(self.__root__)
+        return iter(self.root)
 
     def __getitem__(self, item) -> TableSchema:
-        return self.__root__[item]
+        return self.root[item]
 
     def get(self, item, default=None) -> Optional[TableSchema]:
-        return self.__root__.get(item, default)
-
-    class Config:
-        schema_extra = {
-            'title': 'Database Schema'
-        }
+        return self.root.get(item, default)
