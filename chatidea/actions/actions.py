@@ -625,14 +625,6 @@ def action_view_context_element(entities, context, show_less=False) -> ActionRet
     messages = []
     buttons = []
     if element['real_value_length'] == 1:
-        if previous_element:
-            if element['element_name'] == previous_element['element_name'] \
-                    and previous_element['real_value_length'] > 1:
-                previous_results_list = ''
-                showed_elements = previous_element['show']['to']
-                for i in previous_element['value'][:showed_elements]:
-                    previous_results_list += f"- {resolver.get_element_show_string(previous_element['element_name'], i)}\n"
-                messages.append(previous_results_list)
         messages.append(msg.element_attributes(element))
         if element.get('element_name') in resolver.get_all_primary_element_names():
             m, b = action_show_relations(entities, context).get_components()
