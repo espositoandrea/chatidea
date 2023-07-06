@@ -1,7 +1,14 @@
+from chatidea.patterns.btn import Button
+
+
 class Response:
 
     def __init__(self):
         self.response_list = []
+
+    def get_components(self) -> tuple[list[str], list[Button]]:
+        return [x["value"] for x in self.response_list if x['type'] == "message"], \
+            [x["value"] for x in self.response_list if x['type'] == "button"]
 
     def add_message(self, message):
         self.response_list.append({'type': 'message',

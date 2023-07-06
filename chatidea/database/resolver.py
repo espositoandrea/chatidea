@@ -1,6 +1,7 @@
 import logging
 
 from chatidea.config import DatabaseConcepts
+from chatidea.config.view import ColumnView
 from chatidea.database import broker
 from chatidea.settings import DB_CONCEPT, DB_CONCEPT_S
 
@@ -97,7 +98,7 @@ def extract_categories(element_name: str):
 def extract_category(element_name: str, column_name: str):
     e = extract_element(element_name)
     for c in e.category:
-        if c.column == column_name:
+        if c.column == column_name or c.alias == column_name:
             return c
     return None
 
@@ -197,7 +198,7 @@ def query_category_value(element_name, category_column, category_value):
     return result_element
 
 
-def simulate_view(element_name):
+def simulate_view(element_name) -> list[ColumnView]:
     e = extract_element(element_name)
     table_name = e.table_name
     result_element = broker.simulate_view(table_name)

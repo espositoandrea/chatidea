@@ -44,10 +44,8 @@ def element_attributes(element):
     #    value = copy.deepcopy(value_with_alias)
     msg = '{}\n'.format(element['element_name'].upper())
     displayable_attributes = resolver.simulate_view(element['element_name'])
-    attribute_names = [i['attribute'] for i in displayable_attributes if
-                       'attribute' in i]
-    displayed_names = [i['display'] for i in displayable_attributes if
-                       'display' in i]
+    attribute_names = [i.attribute for i in displayable_attributes]
+    displayed_names = [i.display for i in displayable_attributes]
     for k, v in element['value'][0].items():
         if k in attribute_names:
             i = attribute_names.index(k)

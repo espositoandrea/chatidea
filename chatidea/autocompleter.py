@@ -1,13 +1,14 @@
 import re
 
 from chatidea.database import resolver
-from chatidea.patterns import nlu
-from . import actions
+from chatidea.patterns import nlu, Response
 from . import nltrasnslator
+from .actions import actions
+from .actions.common import ActionReturn
 from .extractor import Entity
 
 
-def autocomplete_from_word(entities, response, context):
+def autocomplete_from_word(entities) -> ActionReturn:
     element_name = actions.handle_element_name_similarity(
         actions.extract_single_entity_value(entities, nlu.ENTITY_ELEMENT))
     # ordered_entities = compute_ordered_entity_list(entities)
@@ -29,7 +30,7 @@ def autocomplete_from_word(entities, response, context):
     # alla fine chiamo il normale find element by attribute con l'array completato
     print("ENTITIES DOPO COMPLETAMENTO--------------------")
     print(entities)
-    nltrasnslator.traslate_to_nl(entities, response)
+    return nltrasnslator.traslate_to_nl(entities)
 
 
 def contain(entities: list[Entity], word):
@@ -56,7 +57,7 @@ def add_entity_from_word(entities: list[Entity]):
     return entities
 
 
-def add_attribute_from_word_number_and_el_number(entities:list[Entity]):
+def add_attribute_from_word_number_and_el_number(entities: list[Entity]):
     for i in range(0, len(entities)):
 
         match = re.match("(\w+)_(\d+)", entities[i].entity)  # devi fare il numero e dividere i gruppi
@@ -84,9 +85,9 @@ def add_attribute_from_word_number_and_el_number(entities:list[Entity]):
     if attribute_number and attributes:
         entities.insert(position, Entity(**{'start': 0, 'value':
             attributes[int(attribute_number) - 1]['keyword'],
-                                   'entity': nlu.ENTITY_ATTRIBUTE + "_" + str(
-                                       entity_number) + "_" + str(
-                                       attribute_number)}))
+                                            'entity': nlu.ENTITY_ATTRIBUTE + "_" + str(
+                                                entity_number) + "_" + str(
+                                                attribute_number)}))
     return entities
 
 

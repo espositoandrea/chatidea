@@ -8,7 +8,7 @@ import string
 import typing
 import warnings
 from collections import namedtuple
-from typing import Optional, Any, List
+from typing import Optional, Any
 
 import pyodbc
 from pypika import MySQLQuery as Query, Table, Criterion, Field, functions, \
@@ -27,9 +27,9 @@ from chatidea.settings import DB_NAME, DB_SCHEMA, DB_VIEW, \
 
 logger = logging.getLogger(__name__)
 
-db_schema: Optional[DatabaseSchema] = None
+db_schema: Optional[DatabaseSchema] = DB_SCHEMA
 
-db_view: Optional[DatabaseView] = None
+db_view: Optional[DatabaseView] = DB_VIEW
 
 
 def test_connection():
@@ -274,6 +274,7 @@ def query_join(element, relation):
     # the table is the last one of the last "by" in the relation
     to_table_name = relation.by[-1]['to_table_name']
     to_columns = get_columns(to_table_name)
+    relation = relation.dict()
 
     # the table is the one of the first "by" in the relation
     from_table_name = relation['by'][0]['from_table_name']
@@ -324,43 +325,37 @@ def get_reverse_relation(relation: dict):
     return final
 
 
-def query_category(in_table_name, category):
+def query_category(in_table_name, category) -> Result:
     columns = ("category", "count")
-    ref = {}
+    ref: Optional[Reference] = None
 
     for fk in get_references_from_name(in_table_name):
-        if fk.from_attribute == category:
+        if fk.from_attribute == category.column:
             ref = fk
 
     from_table = Table(in_table_name)
-    from_field = from_table.field(category)
+    from_field = from_table.field(category.column)
+    query: QueryBuilder = Query.from_(from_table)
     if ref:
         to_table = Table(ref.to_table)
-        query: QueryBuilder = (Query.from_(from_table)
-                               .left_join(to_table)
-                               .on(
-            from_field == to_table.field(ref.to_attribute))
-                               .select(to_table.field(ref.show_attribute),
-                                       functions.Count('*'))
-                               .groupby(from_field,
-                                        to_table.field(ref.show_attribute))
-                               .orderby(functions.Count('*'), order=Order.desc)
-                               )
-        query_string = str(query)
+        query = (query
+                 .left_join(to_table)
+                 .on(from_field == to_table.field(ref.to_attribute))
+                 .select(to_table.field(ref.show_attribute), functions.Count('*'))
+                 .groupby(from_field, to_table.field(ref.show_attribute))
+                 .orderby(functions.Count('*'), order=Order.desc))
     else:
-        query: QueryBuilder = (Query.from_(from_table)
-                               .select(from_field, functions.Count('*'))
-                               .groupby(from_field)
-                               .orderby(functions.Count('*'),
-                                        order=Order.desc))
-        query_string = str(query)
+        query = (query
+                 .select(from_field, functions.Count('*'))
+                 .groupby(from_field)
+                 .orderby(functions.Count('*'), order=Order.desc))
 
     tup = None
-    rows = execute_query_select(query_string, tup, limit=False)
-    return get_dictionary_result(query_string, tup, rows, columns, category)
+    rows = execute_query(query, tup, limit=False)
+    return get_dictionary_result(str(query), tup, rows, columns, category)
 
 
-def query_category_value(element_name, table_name, category_column:Category,
+def query_category_value(element_name, table_name, category_column: Category,
                          category_value):
     columns = get_columns(table_name)
     attribute = resolver.get_attribute_by_name(element_name,
