@@ -8,9 +8,9 @@ stages:
     deps:
     - writer/chatito_template.chatito
     - translator.py
-    - ../database/schema.json
-    - ../database/view.json
-    - ../database/concept.json
+    - ../resources/db/db_schema_deib.json
+    - ../resources/db/db_view_deib.json
+    - ../resources/db/db_concept_deib.json
   generate-phrases:
     cmd: npx chatito writer/chatito_model.chatito --format=rasa --defaultDistribution=even
       --outputPath=writer

@@ -4,60 +4,73 @@ stages:
     cmd: python3 translator.py -t "writer/chatito_template.chatito" -o "writer/chatito_model.chatito"
       -p params.yaml
     deps:
-    - path: ../database/concept.json
-      md5: cece221ff94acd1c12f110383be044b6
-      size: 13675
-    - path: ../database/schema.json
-      md5: 34918aaf07bfc37462ab70bcdffed2a8
-      size: 6069
-    - path: ../database/view.json
-      md5: e23aab89e81553555a7202514e61c2db
-      size: 30151
+    - path: ../resources/db/db_concept_deib.json
+      hash: md5
+      md5: 91382d27461659739bf34b7bf956c1fd
+      size: 66248
+    - path: ../resources/db/db_schema_deib.json
+      hash: md5
+      md5: 8d07dbaa74263260caa40a4a8db31c42
+      size: 44793
+    - path: ../resources/db/db_view_deib.json
+      hash: md5
+      md5: c3f61fe8dba949d6333956be6a73bde2
+      size: 16174
     - path: translator.py
-      md5: c3c48fa33a7b8b8014c23e1950315680
-      size: 10159
+      hash: md5
+      md5: 62435b3b3f1fa8f01ad880f9ea8b877a
+      size: 9971
     - path: writer/chatito_template.chatito
-      md5: 3764b82dc9a72ee50b4e2c3c5db3dd57
-      size: 2093
+      hash: md5
+      md5: 1d37e3f5bc420ea54cd434a7c9e2d83c
+      size: 2092
     params:
       params.yaml:
         dataset.max_ngrams: 3
     outs:
     - path: writer/chatito_model.chatito
-      md5: 6d8ba1856b2915ad77e702ba6c9b0810
-      size: 20953
+      hash: md5
+      md5: c1c7eb264b34182e5b01efd65234a713
+      size: 96355
   generate-phrases:
     cmd: npx chatito writer/chatito_model.chatito --format=rasa --defaultDistribution=even
       --outputPath=writer
     deps:
     - path: writer/chatito_model.chatito
-      md5: 6d8ba1856b2915ad77e702ba6c9b0810
-      size: 20953
+      hash: md5
+      md5: c1c7eb264b34182e5b01efd65234a713
+      size: 96355
     outs:
     - path: writer/rasa_dataset_testing.json
-      md5: cf686978a9325c77a9afd718859549c6
-      size: 66524
+      hash: md5
+      md5: 2f09a2660cfc51efee33672000dc926f
+      size: 213918
     - path: writer/rasa_dataset_training.json
-      md5: 75aaa998b36f724a82e4746996fc34a1
-      size: 258725
+      hash: md5
+      md5: 200bf1430020f19130554db298cde9a1
+      size: 868336
   convert-data-to-yaml:
     cmd:
     - rasa data convert nlu -f yaml --data=writer/rasa_dataset_training.json --out=data/chatito_nlu.yml
     - rasa data convert nlu -f yaml --data=writer/rasa_dataset_testing.json --out=data/test_chatito_nlu.yml
     deps:
     - path: writer/rasa_dataset_testing.json
-      md5: cf686978a9325c77a9afd718859549c6
-      size: 66524
+      hash: md5
+      md5: 2f09a2660cfc51efee33672000dc926f
+      size: 213918
     - path: writer/rasa_dataset_training.json
-      md5: 75aaa998b36f724a82e4746996fc34a1
-      size: 258725
+      hash: md5
+      md5: 200bf1430020f19130554db298cde9a1
+      size: 868336
     outs:
     - path: data/chatito_nlu.yml
-      md5: ed743d4f7d939649534930a2d61c6ce7
-      size: 77344
+      hash: md5
+      md5: 7767d9c0a4b53dcd0ec95cd90e862ae1
+      size: 268994
     - path: data/test_chatito_nlu.yml
-      md5: 2c6f240816b762887923c80b4c90bb43
-      size: 20202
+      hash: md5
+      md5: aa535a6871c4310caa3a3c4d7efaef20
+      size: 66041
   train:
     cmd: rasa train --fixed-model-name nlu_model --out models --data data/chatito_nlu.yml
     deps:
@@ -65,46 +78,58 @@ stages:
       md5: 2b5e1366de3c068c134e338528382206
       size: 949
     - path: data/chatito_nlu.yml
-      md5: ed743d4f7d939649534930a2d61c6ce7
-      size: 77344
+      hash: md5
+      md5: 7767d9c0a4b53dcd0ec95cd90e862ae1
+      size: 268994
     - path: domain.yml
       md5: 65e4c57c53635900895b120f5ed8c944
       size: 863
     outs:
     - path: models/nlu_model.tar.gz
-      md5: f4da1f23f25cb50d11c4a2c6ff1c49b8
-      size: 30537038
+      hash: md5
+      md5: 0c562f522f29ad8d68410bf83c7b9b0d
+      size: 43176568
   test:
     cmd: rasa test nlu -m models/nlu_model.tar.gz -u data/test_chatito_nlu.yml
     deps:
     - path: data/test_chatito_nlu.yml
-      md5: 2c6f240816b762887923c80b4c90bb43
-      size: 20202
+      hash: md5
+      md5: aa535a6871c4310caa3a3c4d7efaef20
+      size: 66041
     - path: models/nlu_model.tar.gz
-      md5: f4da1f23f25cb50d11c4a2c6ff1c49b8
-      size: 30537038
+      hash: md5
+      md5: 0c562f522f29ad8d68410bf83c7b9b0d
+      size: 43176568
     outs:
     - path: results/DIETClassifier_confusion_matrix.png
-      md5: 34a6c4fbe347d3701094d174d343018f
-      size: 90597
+      hash: md5
+      md5: b2fa550649d0d897e509b8ba2e0b99e8
+      size: 181199
     - path: results/DIETClassifier_errors.json
-      md5: 2cfe9d0928e2961f0c770db9a4ef9b70
-      size: 37172
+      hash: md5
+      md5: 066348d189b48712d68d0d2b96845909
+      size: 136921
     - path: results/DIETClassifier_histogram.png
-      md5: c759831853e5dc0b3c99ce9b28bda7a3
-      size: 47319
+      hash: md5
+      md5: 6c0c11247954574c609d76059f88b0f4
+      size: 48370
     - path: results/DIETClassifier_report.json
-      md5: 4371c6a0a3e1d251eefc6f408aae500d
-      size: 3500
+      hash: md5
+      md5: 06afee57598880aaf7941a3e63a67065
+      size: 8757
     - path: results/intent_confusion_matrix.png
-      md5: ba63e39af59d9ca7c4ad0f31fbeb38ec
-      size: 79262
+      hash: md5
+      md5: ef63c4ec434933e6be4185308329659e
+      size: 85083
     - path: results/intent_errors.json
-      md5: 1ee05d81d78786614f0db157c4585a47
-      size: 175
+      hash: md5
+      md5: 7244665cd2568c18baf2758dd05c1cdc
+      size: 390
     - path: results/intent_histogram.png
-      md5: 0fd82e712ec856ac2cb934f0e2410ffd
-      size: 36367
+      hash: md5
+      md5: 7f3250799157b13a5f2b6d42e587d466
+      size: 46328
     - path: results/intent_report.json
-      md5: 22eb94332ec11f08e7da3dda17bb8ce1
-      size: 1839
+      hash: md5
+      md5: 65c20424f4f5bc390eb81712876505a3
+      size: 2102

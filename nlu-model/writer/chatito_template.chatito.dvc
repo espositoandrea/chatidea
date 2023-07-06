@@ -1,4 +1,5 @@
 outs:
-- md5: 3764b82dc9a72ee50b4e2c3c5db3dd57
-  size: 2093
+- md5: 1d37e3f5bc420ea54cd434a7c9e2d83c
+  size: 2092
   path: chatito_template.chatito
+  hash: md5
