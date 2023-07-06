@@ -27,9 +27,9 @@ from chatidea.settings import DB_NAME, DB_SCHEMA, DB_VIEW, \
 
 logger = logging.getLogger(__name__)
 
-db_schema: Optional[DatabaseSchema] = None
+db_schema: Optional[DatabaseSchema] = DB_SCHEMA
 
-db_view: Optional[DatabaseView] = None
+db_view: Optional[DatabaseView] = DB_VIEW
 
 
 def test_connection():
