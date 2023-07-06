@@ -245,6 +245,7 @@ def get_columns(table_name: str) -> list[Columns]:
 def query_find(in_table_name, attributes):
     columns = get_columns(in_table_name)
 
+    attributes = [{'value': v, 'operator': o, **a.dict()} for v, o, a in attributes]
     label_attributes(attributes, in_table_name)
     for a in attributes:
         a.setdefault('operator', '=')
