@@ -274,6 +274,7 @@ def query_join(element, relation):
     # the table is the last one of the last "by" in the relation
     to_table_name = relation.by[-1]['to_table_name']
     to_columns = get_columns(to_table_name)
+    relation = relation.dict()
 
     # the table is the one of the first "by" in the relation
     from_table_name = relation['by'][0]['from_table_name']
