@@ -14,7 +14,7 @@ from chatidea.actions.common import action, ActionReturn
 from chatidea.config.concept import Attribute
 from chatidea.database import resolver
 from chatidea.extractor import Entity
-from chatidea.patterns import btn, msg, nlu, Response
+from chatidea.patterns import btn, msg, nlu
 from chatidea.settings import ELEMENT_VISU_LIMIT, CONTEXT_VISU_LIMIT, \
     ELEMENT_SIMILARITY_DISTANCE_THRESHOLD
 
@@ -299,11 +299,7 @@ def clean_title_for_selection(title):
 
 @action
 def action_more_info_find(entities, context, add=True) -> ActionReturn:
-    base_buttons = [
-        btn.get_button_help_on_elements(),
-        btn.get_button_go_back_to_context_position('- GO BACK! -', len(context.get_context_list()) - 1),
-        btn.get_button_history()
-    ]
+    base_buttons = btn.get_base_buttons(context)
 
     name = extract_single_entity_value(entities, nlu.ENTITY_ELEMENT)
     element_name = handle_element_name_similarity(name) if name else None
@@ -586,12 +582,7 @@ def action_show_relations(entities, context) -> ActionReturn:
 
 @action
 def action_select_element_by_position(entities: list[extractor.Entity], context) -> ActionReturn:
-    base_buttons = [
-        btn.get_button_help_on_elements(),
-        # response.add_message('Remember that you can always go back, just click the button')
-        btn.get_button_go_back_to_context_position('- GO BACK! -', len(context.get_context_list()) - 1),
-        btn.get_button_history()
-    ]
+    base_buttons = btn.get_base_buttons(context)
     pos = extract_single_entity_value(entities, nlu.ENTITY_POSITION)
     title = extract_single_entity_value(entities, 'title')
 
@@ -617,11 +608,7 @@ def action_select_element_by_position(entities: list[extractor.Entity], context)
 
 @action
 def action_view_context_element(entities, context, show_less=False) -> ActionReturn:
-    base_buttons = [
-        btn.get_button_help_on_elements(),
-        btn.get_button_go_back_to_context_position('- GO BACK! -', len(context.get_context_list()) - 1),
-        btn.get_button_history()
-    ]
+    base_buttons = btn.get_base_buttons(context)
     element = context.view_last_element()
     previous_element = context.view_second_to_last_element()
     if not element:
@@ -889,7 +876,7 @@ def action_show_table_categories(entities: list[Entity], context, add=True) -> A
         return [f"I cannot find more info about {element_name}s."], base_buttons
 
     element = resolver.query_category(element_name, category)
-    create_plot(element, category.name.upper())
+    create_plot(element, (category.alias or category.column).upper())
 
     if add:
         context.append_element({
@@ -899,10 +886,10 @@ def action_show_table_categories(entities: list[Entity], context, add=True) -> A
         })
 
     return [
-        f'The concepts of type {element_name} can be categorized based on {category.name}.',
+        f'The concepts of type {element_name} can be categorized based on {category.alias}.',
         'Pie chart',
         f'You can select {element_name}s related to a specific category by clicking on the related button.'
-    ], btn.get_buttons_select_category(element_name, category.name, element['value']) + base_buttons
+    ], btn.get_buttons_select_category(element_name, category.alias, element['value']) + base_buttons
 
 
 def create_plot(categories, legend_title):

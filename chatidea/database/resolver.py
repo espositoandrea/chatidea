@@ -97,7 +97,7 @@ def extract_categories(element_name: str):
 def extract_category(element_name: str, column_name: str):
     e = extract_element(element_name)
     for c in e.category:
-        if c.column == column_name:
+        if c.column == column_name or c.alias == column_name:
             return c
     return None
 

@@ -177,11 +177,11 @@ def get_button_go_back_to_context_position(action_name, pos) -> Button:
 
 def get_buttons_help() -> list[Button]:
     buttons: list[Button] = [{'title': '- SHOW ALL THE CONCEPTS -',
-                'payload': extract_payload(nlu.INTENT_HELP_ELEMENTS)},
-               {'title': '- Help on HISTORY -',
-                'payload': extract_payload(nlu.INTENT_HELP_HISTORY)},
-               {'title': '- Help on GOING BACK -',
-                'payload': extract_payload(nlu.INTENT_HELP_GO_BACK)}]
+                              'payload': extract_payload(nlu.INTENT_HELP_ELEMENTS)},
+                             {'title': '- Help on HISTORY -',
+                              'payload': extract_payload(nlu.INTENT_HELP_HISTORY)},
+                             {'title': '- Help on GOING BACK -',
+                              'payload': extract_payload(nlu.INTENT_HELP_GO_BACK)}]
     return buttons
 
 
@@ -211,7 +211,7 @@ def get_button_help_on_elements() -> Button:
 def get_button_show_table_categories(element) -> list[Button]:
     buttons: list[Button] = []
     for cat in resolver.extract_categories(element):
-        name = cat.name or (cat.source if isinstance(cat.source, str) else cat.source.show_as_column or cat.source.to_table)
+        name = cat.alias or cat.column
         title = f"+ SHOW THE {name.upper()}S OF {element.upper()} +"
         payload = extract_payload(nlu.INTENT_SHOW_TABLE_CATEGORIES,
                                   [element, cat.column])
