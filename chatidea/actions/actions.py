@@ -406,7 +406,7 @@ def action_ambiguity_solver(entities: list[extractor.Entity], context) -> Action
     replace_el_name(entities, element_name)
 
     if not contain(entities, nlu.ENTITY_WORD) and not contain(entities, nlu.ENTITY_NUMBER):
-        return action_find_element_by_attribute(entities).get_components()
+        return action_find_element_by_attribute(entities, context).get_components()
 
     el_number = int(find_el_number(entities))
     word_el_number = int(find_word_el_number(entities))
