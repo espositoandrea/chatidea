@@ -214,7 +214,7 @@ def get_button_show_table_categories(element) -> list[Button]:
         name = cat.alias or cat.column
         title = f"+ SHOW THE {name.upper()}S OF {element.upper()} +"
         payload = extract_payload(nlu.INTENT_SHOW_TABLE_CATEGORIES,
-                                  [element, cat.column])
+                                  [element, name])
         buttons.append({'title': title, 'payload': payload})
     return buttons
 
