@@ -334,10 +334,10 @@ def action_more_info_filter(entities, context) -> ActionReturn:
     name = extract_single_entity_value(entities, nlu.ENTITY_ELEMENT)
     element_name = handle_element_name_similarity(name) if name else None
     if element_name:
-        return msg.filter_element_examples(element_name), base_buttons
+        return [msg.filter_element_examples(element_name)], base_buttons
     element = context.get_last_element()
     if element and element['real_value_length'] > 1:
-        return msg.filter_element_examples(element['element_name']), base_buttons
+        return [msg.filter_element_examples(element['element_name'])], base_buttons
     else:
         return ["I am sorry, but there is nothing to filter... You'd better tell on which element.\n"
                 f'Try, for instance, with "how to filter {resolver.get_all_primary_element_names()[0]}"'], base_buttons
