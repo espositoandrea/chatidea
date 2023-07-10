@@ -1,6 +1,6 @@
 [
         {
-                "element_name": "building",
+                "name": "building",
                 "aliases": ["building", "buildings"],
                 "type": "secondary",
                 "table_name": "location_edifici",
@@ -15,7 +15,7 @@
                 "relations": []
         },
         {
-                "element_name": "room",
+                "name": "room",
                 "aliases": ["rooms"],
                 "type": "secondary",
                 "table_name": "location_locali",
@@ -62,7 +62,7 @@
                 "relations": []
         },
         {
-                "element_name": "floor",
+                "name": "floor",
                 "aliases": ["floor", "floors"],
                 "type": "secondary",
                 "table_name": "location_piani",
@@ -83,7 +83,7 @@
                 "relations": []
         },
         {
-                "element_name": "contact",
+                "name": "contact",
                 "aliases": ["contacts"],
                 "type": "secondary",
                 "table_name": "personale_deib_recapiti",
@@ -98,7 +98,7 @@
                 "relations": []
         },
         {
-                "element_name": "telephone",
+                "name": "telephone",
                 "aliases": ["phone", "phones", "telephone", "telephones"],
                 "type": "secondary",
                 "table_name": "telefoni",
@@ -119,7 +119,7 @@
                 "relations": []
         },
         {
-                "element_name": "category",
+                "name": "category",
                 "aliases": ["categories"],
                 "type": "secondary",
                 "table_name": "aunica_categorie",
@@ -140,7 +140,7 @@
                 "relations": [
                         {
                                 "keyword": "people in this category",
-                                "element_name": "person",
+                                "name": "person",
                                 "by": [
                                         {
                                                 "from_table_name": "aunica_categorie",
@@ -159,7 +159,7 @@
                 ]
         },
         {
-                "element_name": "group",
+                "name": "group",
                 "aliases": ["groups"],
                 "type": "secondary",
                 "table_name": "aunica_gruppi_espliciti",
@@ -180,7 +180,7 @@
                 "relations": [
                         {
                                 "keyword": "people in this group",
-                                "element_name": "person",
+                                "name": "person",
                                 "by": [
                                         {
                                                 "from_table_name": "aunica_gruppi_espliciti",
@@ -193,12 +193,15 @@
                 ]
         },
         {
-                "element_name": "people categories",
+                "name": "people categories",
                 "type": "crossable",
                 "table_name": "aunica_people_categorie"
         },
         {
-                "element_name": "person",
+                "name": {
+                        "plural": "people",
+                        "singular": "person"
+                },
                 "aliases": ["people", "professor", "professors", "teacher", "teachers"],
                 "type": "primary",
                 "table_name": "aunica_people_dettagli",
@@ -314,7 +317,7 @@
                 "relations": [
                         {
                                 "keyword": "in research area",
-                                "element_name": "research area",
+                                "name": "research area",
                                 "by": [
                                         {
                                                 "from_table_name": "aunica_people_dettagli",
@@ -332,7 +335,7 @@
                         },
                         {
                                 "keyword": "in group",
-                                "element_name": "group",
+                                "name": "group",
                                 "by": [
                                         {
                                                 "from_table_name": "aunica_people_dettagli",
@@ -344,7 +347,7 @@
                         },
                         {
                                 "keyword": "in category",
-                                "element_name": "category",
+                                "name": "category",
                                 "by": [
                                         {
                                                 "from_table_name": "aunica_people_dettagli",
@@ -362,7 +365,7 @@
                         },
                         {
                                 "keyword": "contacts",
-                                "element_name": "contact",
+                                "name": "contact",
                                 "by": [
                                         {
                                                 "from_table_name": "aunica_people_dettagli",
@@ -374,7 +377,7 @@
                         },
                         {
                                 "keyword": "associated laboratory",
-                                "element_name": "laboratory",
+                                "name": "laboratory",
                                 "by": [
                                         {
                                                 "from_table_name": "aunica_people_dettagli",
@@ -392,7 +395,7 @@
                         },
                         {
                                 "keyword": "books written",
-                                "element_name": "book",
+                                "name": "book",
                                 "by": [
                                         {
                                                 "from_table_name": "aunica_people_dettagli",
@@ -410,7 +413,7 @@
                         },
                         {
                                 "keyword": "associated projects",
-                                "element_name": "project",
+                                "name": "project",
                                 "by": [
                                         {
                                                 "from_table_name": "aunica_people_dettagli",
@@ -428,7 +431,7 @@
                         },
                         {
                                 "keyword": "awards won",
-                                "element_name": "award",
+                                "name": "award",
                                 "by": [
                                         {
                                                 "from_table_name": "aunica_people_dettagli",
@@ -447,32 +450,32 @@
                 ]
         },
         {
-                "element_name": "people laboratory",
+                "name": "people laboratory",
                 "type": "crossable",
                 "table_name": "aunica_people_laboratorio"
         },
         {
-                "element_name": "people books",
+                "name": "people books",
                 "type": "crossable",
                 "table_name": "aunica_people_libri"
         },
         {
-                "element_name": "people projects",
+                "name": "people projects",
                 "type": "crossable",
                 "table_name": "aunica_people_progetti"
         },
         {
-                "element_name": "people awards",
+                "name": "people awards",
                 "type": "crossable",
                 "table_name": "aunica_people_riconoscimenti"
         },
         {
-                "element_name": "people sections",
+                "name": "people sections",
                 "type": "crossable",
                 "table_name": "aunica_people_sezioni"
         },
         {
-                "element_name": "event",
+                "name": "event",
                 "aliases": ["events"],
                 "type": "primary",
                 "table_name": "eventi",
@@ -512,7 +515,7 @@
                 "relations": []
         },
         {
-                "element_name": "laboratory",
+                "name": "laboratory",
                 "aliases": ["laboratories", "lab", "labs"],
                 "type": "secondary",
                 "table_name": "laboratorio",
@@ -552,7 +555,7 @@
                 "relations": [
                         {
                                 "keyword": "people working in this laboratory",
-                                "element_name": "person",
+                                "name": "person",
                                 "by": [
                                         {
                                                 "from_table_name": "laboratorio",
@@ -571,7 +574,7 @@
                 ]
         },
         {
-                "element_name": "book",
+                "name": "book",
                 "aliases": ["books"],
                 "type": "primary",
                 "table_name": "libri_internazionali",
@@ -640,7 +643,7 @@
                 "relations": [
                         {
                                 "keyword": "written by",
-                                "element_name": "person",
+                                "name": "person",
                                 "by": [
                                         {
                                                 "from_table_name": "libri_internazionali",
@@ -658,7 +661,7 @@
                         },
                         {
                                 "keyword": "in research area",
-                                "element_name": "research area",
+                                "name": "research area",
                                 "by": [
                                         {
                                                 "from_table_name": "libri_internazionali",
@@ -671,7 +674,7 @@
                 ]
         },
         {
-                "element_name": "project",
+                "name": "project",
                 "aliases": ["projects"],
                 "type": "primary",
                 "table_name": "progetto",
@@ -749,7 +752,7 @@
                 "relations": [
                         {
                                 "keyword": "in research area",
-                                "element_name": "research area",
+                                "name": "research area",
                                 "by": [
                                         {
                                                 "from_table_name": "progetto",
@@ -767,7 +770,7 @@
                         },
                         {
                                 "keyword": "in research line",
-                                "element_name": "research line",
+                                "name": "research line",
                                 "by": [
                                         {
                                                 "from_table_name": "progetto",
@@ -785,7 +788,7 @@
                         },
                         {
                                 "keyword": "people working on this project",
-                                "element_name": "person",
+                                "name": "person",
                                 "by": [
                                         {
                                                 "from_table_name": "progetto",
@@ -804,22 +807,22 @@
                 ]
         },
         {
-                "element_name": "project teacher",
+                "name": "project teacher",
                 "type": "crossable",
                 "table_name": "progetto_docente"
         },
         {
-                "element_name": "project area",
+                "name": "project area",
                 "type": "crossable",
                 "table_name": "progetto_settore_sottoaree"
         },
         {
-                "element_name": "project section",
+                "name": "project section",
                 "type": "crossable",
                 "table_name": "progetto_sezione"
         },
         {
-                "element_name": "award",
+                "name": "award",
                 "aliases": ["awards"],
                 "type": "primary",
                 "table_name": "riconoscimento",
@@ -916,7 +919,7 @@
                 "relations": [
                         {
                                 "keyword": "people that won this award",
-                                "element_name": "person",
+                                "name": "person",
                                 "by": [
                                         {
                                                 "from_table_name": "riconoscimento",
@@ -934,7 +937,7 @@
                         },
                         {
                                 "keyword": "in research area",
-                                "element_name": "research area",
+                                "name": "research area",
                                 "by": [
                                         {
                                                 "from_table_name": "riconoscimento",
@@ -952,7 +955,7 @@
                         },
                         {
                                 "keyword": "in research line",
-                                "element_name": "research line",
+                                "name": "research line",
                                 "by": [
                                         {
                                                 "from_table_name": "riconoscimento",
@@ -971,22 +974,22 @@
                 ]
         },
         {
-                "element_name": "award area",
+                "name": "award area",
                 "type": "crossable",
                 "table_name": "riconoscimento_settore_sottoarea"
         },
         {
-                "element_name": "award section",
+                "name": "award section",
                 "type": "crossable",
                 "table_name": "riconoscimento_sezione"
         },
         {
-                "element_name": "section area",
+                "name": "section area",
                 "type": "crossable",
                 "table_name": "sezione_sottoarea_settore"
         },
         {
-                "element_name": "research area",
+                "name": "research area",
                 "aliases": ["research areas", "section", "sections", "department", "departments"],
                 "type": "primary",
                 "table_name": "sezioni",
@@ -1007,7 +1010,7 @@
                 "relations": [
                         {
                                 "keyword": "research lines in this area",
-                                "element_name": "research line",
+                                "name": "research line",
                                 "by": [
                                         {
                                                 "from_table_name": "sezioni",
@@ -1025,7 +1028,7 @@
                         },
                         {
                                 "keyword": "people working in this area",
-                                "element_name": "person",
+                                "name": "person",
                                 "by": [
                                         {
                                                 "from_table_name": "sezioni",
@@ -1043,7 +1046,7 @@
                         },
                         {
                                 "keyword": "projects",
-                                "element_name": "project",
+                                "name": "project",
                                 "by": [
                                         {
                                                 "from_table_name": "sezioni",
@@ -1061,7 +1064,7 @@
                         },
                         {
                                 "keyword": "books",
-                                "element_name": "book",
+                                "name": "book",
                                 "by": [
                                         {
                                                 "from_table_name": "sezioni",
@@ -1073,7 +1076,7 @@
                         },
                         {
                                 "keyword": "awards",
-                                "element_name": "award",
+                                "name": "award",
                                 "by": [
                                         {
                                                 "from_table_name": "sezioni",
@@ -1092,7 +1095,7 @@
                 ]
         },
         {
-                "element_name": "research line",
+                "name": "research line",
                 "aliases": ["research lines", "area", "areas"],
                 "type": "secondary",
                 "table_name": "sottoaree",
@@ -1132,7 +1135,7 @@
                 "relations": [
                         {
                                 "keyword": "in research area",
-                                "element_name": "research area",
+                                "name": "research area",
                                 "by": [
                                         {
                                                 "from_table_name": "sottoaree",
@@ -1150,7 +1153,7 @@
                         },
                         {
                                 "keyword": "projects",
-                                "element_name": "project",
+                                "name": "project",
                                 "by": [
                                         {
                                                 "from_table_name": "sottoaree",
@@ -1168,7 +1171,7 @@
                         },
                         {
                                 "keyword": "awards",
-                                "element_name": "award",
+                                "name": "award",
                                 "by": [
                                         {
                                                 "from_table_name": "sottoaree",
@@ -1187,7 +1190,7 @@
                 ]
         },
         {
-                "element_name": "event type",
+                "name": "event type",
                 "aliases": [],
                 "type": "secondary",
                 "table_name": "tipo_evento",
@@ -1208,7 +1211,7 @@
                 "relations": [
                         {
                                 "keyword": "events of this type",
-                                "element_name": "event",
+                                "name": "event",
                                 "by": [
                                         {
                                                 "from_table_name": "tipo_evento",
@@ -1221,7 +1224,7 @@
                 ]
         },
         {
-                "element_name": "laboratory type",
+                "name": "laboratory type",
                 "aliases": ["lab type"],
                 "type": "secondary",
                 "table_name": "tipo_laboratorio",
@@ -1242,7 +1245,7 @@
                 "relations": [
                         {
                                 "keyword": "laboratories of this type",
-                                "element_name": "laboratory",
+                                "name": "laboratory",
                                 "by": [
                                         {
                                                 "from_table_name": "tipo_laboratorio",
@@ -1255,7 +1258,7 @@
                 ]
         },
         {
-                "element_name": "project type",
+                "name": "project type",
                 "aliases": [],
                 "type": "secondary",
                 "table_name": "tipo_progetto",
@@ -1276,7 +1279,7 @@
                 "relations": [
                         {
                                 "keyword": "projects of this type",
-                                "element_name": "project",
+                                "name": "project",
                                 "by": [
                                         {
                                                 "from_table_name": "tipo_progetto",
@@ -1289,7 +1292,7 @@
                 ]
         },
         {
-                "element_name": "award type",
+                "name": "award type",
                 "aliases": [],
                 "type": "secondary",
                 "table_name": "tipo_riconoscimento",
@@ -1310,7 +1313,7 @@
                 "relations": [
                         {
                                 "keyword": "awards of this type",
-                                "element_name": "award",
+                                "name": "award",
                                 "by": [
                                         {
                                                 "from_table_name": "tipo_riconoscimento",

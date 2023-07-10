@@ -18,6 +18,8 @@ from typing import Literal, Optional, Iterator, Any
 
 from pydantic import BaseModel, RootModel, ConfigDict
 
+from chatidea.config.__strings import PluralizableString
+
 
 class ColumnDescriptor(BaseModel):
     keyword: str
@@ -30,7 +32,7 @@ class ColumnDescriptor(BaseModel):
 
 class Category(BaseModel):
     column: str
-    alias: str
+    alias: PluralizableString
     keyword: str
 
     def __getitem__(self, item: str) -> Any:
@@ -63,7 +65,7 @@ class Attribute(BaseModel):
 
 class Relation(BaseModel):
     keyword: str
-    element_name: str
+    name: str
     by: list[Reference]
 
     def __getitem__(self, item: str) -> Any:
@@ -72,7 +74,7 @@ class Relation(BaseModel):
 
 
 class Concept(BaseModel):
-    element_name: str
+    name: PluralizableString
     aliases: list[str] = []
     type: Literal["primary", "secondary", "crossable"]
     table_name: str
@@ -80,6 +82,13 @@ class Concept(BaseModel):
     category: list[Category] = []
     attributes: list[Attribute] = []
     relations: list[Relation] = []
+
+    def get_element_name(self, plural: bool = False) -> str:
+        return self.name.plural if plural else self.name.singular
+
+    @property
+    def element_name(self) -> str:
+        return self.get_element_name()
 
     def __getitem__(self, item: str) -> Any:
         warnings.warn('This function is deprecated', DeprecationWarning)

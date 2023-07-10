@@ -25,13 +25,13 @@ KEY_REAL_VALUE_LENGTH = 'real_value_length'
 def extract_similar_value(keyword, keyword_list, threshold=5):
     winner = None
     if keyword:
-        if keyword in keyword_list:
+        if keyword in set().union(*keyword_list):
             winner = keyword
         else:
             logger.info('I will compute some similarity distance '
                         'for the received element "{}"...'.format(keyword))
             sim = 100  # very high number
-            for el_name in keyword_list:
+            for el_name in set().union(*keyword_list):
                 received = keyword
                 cur = edit_distance(el_name, received)
                 if cur < sim and cur < threshold:
