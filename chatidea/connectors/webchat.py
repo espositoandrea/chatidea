@@ -1,5 +1,4 @@
 import logging
-import time
 import uuid
 from pathlib import Path
 
@@ -48,7 +47,7 @@ async def session_request(sid, data):
 
 
 @sio.on('user_uttered')  # ON USER MESSAGE
-async def handle_message(sid, message_dict):
+async def handle_message(sid: str, message_dict: dict):
     all_quick_replies = []
     message = message_dict['message']
     parsed_message = extractor.parse(message)
@@ -56,18 +55,20 @@ async def handle_message(sid, message_dict):
                                                      "WEBCHAT_" + str(sid))
     print(response.get_printable_string())
     for x in response.get_telegram_or_webchat_format():
-        text = x['message']
-        if text == 'Pie chart':
-            send_message = {
-                "attachment": {
-                    "type": "image",
-                    "payload": {
-                        "title": "Category table",
-                        "src": f"/static/pie.png?{time.time()}"
+        text: str = x['message']
+        if text.startswith('/'):
+            command, params = text.split(' ')[0], text.split(' ')[1].split(';')
+            if command == '/pie-chart':
+                send_message = {
+                    "attachment": {
+                        "type": "image",
+                        "payload": {
+                            "title": "Category table",
+                            "src": f"/static/{params[0]}"
+                        }
                     }
                 }
-            }
-            await sio.emit('bot_uttered', send_message, room=sid)
+                await sio.emit('bot_uttered', send_message, room=sid)
         else:
             all_quick_replies = [{
                 'title': b['title'],

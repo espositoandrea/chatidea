@@ -128,6 +128,7 @@ class Context:
         self.reset_show_last_element = True
         self.logger = logging.Logger(__name__, logging.INFO)
         self.log_path = LOG_DIR_PATH_AND_SEP / f'context_{chat_id}.log'
+        self.session = chat_id
         log_handler = handlers.RotatingFileHandler(self.log_path, maxBytes=500)
         log_handler.setLevel(logging.INFO)
         log_handler.setFormatter(logging.Formatter('--> %(asctime)s:\n'

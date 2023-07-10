@@ -1,5 +1,7 @@
 import copy
+import datetime
 import logging
+import pathlib
 import random
 import re
 from typing import Optional, Any
@@ -868,7 +870,7 @@ def action_show_table_categories(entities: list[Entity], context, add=True) -> A
         return [f"I cannot find more info about {element_name}s."], base_buttons
 
     element = resolver.query_category(element_name, category)
-    create_plot(element, (category.alias or category.column).upper())
+    plot_file = create_plot(element, (category.alias or category.column).upper(), session=context.session)
 
     if add:
         context.append_element({
@@ -879,12 +881,12 @@ def action_show_table_categories(entities: list[Entity], context, add=True) -> A
 
     return [
         f'The concepts of type {element_name} can be categorized based on {category.alias}.',
-        'Pie chart',
+        f'/pie-chart {plot_file.name}',
         f'You can select {element_name}s related to a specific category by clicking on the related button.'
     ], btn.get_buttons_select_category(element_name, category.alias, element['value']) + base_buttons
 
 
-def create_plot(categories, legend_title):
+def create_plot(categories, legend_title, session: Optional[str] = None) -> pathlib.Path:
     plt.switch_backend('Agg')
 
     total = 0
@@ -921,6 +923,10 @@ def create_plot(categories, legend_title):
                title=legend_title, title_fontsize='large', loc='lower center',
                bbox_to_anchor=(0.5, 1))
 
+    timestamp = datetime.datetime.now().isoformat()
+    filename = f"pie-{timestamp}.png" if not session else f"pie-{session}-{timestamp}.png"
+    base = pathlib.Path("static")
     plt.axis('equal')
-    plt.savefig('static/pie.png', bbox_inches="tight")
+    plt.savefig(base / filename, bbox_inches="tight")
     plt.close()
+    return base / filename
