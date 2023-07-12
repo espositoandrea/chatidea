@@ -1,6 +1,7 @@
 import logging
 
 from chatidea.config import DatabaseConcepts
+from chatidea.config.concept import Concept
 from chatidea.config.view import ColumnView
 from chatidea.database import broker
 from chatidea.settings import DB_CONCEPT, DB_CONCEPT_S
@@ -40,12 +41,12 @@ def get_all_primary_element_names():
     return res
 
 
-def get_all_primary_element_names_and_aliases():
-    res = []
-    for e in db_concept:
-        if e.type == 'primary':
-            res.extend([e.element_name] + (e.aliases or []))
-    return res
+def get_all_primary_elements() -> list[Concept]:
+    return [e for e in db_concept if e.type == "primary"]
+
+
+def get_all_primary_element_names_and_aliases() -> list[set[str]]:
+    return [{e.get_element_name(False), e.get_element_name(True), *e.aliases} for e in get_all_primary_elements()]
 
 
 def get_element_aliases(element_name: str):
@@ -53,12 +54,17 @@ def get_element_aliases(element_name: str):
     return element.aliases or []
 
 
-def get_element_name_from_possible_alias(element_or_alias_name: str):
+def get_element_from_possible_alias(element_or_alias_name: str):
     for e in db_concept:
-        if e.element_name == element_or_alias_name or element_or_alias_name in (
-                e.aliases or []):
-            return e.element_name
+        if e.get_element_name(False) == element_or_alias_name or e.get_element_name(
+                True) == element_or_alias_name or element_or_alias_name in e.aliases:
+            return e
     return None
+
+
+def get_element_name_from_possible_alias(element_or_alias_name: str):
+    e = get_element_from_possible_alias(element_or_alias_name)
+    return e.element_name if e else None
 
 
 def get_element_name_from_table_name(table_name: str):

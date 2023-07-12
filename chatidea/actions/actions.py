@@ -861,6 +861,7 @@ def action_find_element_by_category(entities: list[Entity], context) -> ActionRe
 def action_show_table_categories(entities: list[Entity], context, add=True) -> ActionReturn:
     base_buttons = btn.get_base_buttons(context)
     element_name = entities[0].entity
+    concept = resolver.get_element_from_possible_alias(element_name)
     category_column = entities[0].value
     category = resolver.extract_category(element_name, category_column)
     if not element_name:
@@ -870,7 +871,7 @@ def action_show_table_categories(entities: list[Entity], context, add=True) -> A
         return [f"I cannot find more info about {element_name}s."], base_buttons
 
     element = resolver.query_category(element_name, category)
-    plot_file = create_plot(element, (category.alias or category.column).upper(), session=context.session)
+    plot_file = create_plot(element, (category.alias.plural or category.column).upper(), session=context.session)
 
     if add:
         context.append_element({
@@ -880,10 +881,10 @@ def action_show_table_categories(entities: list[Entity], context, add=True) -> A
         })
 
     return [
-        f'The concepts of type {element_name} can be categorized based on {category.alias}.',
+        f'The concepts of type {concept.name.plural} can be categorized based on {category.alias.plural}.',
         f'/pie-chart {plot_file.name}',
-        f'You can select {element_name}s related to a specific category by clicking on the related button.'
-    ], btn.get_buttons_select_category(element_name, category.alias, element['value']) + base_buttons
+        f'You can select {concept.name.plural} related to a specific category by clicking on the related button.'
+    ], btn.get_buttons_select_category(element_name, category.alias.singular, element['value']) + base_buttons
 
 
 def create_plot(categories, legend_title, session: Optional[str] = None) -> pathlib.Path:

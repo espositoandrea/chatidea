@@ -146,12 +146,12 @@ def get_button_show_more_context() -> Button:
 
 
 def get_buttons_tell_me_more() -> list[Button]:
-    elements = resolver.get_all_primary_element_names()
+    elements = resolver.get_all_primary_elements()
     buttons: list[Button] = []
     for e in elements:
-        title = "Tell me more about {}".format(e)
+        title = f"Tell me more about {e.get_element_name(True)}"
         payload = extract_payload(nlu.INTENT_MORE_INFO_FIND,
-                                  [nlu.ENTITY_ELEMENT, e])
+                                  [nlu.ENTITY_ELEMENT, e.get_element_name()])
         buttons.append({'title': title, 'payload': payload})
     return buttons
 
@@ -211,10 +211,10 @@ def get_button_help_on_elements() -> Button:
 def get_button_show_table_categories(element) -> list[Button]:
     buttons: list[Button] = []
     for cat in resolver.extract_categories(element):
-        name = cat.alias or cat.column
-        title = f"+ SHOW THE {name.upper()}S OF {element.upper()} +"
+        name = cat.alias.plural or cat.column
+        title = f"+ SHOW THE {name.upper()} OF {element.upper()} +"
         payload = extract_payload(nlu.INTENT_SHOW_TABLE_CATEGORIES,
-                                  [element, name])
+                                  [element, cat.alias.singular or cat.column])
         buttons.append({'title': title, 'payload': payload})
     return buttons
 
