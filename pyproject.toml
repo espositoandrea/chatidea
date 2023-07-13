@@ -36,6 +36,7 @@ sphinxcontrib-plantuml = "^0.25"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.4.1"
+types-pyyaml = "^6.0.12.10"
 
 [build-system]
 requires = ["poetry-core"]
