@@ -923,7 +923,7 @@ def create_plot(categories, legend_title, session: Optional[str] = None) -> path
                title=legend_title, title_fontsize='large', loc='lower center',
                bbox_to_anchor=(0.5, 1))
 
-    timestamp = datetime.datetime.now().isoformat()
+    timestamp = datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
     filename = f"pie-{timestamp}.png" if not session else f"pie-{session}-{timestamp}.png"
     base = pathlib.Path("static")
     plt.axis('equal')
