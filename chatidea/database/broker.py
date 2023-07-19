@@ -11,8 +11,7 @@ from collections import namedtuple
 from typing import Optional, Any
 
 import pyodbc
-from pypika import MySQLQuery as Query, Table, Criterion, Field, functions, \
-    Order
+from pypika import Table, Criterion, Field, functions, Order
 from pypika.dialects import Dialects
 from pypika.queries import QueryBuilder
 from pypika.terms import Parameter
@@ -23,7 +22,8 @@ from chatidea.config.schema import TableSchema, Reference
 from chatidea.config.view import TableView, ColumnView
 from chatidea.database import resolver
 from chatidea.settings import DB_NAME, DB_SCHEMA, DB_VIEW, \
-    DB_USER, DB_PASSWORD, DB_HOST, QUERY_LIMIT, DB_DRIVER, DB_CHARSET
+    DB_USER, DB_PASSWORD, DB_HOST, QUERY_LIMIT, DB_DRIVER, DB_CHARSET, \
+    DialectQuery as Query
 
 logger = logging.getLogger(__name__)
 

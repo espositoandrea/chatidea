@@ -3,11 +3,14 @@ import json
 import logging
 import os
 import pathlib
-from typing import Literal, Union, Any
+from typing import Literal, Union, Any, Type
 
 import dotenv
 import yaml
 from pydantic import parse_obj_as
+from pypika import Query, MSSQLQuery, MySQLQuery, SQLLiteQuery, PostgreSQLQuery, OracleQuery, RedshiftQuery, \
+    ClickHouseQuery
+from pypika.enums import Dialects
 
 from .config import *
 
@@ -15,6 +18,23 @@ env = dotenv.dotenv_values(dotenv.find_dotenv(usecwd=True))
 file_path = pathlib.Path(__file__).resolve().parent.parent
 logger = logging.getLogger(__name__)
 CONFIG_TYPES = Literal["concept", "concept_s", "view", "schema"]
+
+
+def get_db_dialect() -> Type[Query]:
+    dialect = [e for e in Dialects if e.value == env.get("DB_DIALECT", "mysql")]
+    if not dialect:
+        raise ValueError(f'Unrecognized dialect: {env.get("DB_DIALECT", "mysql")}')
+
+    dialect_to_obj: dict[Dialects, Type[Query]] = {
+        Dialects.MSSQL: MSSQLQuery,
+        Dialects.MYSQL: MySQLQuery,
+        Dialects.SQLLITE: SQLLiteQuery,
+        Dialects.POSTGRESQL: PostgreSQLQuery,
+        Dialects.ORACLE: OracleQuery,
+        Dialects.REDSHIFT: RedshiftQuery,
+        Dialects.CLICKHOUSE: ClickHouseQuery
+    }
+    return dialect_to_obj.get(dialect[0], Query)
 
 
 def get_db_config(config_type: CONFIG_TYPES) -> \
@@ -41,6 +61,7 @@ DB_PASSWORD = env.get('DB_PASSWORD')
 DB_HOST = env['DB_HOST']
 DB_NAME = env['DB_NAME']
 DB_CHARSET = env.get("DB_CHARSET")
+DialectQuery: Type[Query] = get_db_dialect()
 
 NLU_API_ENDPOINT = env.get("NLU_API_ENDPOINT", "http://localhost:5005")
 # files
