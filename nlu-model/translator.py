@@ -34,7 +34,6 @@ def setup_args():
     args.params = yaml.safe_load(args.params)
     return args
 
-
 if __name__ == "__main__":
     args = setup_args()
     MAX_NUMBER_OF_NGRAMS = args.params['dataset']['max_ngrams']
@@ -71,14 +70,16 @@ if __name__ == "__main__":
         # aggiunta 10/03
         e_name = resolver.extract_element(e.element_name).table_name
         table_schema = broker.get_table_schema_from_name(e_name)
+        # In generating the dataset, each element must have an associated schema
+        # Thus we can safely discard the "None" option: this will also be useful
+        # as a check step to see if the config files are written correctly
+        assert table_schema is not None
         all_columns_name = table_schema.column_list
-        whole_column_text += "\n".join(
-            f"    {c}" for c in all_columns_name) + "\n"
+        whole_column_text += "\n".join(f"    {c}" for c in all_columns_name) + "\n"
         if table_schema.column_alias_list:
             all_columns_name_alias = table_schema.column_alias_list
-            for k, v in all_columns_name_alias.items():
-                column_text = "    "
-                column_text += v
+            for _, v in all_columns_name_alias.items():
+                column_text = f"    {v}"
                 whole_column_text += column_text + "\n"
         # fine aggiunta
 
@@ -94,7 +95,7 @@ if __name__ == "__main__":
         idx_e_alias += 1 + len(e.aliases or [])
 
         idx_a = 1
-        for a in (e.attributes or []):
+        for a in e.attributes:
             idx_tot += 1
             # aggiunta 10/03
             if a.keyword:
@@ -104,80 +105,77 @@ if __name__ == "__main__":
 
             example_type_text = f"@[{a.type}_{idx_e}_{idx_a}]\n"
 
-            for col in (a.columns or []):
-                query = (Query.from_(e.table_name
-                                     if not a.by
-                                     else a.by[-1].to_table_name)
+            for col in a.columns:
+                query = (Query.from_(e.table_name if not a.by else a.by[-1].to_table_name)
                          .select(col)
                          .distinct())
                 print(query)
                 res = list(broker.execute_query(query))
-                if res:
-                    for r in res[:50]:  # max 50 examples each
-                        if r[0]:
-                            idx_tot += 1
-                            string_word = str(r[0])
-                            string_word = re.sub(r'[^a-zA-Z0-9]', ' ',
-                                                 string_word)  # Replace all none alphanumeric characters with spaces
-                            string_word = string_word.rstrip()
-                            tokens = [token for token in
-                                      string_word.split(" ") if
-                                      token != ""]  # Break sentence in the token, remove empty tokens
-                            if len(tokens) > 2:  # ngrams only string with more than 2 words
-                                k = 0  # k is limitatore
-                                for i in range(len(tokens), 0, -1):
-                                    output = list(ngrams(tokens, i))
-                                    k += 1
-                                    for output_element in output:
-                                        if k < MAX_NUMBER_OF_NGRAMS:
-                                            output_list = list(
-                                                output_element)
-                                            words = output_list
-                                            words[-1] = words[-1].rstrip(
-                                                '\'\"-,.:;!?')
-                                            example_type_text += "    " + " ".join(
-                                                words).lower()
-                                            example_type_text += "\n"
+                if not res:
+                    continue
+                for r in res[:50]:  # max 50 examples each
+                    if r[0]:
+                        idx_tot += 1
+                        string_word = str(r[0])
+                        string_word = re.sub(r'[^a-zA-Z0-9]', ' ',
+                                             string_word)  # Replace all none alphanumeric characters with spaces
+                        string_word = string_word.rstrip()
+                        tokens = [token for token in
+                                  string_word.split(" ") if
+                                  token != ""]  # Break sentence in the token, remove empty tokens
+                        if len(tokens) > 2:  # ngrams only string with more than 2 words
+                            k = 0  # k is limitatore
+                            for i in range(len(tokens), 0, -1):
+                                output = list(ngrams(tokens, i))
+                                k += 1
+                                for output_element in output:
+                                    if k < MAX_NUMBER_OF_NGRAMS:
+                                        output_list = list(
+                                            output_element)
+                                        words = output_list
+                                        words[-1] = words[-1].rstrip(
+                                            '\'\"-,.:;!?')
+                                        example_type_text += "    " + " ".join(
+                                            words).lower()
+                                        example_type_text += "\n"
 
-                            else:
-                                try:
-                                    words = string_word.split()
-                                    words[-1] = words[-1].rstrip('\'\"-,.:;!?')
-                                    example_type_text += "    " + " ".join(
-                                        words).lower()
-                                    example_type_text += "\n"
-                                except IndexError:
-                                    logging.error("%s %s %s", col,
-                                                  e.table_name
-                                                  if not a.by
-                                                  else a.by[-1].to_table_name, r)
-                                    # raise
+                        else:
+                            try:
+                                words = string_word.split()
+                                words[-1] = words[-1].rstrip('\'\"-,.:;!?')
+                                example_type_text += "    " + " ".join(
+                                    words).lower()
+                                example_type_text += "\n"
+                            except IndexError:
+                                logging.error("%s %s %s", col,
+                                              e.table_name
+                                              if not a.by
+                                              else a.by[-1].to_table_name, r)
+                                # raise
             # fine aggiunta
             whole_example_type_text += example_type_text + "\n"
             # da qui
             text = ""
 
             if a.keyword:
-                text += "@[attr_{}_{}] ".format(idx_e, idx_a)
+                text += f"@[attr_{idx_e}_{idx_a}] "
 
                 if a.type == 'num':  # use nlu.ENTITY_ATTR?
                     text += '@[op_num?] '
 
-            text += "@[{}_{}_{}]".format(a.type, idx_e, idx_a)
+            text += f"@[{a.type}_{idx_e}_{idx_a}]"
 
-            whole_text_find += "    ~[find] @[el_{}] ".format(
-                idx_e) + text + " ~[and_or_clause_el_{}?]".format(
-                idx_e) + " ~[order_by_clause?]" "\n"
-            whole_text_filter += "    ~[filter] ~[those?] " + text + "\n"
+            whole_text_find += f"    ~[find] @[el_{idx_e}] {text} ~[and_or_clause_el_{idx_e}?] ~[order_by_clause?]" "\n"
+            whole_text_filter += f"    ~[filter] ~[those?] {text}\n"
             # aggiunta 10/03
-            whole_text_and_or_el += "    " + "@[and] " + text + "\n"
-            whole_text_and_or_el += "    " + "@[or] " + text + "\n"
+            whole_text_and_or_el += f"    @[and] {text}\n"
+            whole_text_and_or_el += f"    @[or] {text}\n"
             # fine aggiunta
 
             # single words training
             new_text = re.sub('@[attr_*[0-9]*_*[0-9]*]', '', text)
             new_text = new_text.replace(" ", "", 1)
-            new_text += ("\n    ")
+            new_text += "\n    "
             whole_text_ambiguity_solver_words += new_text
 
             # a qui
@@ -189,7 +187,7 @@ if __name__ == "__main__":
     idx_e_alias = max(idx_e_alias, 100)
 
     #  prepending here...
-    whole_text_and_or_el += "@[and]\n" + "    " + "and\n" + "\n@[or]\n" + "    " + "or\n"
+    whole_text_and_or_el += "@[and]\n    and\n\n@[or]\n    or\n"
 
     whole_text_more_info_find = "%[more_info_find]('training': '{}', 'testing': '{}')\n{}" \
         .format(idx_e_alias * 2 - idx_e_alias * 2 // 5, idx_e_alias * 2 // 5,
