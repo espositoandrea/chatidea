@@ -246,7 +246,7 @@ def query_find(in_table_name, attributes):
     columns = get_columns(in_table_name)
 
     attributes = [{'value': v, 'operator': o, **a.dict()} for v, o, a in attributes]
-    label_attributes(attributes, in_table_name)
+    attributes = label_attributes(attributes, in_table_name)
     for a in attributes:
         a.setdefault('operator', '=')
 
@@ -290,7 +290,7 @@ def query_join(element, relation):
     # HERE I REVERT THE RELATION to standardize with the attributes
     relation = get_reverse_relation(relation)
 
-    label_attributes([relation], from_table_name)
+    relation = label_attributes([relation], from_table_name)[0]
 
     tables = get_sql_tables([relation], to_table_name)
     columns = get_sql_columns(to_columns)
@@ -365,19 +365,22 @@ def query_category_value(element_name, table_name, category_column: Category,
     attribute['operator'] = 'LIKE'
 
     attributes = [attribute]
-    label_attributes(attributes, table_name)
+    attributes = label_attributes(attributes, table_name)
+
+    element = resolver.extract_element(element_name)
+    order_by = [a for a in element.attributes if a.order_by]
 
     tables = get_sql_tables([], table_name)
     where_category = get_WHERE_CATEGORY_query_string(table_name,
                                                      category_column.column)
-    print(where_category)
     query: QueryBuilder = (Query.from_(tables.base)
                            .select(*get_sql_columns(columns))
                            .where(
         Criterion.all([where_category,
                        # get_WHERE_REFERENCE_query_string(table_name)
                        ]))
-                           .orderby(*get_order_by([], table_name)))
+                           .orderby(*[Table(a.by[0].to_table_name).field(a.columns[0]) if a.by else a.columns[0] for a in order_by]))
+
     for table in tables.joins:
         query = query.left_join(table.target).on(table.on)
     val = str(category_value)
@@ -396,7 +399,8 @@ def simulate_view(table_name: str) -> list[ColumnView]:
 
 # query helper
 
-def label_attributes(attributes, table_name):
+def label_attributes(attrs, table_name):
+    attributes = [a.copy() for a in attrs]
     num2alpha = dict(zip(range(1, 27), string.ascii_lowercase))
     i = 2  # the 'a' is taken by the first
     for a in attributes:
@@ -414,6 +418,7 @@ def label_attributes(attributes, table_name):
             a['from_table'] = rel['to_table_name']
         else:
             a['from_table'] = table_name
+    return attributes
 
 
 # query creators
@@ -620,7 +625,7 @@ def get_WHERE_CATEGORY_query_string(table_name, category_column) -> Criterion:
 
 
 def get_order_by(attributes: list[dict[str, str]], table: str) -> list[Field]:
-    order_attrs = [a for a in attributes if a['keyword'] == 'order by']
+    order_attrs = [a for a in attributes if a['order_by']]
     if not order_attrs:
         # If we do not have any keywords to order by, we'll simply order by
         # the attributes that we should show
