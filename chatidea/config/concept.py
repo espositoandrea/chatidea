@@ -51,6 +51,7 @@ class Reference(BaseModel):
 
 class Attribute(BaseModel):
     keyword: str
+    order_by: bool = False
     type: Literal["word"]
     columns: list[str]
     by: Optional[list[Reference]] = None
