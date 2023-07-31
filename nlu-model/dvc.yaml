@@ -38,7 +38,9 @@ stages:
     - domain.yml
     - data/chatito_nlu.yml
   test:
-    cmd: rasa test nlu -m models/nlu_model.tar.gz -u data/test_chatito_nlu.yml
+    cmd:
+    - rasa test nlu -m models/nlu_model.tar.gz -u data/test_chatito_nlu.yml
+    - touch results/DIETClassifier_confusion_matrix.png results/DIETClassifier_errors.json results/DIETClassifier_histogram.png results/DIETClassifier_report.json results/intent_report.json results/intent_errors.json
     deps:
     - data/test_chatito_nlu.yml
     - models/nlu_model.tar.gz
