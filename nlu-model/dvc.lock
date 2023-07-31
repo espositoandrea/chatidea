@@ -18,8 +18,8 @@ stages:
       size: 16174
     - path: translator.py
       hash: md5
-      md5: 62435b3b3f1fa8f01ad880f9ea8b877a
-      size: 9971
+      md5: 5c9b9569b8cf7fef3c2d3c3a93da31e5
+      size: 9860
     - path: writer/chatito_template.chatito
       hash: md5
       md5: 1d37e3f5bc420ea54cd434a7c9e2d83c
@@ -90,7 +90,11 @@ stages:
       md5: 0c562f522f29ad8d68410bf83c7b9b0d
       size: 43176568
   test:
-    cmd: rasa test nlu -m models/nlu_model.tar.gz -u data/test_chatito_nlu.yml
+    cmd:
+    - rasa test nlu -m models/nlu_model.tar.gz -u data/test_chatito_nlu.yml
+    - touch results/DIETClassifier_confusion_matrix.png results/DIETClassifier_errors.json
+      results/DIETClassifier_histogram.png results/DIETClassifier_report.json results/intent_report.json
+      results/intent_errors.json
     deps:
     - path: data/test_chatito_nlu.yml
       hash: md5
@@ -103,20 +107,20 @@ stages:
     outs:
     - path: results/DIETClassifier_confusion_matrix.png
       hash: md5
-      md5: b2fa550649d0d897e509b8ba2e0b99e8
-      size: 181199
+      md5: 50e92e651f75f720d376df37595b18b8
+      size: 182219
     - path: results/DIETClassifier_errors.json
       hash: md5
-      md5: 066348d189b48712d68d0d2b96845909
-      size: 136921
+      md5: 77f752f27ff6e1ae596a946a49e87fca
+      size: 136923
     - path: results/DIETClassifier_histogram.png
       hash: md5
-      md5: 6c0c11247954574c609d76059f88b0f4
-      size: 48370
+      md5: 0250f8fef902821a27e0be1b9248dc73
+      size: 48553
     - path: results/DIETClassifier_report.json
       hash: md5
-      md5: 06afee57598880aaf7941a3e63a67065
-      size: 8757
+      md5: 7537d9221a2e1bdaf148757f6bc4085c
+      size: 8759
     - path: results/intent_confusion_matrix.png
       hash: md5
       md5: ef63c4ec434933e6be4185308329659e
@@ -127,9 +131,9 @@ stages:
       size: 390
     - path: results/intent_histogram.png
       hash: md5
-      md5: 7f3250799157b13a5f2b6d42e587d466
-      size: 46328
+      md5: dd0e4c4fbee55e2bd38a6269905dd6fd
+      size: 46271
     - path: results/intent_report.json
       hash: md5
-      md5: 65c20424f4f5bc390eb81712876505a3
+      md5: e979a6e5d415b347ad25b2aaa027476a
       size: 2102
