@@ -21,7 +21,6 @@ from pydantic import BaseModel, RootModel, ConfigDict
 
 class Reference(BaseModel):
     to_table: str
-    from_attribute: str
     to_attribute: str
     show_attribute: str
 
@@ -30,11 +29,27 @@ class Reference(BaseModel):
         return getattr(self, item)
 
 
+class FullReference(Reference):
+    from_column: str
+
+
+class Column(BaseModel):
+    name: str
+    alias: Optional[str]
+    primary_key: bool = False
+    ref: Optional[Reference] = None
+
+
 class TableSchema(BaseModel):
-    column_list: list[str]
-    primary_key_list: list[str]
-    column_alias_list: Optional[dict[str, str]]
-    references: list[Reference]
+    column_list: list[Column]
+
+    @property
+    def primary_key_list(self) -> list[Column]:
+        return [c for c in self.column_list if c.primary_key]
+
+    @property
+    def references(self) -> list[FullReference]:
+        return [FullReference(**column.ref.model_dump(), from_column=column.name) for column in self.column_list if column.ref]
 
     def __getitem__(self, item: str) -> Any:
         warnings.warn('This function is deprecated', DeprecationWarning)
