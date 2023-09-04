@@ -91,7 +91,7 @@ CONTEXT_VISU_LIMIT = 4
 CONTEXT_PERSISTENCE_SECONDS = 5 * 60
 CONTEXT_MAX_LENGTH = 16
 
-QUERY_LIMIT = 100  # 0 for no limit
+QUERY_LIMIT = int(env.get('QUERY_LIMIT', 100))  # 0 for no limit
 
 # db
 
