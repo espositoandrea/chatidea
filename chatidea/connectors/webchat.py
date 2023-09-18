@@ -1,3 +1,4 @@
+import base64
 import logging
 import uuid
 from pathlib import Path
@@ -59,12 +60,15 @@ async def handle_message(sid: str, message_dict: dict):
         if text.startswith('/'):
             command, params = text.split(' ')[0], text.split(' ')[1].split(';')
             if command == '/pie-chart':
+                with open(params[0], "rb") as img:
+                    encoded_string = base64.b64encode(img.read())
+                Path(params[0]).unlink(missing_ok=True)
                 send_message = {
                     "attachment": {
                         "type": "image",
                         "payload": {
                             "title": "Category table",
-                            "src": f"/static/{params[0]}"
+                            "src": f"data:image/png;base64,{encoded_string.decode('utf-8')}"
                         }
                     }
                 }

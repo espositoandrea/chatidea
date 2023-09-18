@@ -881,7 +881,7 @@ def action_show_table_categories(entities: list[Entity], context, add=True) -> A
 
     return [
         f'The concepts of type {element_name} can be categorized based on {category.alias}.',
-        f'/pie-chart {plot_file.name}',
+        f'/pie-chart {plot_file}',
         f'You can select {element_name}s related to a specific category by clicking on the related button.'
     ], btn.get_buttons_select_category(element_name, category.alias, element['value']) + base_buttons
 
