@@ -61,6 +61,7 @@ DB_PASSWORD = env.get('DB_PASSWORD')
 DB_HOST = env['DB_HOST']
 DB_NAME = env['DB_NAME']
 DB_CHARSET = env.get("DB_CHARSET")
+DB_TRUST_CERTIFICATE = env.get('DB_TRUST_CERTIFICATE')
 DialectQuery: Type[Query] = get_db_dialect()
 
 NLU_API_ENDPOINT = env.get("NLU_API_ENDPOINT", "http://localhost:5005")

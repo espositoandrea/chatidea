@@ -22,7 +22,7 @@ from chatidea.config.schema import TableSchema, Reference
 from chatidea.config.view import TableView, ColumnView
 from chatidea.database import resolver
 from chatidea.settings import DB_NAME, DB_SCHEMA, DB_VIEW, \
-    DB_USER, DB_PASSWORD, DB_HOST, QUERY_LIMIT, DB_DRIVER, DB_CHARSET, \
+    DB_USER, DB_PASSWORD, DB_HOST, QUERY_LIMIT, DB_DRIVER, DB_CHARSET, DB_TRUST_CERTIFICATE, \
     DialectQuery as Query
 
 logger = logging.getLogger(__name__)
@@ -71,6 +71,12 @@ class ConnectionStringBuilder:
             self.__add_to_str("charset", charset)
         return self
 
+    def certificate(self, trust_certificate: Optional[str]) -> "ConnectionStringBuilder":
+        if trust_certificate:
+            self.__add_to_str("TrustServerCertificate", trust_certificate)
+
+        return self
+
     def __str__(self):
         return ";".join(f"{k}={v}" for k, v in self.parameters.items())
 
@@ -82,7 +88,8 @@ def _connect() -> pyodbc.Connection:
     connection_str = (ConnectionStringBuilder(DB_DRIVER, DB_HOST, DB_NAME)
                       .login(DB_USER, DB_PASSWORD)
                       .charset(DB_CHARSET)
-                      .authentication("SqlPassword"))
+                      .authentication("SqlPassword")
+                      .certificate(DB_TRUST_CERTIFICATE))
     logger.debug("Connection string: %s", connection_str)
     connection = pyodbc.connect(connection_str.get_str())
 
