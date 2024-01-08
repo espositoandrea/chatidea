@@ -926,6 +926,7 @@ def create_plot(categories, legend_title, session: Optional[str] = None) -> path
     timestamp = datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
     filename = f"pie-{timestamp}.png" if not session else f"pie-{session}-{timestamp}.png"
     base = pathlib.Path("static")
+    base.mkdir(exist_ok=True, parents=True)
     plt.axis('equal')
     plt.savefig(base / filename, bbox_inches="tight")
     plt.close()
