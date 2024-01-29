@@ -5,7 +5,8 @@ database's schema.
 
 This file holds a brief documentation for the implementation of the CHATIDEA
 framework, just enough to get contributors up and running. For a detailed
-documentation, please visit [the full documentation](file:///docs).
+documentation, please visit [the full documentation](file:///docs). An online
+version can be found on [ReadTheDocs](https://chatidea.readthedocs.io/)
 
 ## Requirements
 
