@@ -1,4 +1,12 @@
 stages:
+  check:
+    always_changed: true
+    cmd: python3 check.py -p params.yaml
+    deps:
+      - check.py
+      - ../resources/db/db_schema_deib.json
+      - ../resources/db/db_view_deib.json
+      - ../resources/db/db_concept_deib.json
   create-chatito-definitions:
     cmd: python3 translator.py -t "writer/chatito_template.chatito" -o "writer/chatito_model.chatito" -p params.yaml
     params:
