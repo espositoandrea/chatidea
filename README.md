@@ -15,11 +15,14 @@ machine (please refer to the official documentations for instructions on how to
 install them).
 
 - [Rasa](https://rasa.com)
-- [Python 3.9 (with PIP)](https://www.python.org/downloads)
+- [Python ^3.9,<3.11 (with PIP)](https://www.python.org/downloads)
 - [Node.js (with NPM)](https://nodejs.org/)
-- [Pipenv](https://pipenv.pypa.io)
+- [Poetry](https://python-poetry.org/docs/)
 - [Docker and Docker Compose](https://www.docker.com)
 - [ODBC drivers](https://github.com/mkleehammer/pyodbc/wiki/Install)
+
+Note that we manage everything with Virtual Environments, so just make sure you
+have Python, Poetry and ODBC drivers.
 
 Before continuing, a database is needed. Be sure to have a DBMS running on your
 system or on a remote server, and remember to set the appropriate SQL dialect
@@ -29,7 +32,7 @@ Install all Python and Node.js dependencies in a virtual environment using the
 following command:
 
 ```shell
-PIPENV_VENV_IN_PROJECT=1 pipenv install --dev
+poetry install
 npm i --dev
 ```
 
@@ -54,13 +57,13 @@ cd nlu-model
 ### Generate Data and Train the Model
 
 ```shell
-dvc repro
+poetry run dvc repro
 ```
 
 ## Start the Rasa Server
 
 ```shell
-rasa run --enable-api
+poetry run rasa run --enable-api
 ```
 
 ## Deploying Information
@@ -111,5 +114,5 @@ TEMP_FILE=$(mktemp) && \
 
 ## Known Issues and Future Actions
 
--   [ ] Separate NLU model's environment from the main app's environment
+- [x] Separate NLU model's environment from the main app's environment
 
