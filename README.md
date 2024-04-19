@@ -54,6 +54,9 @@ pipeline.
 cd nlu-model
 ```
 
+Please make sure to double-check any gotchas that are documented in the [NLU
+model README file](nlu-model/README.md)
+
 ### Generate Data and Train the Model
 
 ```shell
@@ -115,4 +118,3 @@ TEMP_FILE=$(mktemp) && \
 ## Known Issues and Future Actions
 
 - [x] Separate NLU model's environment from the main app's environment
-
