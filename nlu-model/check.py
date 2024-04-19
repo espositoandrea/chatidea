@@ -11,9 +11,9 @@ from typing import Any
 
 import pypika
 
-from chatidea.database.broker import execute_query
 
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
+from chatidea.database.broker import execute_query
 import yaml
 from chatidea.database import resolver
 from chatidea.settings import DialectQuery as Query
