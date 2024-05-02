@@ -36,6 +36,12 @@ poetry install
 npm i --dev
 ```
 
+Please note that if you want to train a custom NLP model, you must also install
+the NLP-specific environment. You can do this by accessing the `nlu-model`
+directory and executing once again `poetry install`. For further documentation
+on quirks and gotchas of the NLU model, please refer to the appropriate
+[`nlu-model/README.md`](nlu-model/README.md) file.
+
 Then edit the `.env` file to fit your environment. If the `.env` file does not
 exist, copy the provided example template. This can be done using the following
 command.
