@@ -2,6 +2,10 @@
 
 This directory holds the scripts and configuration files for the Natural Language Understanding model used by CHATIDEA.
 
+## Running the Training
+
+Open a shell in this directory (the `nlu-model` directory) and execute `poetry run dvc repro`. Please be sure that the dependencies identified in `dvc.yaml` match the ones you defined in your `.env` file!
+
 ## Dependencies Warning
 
 All dependencies are tracked using Poetry. However, RASA still declares a dependency on Pydantic 1.x. This conflicts
