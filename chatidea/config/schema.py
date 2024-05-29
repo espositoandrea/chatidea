@@ -33,7 +33,7 @@ class Reference(BaseModel):
 class TableSchema(BaseModel):
     column_list: list[str]
     primary_key_list: list[str]
-    column_alias_list: Optional[dict[str, str]]
+    column_alias_list: Optional[dict[str, str]] = None
     references: list[Reference]
 
     def __getitem__(self, item: str) -> Any:
