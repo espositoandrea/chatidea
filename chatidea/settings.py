@@ -77,6 +77,16 @@ DB_CONCEPT = parse_obj_as(DatabaseConcepts, get_db_config('concept'))
 DB_CONCEPT_S = get_db_config("concept_s")
 DB_SCHEMA = parse_obj_as(DatabaseSchema, get_db_config("schema"))
 
+if "EXTRA_CONFIG_PATH" in env:
+    extra_config_path =pathlib.Path(file_path / env.get("EXTRA_CONFIG_PATH"))
+    if extra_config_path.exists():
+        with extra_config_path.open("r") as f:
+            EXTRA_CONFIG = parse_obj_as(ExtraConfiguration, json.load(f) if extra_config_path.suffix == ".json" else yaml.safe_load(f))
+    else:
+        EXTRA_CONFIG = ExtraConfiguration()
+else:
+    EXTRA_CONFIG = ExtraConfiguration()
+
 CHATITO_TEMPLATE_PATH = file_path / 'writer' / 'chatito_template.chatito'
 CHATITO_MODEL_PATH = file_path / 'writer' / 'chatito_model.chatito'
 

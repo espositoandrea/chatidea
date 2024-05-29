@@ -4,31 +4,25 @@ import re
 
 from chatidea.config.concept import Attribute
 from chatidea.database import resolver
+from chatidea.settings import EXTRA_CONFIG
 
-HI_THERE = 'Hi, I am very happy to help you in exploring the database of the Dipartimento di Elettronica, Informazione e Bioingegneria (DEIB) of the Politecnico di Milano.'
+HI_THERE = EXTRA_CONFIG.greeting
 
-REMEMBER_HISTORY = "You can always check the history of the conversation, just ask!\n " \
-                   "For instance you can try with: \"show me the history\" or maybe just \"history\".\n" \
-                   "I will help you to go back in the past, if you want, or just reset it completely."
-REMEMBER_GO_BACK = "If you did something wrong, DON'T PANIC!\n" \
-                   "By simply telling me something like \"go back\" or \"undo\" you can jump to the " \
-                   "previous concepts of your history.\n" \
-                   "This might be a shortcut when you want to make little rollbacks, " \
-                   "without accessing all your history."
-ERROR = 'Sorry, I did not get that! :('
-FINDING_ELEMENT = 'Let me check...'
-NOTHING_FOUND = 'Nothing has been found, I am sorry!'
-ONE_RESULT_FOUND = 'Et voilà! I found 1 result!'
-N_RESULTS_FOUND_PATTERN = 'Et voilà! I found {} results!'
-REMEMBER_FILTER = 'Remember that you can always filter them, click the button to get some hints'
-SELECT_FOR_INFO_PATTERN = 'Select the concept of type {} you are interested in.'
-INTRODUCE_ELEMENT_TO_SHOW_PATTERN = 'Here is what I know about this {}:'
-AMBIGUITY_FOUND = 'I understand you want to search for something, maybe you can start from one of this questions.'
-EMPTY_CONTEXT_LIST = 'I am sorry, but your conversation history is empty!'
-CONTEXT_LIST_RESET = 'The history has been reset!'
-NO_GO_BACK = 'You can not go back any further than that'
-REMEMBER_RESET_HISTORY = 'If you want you can reset the history of the conversation ' \
-                         'by clicking the reset button:'
+REMEMBER_HISTORY = EXTRA_CONFIG.help_history
+REMEMBER_GO_BACK = EXTRA_CONFIG.help_go_back
+ERROR = EXTRA_CONFIG.error
+FINDING_ELEMENT = EXTRA_CONFIG.finding_element
+NOTHING_FOUND = EXTRA_CONFIG.nothing_found
+ONE_RESULT_FOUND = EXTRA_CONFIG.one_result_found
+N_RESULTS_FOUND_PATTERN = EXTRA_CONFIG.n_results_found_pattern
+REMEMBER_FILTER = EXTRA_CONFIG.help_filter
+SELECT_FOR_INFO_PATTERN = EXTRA_CONFIG.select_for_info_pattern
+INTRODUCE_ELEMENT_TO_SHOW_PATTERN = EXTRA_CONFIG.introduce_element_to_show_pattern
+AMBIGUITY_FOUND = EXTRA_CONFIG.ambiguity_found
+EMPTY_CONTEXT_LIST = EXTRA_CONFIG.empty_context_list
+CONTEXT_LIST_RESET = EXTRA_CONFIG.context_list_reset
+NO_GO_BACK = EXTRA_CONFIG.no_go_back
+REMEMBER_RESET_HISTORY = EXTRA_CONFIG.remember_reset_history
 
 
 def element_attributes(element):

@@ -16,3 +16,4 @@
 from .concept import DatabaseConcepts
 from .schema import DatabaseSchema
 from .view import DatabaseView
+from .extras import ExtraConfiguration
