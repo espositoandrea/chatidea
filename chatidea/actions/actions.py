@@ -383,13 +383,13 @@ def replace_el_name(entities: list[Entity], name):
                 entities[i].value = name
 
 
-def replace_word_numbers(entities, numbers):
+def replace_word_numbers(entities: list[Entity], numbers):
     for i in range(0, len(entities)):
-        match = re.match("(\w+)_(\d+)_(\d+)", entities[i]['entity'])
+        match = re.match("(\w+)_(\d+)_(\d+)", entities[i].entity)
         if match:
             what = match.group(1)
             if what == nlu.ENTITY_WORD:
-                entities[i]['entity'] = "word_" + numbers
+                entities[i].entity = "word_" + numbers
 
 
 def remove_el(entities: list[extractor.Entity]):

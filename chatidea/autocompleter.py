@@ -1,7 +1,7 @@
 import re
 
 from chatidea.database import resolver
-from chatidea.patterns import nlu, Response
+from chatidea.patterns import nlu
 from . import nltrasnslator
 from .actions import actions
 from .actions.common import ActionReturn
@@ -58,19 +58,16 @@ def add_entity_from_word(entities: list[Entity]):
 
 
 def add_attribute_from_word_number_and_el_number(entities: list[Entity]):
-    for i in range(0, len(entities)):
-
-        match = re.match("(\w+)_(\d+)", entities[i].entity)  # devi fare il numero e dividere i gruppi
+    for entity in entities:
+        match = re.match("(\w+)_(\d+)", entity.entity)  # devi fare il numero e dividere i gruppi
         if match:
-
             what = match.group(1)
             if what == nlu.ENTITY_ELEMENT:
-                attributes = resolver.extract_all_attributes(
-                    entities[i]['value'])
+                attributes = resolver.extract_all_attributes(entity.value)
                 entity_number = int(match.group(2))
 
-    for i in range(0, len(entities)):
-        match = re.match("(\w+)_(\d+)_(\d+)", entities[i].entity)
+    for i, entity in enumerate(entities):
+        match = re.match("(\w+)_(\d+)_(\d+)", entity.entity)
         if match:
             what = match.group(1)
             if what == nlu.ENTITY_WORD:

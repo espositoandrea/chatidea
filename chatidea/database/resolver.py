@@ -24,7 +24,7 @@ def load_db_concept():
 def extract_similar_values(word):
     all_words = []
     for e in db_concept_s:
-        for s in e.get('similars'):
+        for s in e.get('similars', []):
             if word in s:
                 all_words = s
     if len(all_words) == 0:
@@ -107,7 +107,7 @@ def extract_attributes_with_keyword(element_name: str):
     attributes = extract_all_attributes(element_name)
     if attributes:
         return [a for a in attributes if a.keyword]
-    return None
+    return []
 
 
 def extract_attributes_alias(element_name: str):
