@@ -112,7 +112,7 @@ def execute_query(query: QueryBuilder,
                   connection: pyodbc.Connection = None,
                   limit: bool = True) -> list[pyodbc.Row]:
     # HERE FORCING THE LIMIT OF THE QUERY
-    if limit and QUERY_LIMIT:
+    if limit and QUERY_LIMIT and not "COUNT" in str(query):
         if query.dialect == Dialects.MSSQL and 'ORDER BY' not in str(query):
             # When on MS SQL Server, the limit operation requires an ORDER BY
             # statement, so if the SQL does not contain one, we add it using
