@@ -103,6 +103,14 @@ docker-compose down
 
 ### Testing the Deployment on Apple Silicon and Other ARM Processors
 
+There may be some problems with `pyodbc` until the maintainers do not provide a correctly built image of the library for
+Apple Silicon. If you incur in errors after installing `pyodbc`, simply reinstall the library using the following
+command.
+
+```shell
+poetry run pip3 install --force-reinstall --no-binary :all: pyodbc
+```
+
 At the moment, the project is based on [Rasa](https://rasa.com). Sadly, the
 official Docker image of Rasa does not support the ARM architecture. As a
 workaround, until an official version is released,
